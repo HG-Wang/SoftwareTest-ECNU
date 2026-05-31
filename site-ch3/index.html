@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ch3 图覆盖 — 软件测试笔记</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Toggle menu">☰</button>
+<div class="overlay"></div>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h1>软件测试笔记</h1>
+    <div class="subtitle">Software Testing · Chapter 3</div>
+  </div>
+  <div class="sidebar-nav">
+    <a href="../index.html" class="back-home"><span class="icon">🏠</span> 返回主页</a>
+    <div class="nav-section">章节导航</div>
+    <a href="index.html" class="active"><span class="icon">📖</span> 章节总览</a>
+    <a href="graph-basics.html"><span class="icon">📐</span> 图基础与覆盖标准</a>
+    <a href="source-code.html"><span class="icon">💻</span> 源代码图覆盖</a>
+    <a href="design.html"><span class="icon">🔗</span> 设计元素图覆盖</a>
+    <a href="spec.html"><span class="icon">📋</span> 规约图覆盖</a>
+    <a href="use-case.html"><span class="icon">🎯</span> 用例图覆盖</a>
+    <a href="exercises.html"><span class="icon">✏️</span> 实战练习</a>
+    <div class="nav-section">附录</div>
+    <a href="#summary"><span class="icon">📊</span> 本章总结</a>
+  </div>
+  <div class="sidebar-footer">
+    Chapter 3 · Graph Coverage<br>
+    图覆盖 · 软件工程课程
+  </div>
+</nav>
+
+<main class="main">
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="#">Ch3 图覆盖</a>
+      <span class="sep">›</span>
+      <span>章节总览</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="hero">
+      <h2>Chapter 3<br>图覆盖</h2>
+      <p>Graph Coverage — 利用图结构（控制流图、调用图、有限状态机、活动图等）来系统地定义测试覆盖标准，确保测试充分验证软件的结构和行为。</p>
+      <div class="hero-stats">
+        <div class="stat"><div class="stat-num">8</div><div class="stat-label">覆盖标准</div></div>
+        <div class="stat"><div class="stat-num">5</div><div class="stat-label">图类型</div></div>
+        <div class="stat"><div class="stat-num">6</div><div class="stat-label">章节页面</div></div>
+      </div>
+    </div>
+
+    <h3 id="overview">章节概述</h3>
+    <p>图覆盖是最常用的测试结构，测试人员通过将软件表示为图（如控制流图、设计结构图、有限状态机、用例活动图等）来定义覆盖标准。图的来源多种多样，包括源代码中的控制流、设计阶段的调用关系、规约中的状态转换以及用例场景等。</p>
+    <p>本章系统介绍两大类图覆盖标准：</p>
+    <ul>
+      <li><strong>结构化覆盖标准</strong> — 包括节点覆盖（NC）、边覆盖（EC）、边对覆盖（EPC）、主路径覆盖（PPC）、完全路径覆盖（CPC）、简单环路覆盖（SRTC）、完全环路覆盖（CRTC）等</li>
+      <li><strong>数据流覆盖标准</strong> — 包括全定义覆盖（ADC）、全使用覆盖（AUC）、全DU路径覆盖（ADUPC）等</li>
+    </ul>
+
+    <h3 id="cards">章节内容</h3>
+    <div class="card-grid">
+      <a href="graph-basics.html" class="card">
+        <div class="card-icon blue">📐</div>
+        <h3>图基础与覆盖标准</h3>
+        <p>图的形式化定义、节点覆盖、边覆盖、边对覆盖、主路径覆盖等结构化覆盖标准，以及游历、侧访、绕道等概念。</p>
+        <div class="card-arrow">查看详情 →</div>
+      </a>
+      <a href="source-code.html" class="card">
+        <div class="card-icon purple">💻</div>
+        <h3>源代码图覆盖</h3>
+        <p>将控制流图(CFG)应用于程序源码，覆盖if、while、for等控制结构，以及源码级数据流覆盖。</p>
+        <div class="card-arrow">查看详情 →</div>
+      </a>
+      <a href="design.html" class="card">
+        <div class="card-icon green">🔗</div>
+        <h3>设计元素图覆盖</h3>
+        <p>调用图、面向对象调用覆盖、过程间DU对、耦合数据流路径等集成测试方法。</p>
+        <div class="card-arrow">查看详情 →</div>
+      </a>
+      <a href="spec.html" class="card">
+        <div class="card-icon orange">📋</div>
+        <h3>规约图覆盖</h3>
+        <p>顺序约束、有限状态机(FSM)的构造与覆盖、层次化FSM等规约级测试方法。</p>
+        <div class="card-arrow">查看详情 →</div>
+      </a>
+      <a href="use-case.html" class="card">
+        <div class="card-icon red">🎯</div>
+        <h3>用例图覆盖</h3>
+        <p>UML用例、活动图的转换与覆盖，场景测试方法。</p>
+        <div class="card-arrow">查看详情 →</div>
+      </a>
+      <a href="exercises.html" class="card">
+        <div class="card-icon teal">✏️</div>
+        <h3>实战练习</h3>
+        <p>通过完整的控制流图分析和数据流覆盖案例，综合运用图覆盖标准设计测试用例。</p>
+        <div class="card-arrow">查看详情 →</div>
+      </a>
+    </div>
+
+    <h3 id="roadmap">学习路线</h3>
+    <p>本章内容按照以下路线展开，建议按顺序学习：</p>
+
+    <ol class="step-list">
+      <li>
+        <div>
+          <strong><a href="graph-basics.html">图基础与覆盖标准</a></strong> — 理解图的形式化定义；掌握NC、EC、EPC、PPC等结构化覆盖标准；理解简单路径、主路径、游历、侧访、绕道等核心概念。
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong><a href="source-code.html">源代码图覆盖</a></strong> — 学习将图覆盖标准应用于程序源码；掌握控制流图(CFG)的画法；应用数据流覆盖标准ADC、AUC、ADUPC。
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong><a href="design.html">设计元素图覆盖</a></strong> — 理解调用图与OO调用覆盖；掌握last-def、first-use、coupling du-path等概念；学习All-Coupling-Def/Use/du-Paths覆盖标准。
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong><a href="spec.html">规约图覆盖</a></strong> — 学习顺序约束的静态检查方法；掌握FSM的构造方法（状态变量建模）；理解层次化FSM的构建与覆盖。
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong><a href="use-case.html">用例图覆盖</a></strong> — 将UML用例转换为活动图；应用节点覆盖和场景测试方法。
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong><a href="exercises.html">实战练习</a></strong> — 通过Stats程序和Quadratic程序等完整案例，综合运用图覆盖标准和数据流覆盖设计测试用例。
+        </div>
+      </li>
+    </ol>
+
+    <h3 id="summary">本章核心覆盖标准一览</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>缩写</th>
+          <th>全称</th>
+          <th>中文</th>
+          <th>类型</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>NC</strong></td><td>Node Coverage</td><td>节点覆盖</td><td>结构化覆盖</td></tr>
+        <tr><td><strong>EC</strong></td><td>Edge Coverage</td><td>边覆盖</td><td>结构化覆盖</td></tr>
+        <tr><td><strong>EPC</strong></td><td>Edge-Pair Coverage</td><td>边对覆盖</td><td>结构化覆盖</td></tr>
+        <tr><td><strong>PPC</strong></td><td>Prime Path Coverage</td><td>主路径覆盖</td><td>结构化覆盖</td></tr>
+        <tr><td><strong>CPC</strong></td><td>Complete Path Coverage</td><td>完全路径覆盖</td><td>结构化覆盖</td></tr>
+        <tr><td><strong>SRTC</strong></td><td>Simple Round Trip Coverage</td><td>简单环路覆盖</td><td>结构化覆盖</td></tr>
+        <tr><td><strong>CRTC</strong></td><td>Complete Round Trip Coverage</td><td>完全环路覆盖</td><td>结构化覆盖</td></tr>
+        <tr><td><strong>ADC</strong></td><td>All-Defs Coverage</td><td>全定义覆盖</td><td>数据流覆盖</td></tr>
+        <tr><td><strong>AUC</strong></td><td>All-Uses Coverage</td><td>全使用覆盖</td><td>数据流覆盖</td></tr>
+        <tr><td><strong>ADUPC</strong></td><td>All-DU-Paths Coverage</td><td>全DU路径覆盖</td><td>数据流覆盖</td></tr>
+      </tbody>
+    </table>
+
+    <h3 id="subsumption">包含关系</h3>
+    <div class="flow-diagram">
+      <div class="flow-step">
+        <div class="step-box" style="background:#dbeafe;">PPC</div>
+        <div class="step-label">主路径覆盖</div>
+        <div class="step-sub">所有主路径</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#ede9fe;">EC</div>
+        <div class="step-label">边覆盖</div>
+        <div class="step-sub">所有边</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#d1fae5;">NC</div>
+        <div class="step-label">节点覆盖</div>
+        <div class="step-sub">所有节点</div>
+      </div>
+    </div>
+    <p style="text-align:center; color:var(--text-light); font-size:.88rem;">PPC ⊇ EC ⊇ NC — 主路径覆盖包含边覆盖，边覆盖包含节点覆盖</p>
+
+    <div class="flow-diagram">
+      <div class="flow-step">
+        <div class="step-box" style="background:#fee2e2;">ADUPC</div>
+        <div class="step-label">全DU路径覆盖</div>
+        <div class="step-sub">所有DU路径</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#ffedd5;">AUC</div>
+        <div class="step-label">全使用覆盖</div>
+        <div class="step-sub">所有使用</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#fef3c7;">ADC</div>
+        <div class="step-label">全定义覆盖</div>
+        <div class="step-sub">所有定义</div>
+      </div>
+    </div>
+    <p style="text-align:center; color:var(--text-light); font-size:.88rem;">ADUPC ⊇ AUC ⊇ ADC — 全DU路径覆盖包含全使用覆盖，全使用覆盖包含全定义覆盖</p>
+
+    <hr>
+
+    <h3 id="key-terms">关键术语速查</h3>
+    <dl class="def-list">
+      <dt>图 (Graph)</dt>
+      <dd>由节点集合N、初始节点集合N0、终结节点集合Nf和边集合E组成的四元组 G = &lt;N, N0, Nf, E&gt;。</dd>
+      <dt>测试路径 (Test Path)</dt>
+      <dd>从初始节点开始到终结节点结束的路径，代表测试用例的执行。</dd>
+      <dt>简单路径 (Simple Path)</dt>
+      <dd>除首尾节点可能相同外，没有节点重复出现的路径，即没有内部环路。</dd>
+      <dt>主路径 (Prime Path)</dt>
+      <dd>不作为其他简单路径的真子路径出现的简单路径，即不能再延伸的简单路径。</dd>
+      <dt>游历 (Tour)</dt>
+      <dd>测试路径p游历子路径q，当q是p的子路径。</dd>
+      <dt>侧访 (Sidetrip)</dt>
+      <dd>游历岔道后回到岔道的起点，要求子路径中的每条边都在测试路径中按序出现。</dd>
+      <dt>绕道 (Detour)</dt>
+      <dd>游历岔道后到岔道的终点，要求子路径中的每个节点都在测试路径中按序出现。</dd>
+      <dt>定义 (def)</dt>
+      <dd>变量值被存入内存的位置，如赋值语句左侧。</dd>
+      <dt>使用 (use)</dt>
+      <dd>变量值被访问的位置，如赋值语句右侧或条件判断。</dd>
+      <dt>DU对 (DU-pair)</dt>
+      <dd>变量v在位置li定义、在位置lj使用的位置对。</dd>
+      <dt>耦合DU路径 (Coupling DU-path)</dt>
+      <dd>从last-def到first-use的路径，用于集成测试。</dd>
+    </dl>
+
+    <div class="pagination">
+      <div></div>
+      <a href="graph-basics.html" class="page-nav next">
+        <span class="label">下一节</span>
+        <span class="title">图基础与覆盖标准 →</span>
+      </a>
+    </div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

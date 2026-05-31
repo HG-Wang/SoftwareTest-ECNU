@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>设计元素图覆盖 — Ch3 图覆盖 — 软件测试笔记</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Toggle menu">☰</button>
+<div class="overlay"></div>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h1>软件测试笔记</h1>
+    <div class="subtitle">Software Testing · Chapter 3</div>
+  </div>
+  <div class="sidebar-nav">
+    <a href="../index.html" class="back-home"><span class="icon">🏠</span> 返回主页</a>
+    <div class="nav-section">章节导航</div>
+    <a href="index.html"><span class="icon">📖</span> 章节总览</a>
+    <a href="graph-basics.html"><span class="icon">📐</span> 图基础与覆盖标准</a>
+    <a href="source-code.html"><span class="icon">💻</span> 源代码图覆盖</a>
+    <a href="design.html" class="active"><span class="icon">🔗</span> 设计元素图覆盖</a>
+    <a href="spec.html"><span class="icon">📋</span> 规约图覆盖</a>
+    <a href="use-case.html"><span class="icon">🎯</span> 用例图覆盖</a>
+    <a href="exercises.html"><span class="icon">✏️</span> 实战练习</a>
+    <div class="nav-section">本页目录</div>
+    <a href="#call-graph" class="toc-link"><span class="icon">📞</span> 调用图</a>
+    <a href="#oo-coverage" class="toc-link"><span class="icon">🏗️</span> 面向对象调用覆盖</a>
+    <a href="#coupling-du" class="toc-link"><span class="icon">🔀</span> 耦合数据流</a>
+    <a href="#quadratic" class="toc-link"><span class="icon">📐</span> 完整案例</a>
+  </div>
+  <div class="sidebar-footer">
+    3.4 Design Coverage<br>
+    设计元素图覆盖
+  </div>
+</nav>
+
+<main class="main">
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="index.html">Ch3 图覆盖</a>
+      <span class="sep">›</span>
+      <span>设计元素图覆盖</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-header">
+      <h2>设计元素图覆盖</h2>
+      <p class="desc">Graph Coverage for Design Elements — 利用调用图和耦合数据流路径进行集成测试，覆盖单元之间的接口和数据传递。</p>
+      <div class="meta">
+        <span class="tag">§ 3.4</span>
+        <span class="tag">调用图</span>
+        <span class="tag">耦合DU</span>
+        <span class="tag">集成测试</span>
+      </div>
+    </div>
+
+    <h3 id="call-graph">调用图</h3>
+
+    <h4>调用图基础</h4>
+    <p>调用图(Call Graph)是结构化设计测试中最常见的图。节点是单元（Java中的方法），边是对单元的调用。</p>
+    <table>
+      <thead>
+        <tr>
+          <th>覆盖标准</th>
+          <th>含义</th>
+          <th>说明</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>节点覆盖</strong></td>
+          <td>调用每个方法至少一次</td>
+          <td>方法覆盖</td>
+        </tr>
+        <tr>
+          <td><strong>边覆盖</strong></td>
+          <td>执行每个调用至少一次</td>
+          <td>调用覆盖</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h4>类调用图的局限</h4>
+    <p>类中各个方法可能互不调用（如Stack类的push、pop、isEmpty），因此节点覆盖和边覆盖效果不佳，需要其他测试方法。</p>
+
+    <h3 id="oo-coverage">面向对象调用覆盖</h3>
+
+    <h4>继承与多态</h4>
+    <p>在继承层次结构中，类本身不可执行，需要创建对象。因此调用图需要基于实例化对象来构建。</p>
+
+    <h4>OO调用覆盖标准</h4>
+    <dl class="def-list">
+      <dt>OO调用覆盖 (OO Call Coverage)</dt>
+      <dd>TR包含为类层次结构中每个类实例化的对象的调用图中的每个可达节点。</dd>
+      <dt>OO对象调用覆盖 (OO Object Call Coverage)</dt>
+      <dd>TR包含为类层次结构中每个类的每个实例化对象的调用图中的每个可达节点。</dd>
+    </dl>
+
+    <h3 id="coupling-du">耦合数据流</h3>
+
+    <h4>基本概念</h4>
+    <p>设计层面的数据流耦合比控制流耦合更复杂。当值被传递时，它们"改变名称"。有许多不同的数据共享方式。</p>
+    <table>
+      <thead>
+        <tr>
+          <th>术语</th>
+          <th>含义</th>
+          <th>示例</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>调用者 (Caller)</strong></td>
+          <td>调用其他单元的单元</td>
+          <td>方法A调用方法B</td>
+        </tr>
+        <tr>
+          <td><strong>被调用者 (Callee)</strong></td>
+          <td>被调用的单元</td>
+          <td>方法B</td>
+        </tr>
+        <tr>
+          <td><strong>调用点 (Callsite)</strong></td>
+          <td>调用出现的语句或节点</td>
+          <td>B(x)</td>
+        </tr>
+        <tr>
+          <td><strong>实参 (Actual Parameter)</strong></td>
+          <td>调用者中的变量</td>
+          <td>x</td>
+        </tr>
+        <tr>
+          <td><strong>形参 (Formal Parameter)</strong></td>
+          <td>被调用者中的变量</td>
+          <td>y</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h4>过程间DU对</h4>
+    <p>如果关注接口，只需考虑调用前变量的最后定义(last-def)和调用后/单元内的首次使用(first-use)。</p>
+    <dl class="def-list">
+      <dt>Last-def</dt>
+      <dd>定义变量x的节点集合，从该节点通过调用点到另一单元中的使用存在def-clear路径。可以是从调用者到被调用者（参数或共享变量），也可以是从被调用者到调用者（返回值）。</dd>
+      <dt>First-use</dt>
+      <dd>使用变量y的节点集合，从调用点到这些节点存在def-clear且use-clear的路径。</dd>
+    </dl>
+
+    <h4>示例</h4>
+    <p>以F和G两个方法为例：</p>
+    <pre><code><span class="cm">// Caller: F</span>
+<span class="vr">X</span> <span class="op">=</span> <span class="nu">14</span>;
+...
+<span class="vr">y</span> <span class="op">=</span> <span class="fn">G</span>(<span class="vr">x</span>);
+...
+<span class="fn">print</span>(<span class="vr">y</span>);
+
+<span class="cm">// Callee: G(a)</span>
+<span class="fn">print</span>(<span class="vr">a</span>);
+...
+<span class="vr">b</span> <span class="op">=</span> <span class="nu">42</span>;
+<span class="kw">return</span>(<span class="vr">b</span>);</code></pre>
+    <p><strong>Last Defs:</strong> 节点2, 3（在F中定义x）</p>
+    <p><strong>First Uses:</strong> 节点11, 12（在G中使用a）</p>
+    <p><strong>DU对:</strong> (A, x, 2)→(B, y, 11), (A, x, 2)→(B, y, 12), (A, x, 3)→(B, y, 11), (A, x, 3)→(B, y, 12)</p>
+
+    <h4>三种耦合覆盖标准</h4>
+    <dl class="def-list">
+      <dt>All-Coupling-Def覆盖</dt>
+      <dd>每个last-def到至少一个first-use。</dd>
+      <dt>All-Coupling-Use覆盖</dt>
+      <dd>每个last-def到每个first-use。</dd>
+      <dt>All-Coupling-du-Paths覆盖</dt>
+      <dd>每个last-def到每个first-use之间的每条简单路径。</dd>
+    </dl>
+
+    <h3 id="quadratic">完整案例：Quadratic程序</h3>
+
+    <h4>程序代码</h4>
+    <pre><code><span class="kw">public class</span> <span class="tp">Quadratic</span> {
+  <span class="kw">public static void</span> <span class="fn">main</span>(<span class="tp">String</span>[] args) {
+    <span class="tp">double</span> <span class="vr">X</span>, <span class="vr">Y</span>, <span class="vr">Z</span>;
+    <span class="tp">double</span> <span class="vr">Root1</span>, <span class="vr">Root2</span>;
+    <span class="tp">boolean</span> <span class="vr">ok</span>;
+    <span class="cm">// read X, Y, Z from input</span>
+    <span class="kw">if</span> (<span class="vr">X</span> <span class="op">==</span> <span class="nu">0</span>) {
+      <span class="vr">ok</span> <span class="op">=</span> <span class="kw">false</span>;
+    } <span class="kw">else</span> {
+      <span class="vr">ok</span> <span class="op">=</span> <span class="fn">Root</span>(<span class="vr">X</span>, <span class="vr">Y</span>, <span class="vr">Z</span>, <span class="vr">Root1</span>, <span class="vr">Root2</span>);
+    }
+    <span class="kw">if</span> (<span class="vr">ok</span>) {
+      <span class="fn">print</span>(<span class="vr">Root1</span>, <span class="vr">Root2</span>);
+    } <span class="kw">else</span> {
+      <span class="fn">print</span>(<span class="st">"No real roots"</span>);
+    }
+  }
+
+  <span class="kw">public static boolean</span> <span class="fn">Root</span>(<span class="tp">double</span> <span class="vr">A</span>, <span class="tp">double</span> <span class="vr">B</span>, <span class="tp">double</span> <span class="vr">C</span>,
+                             <span class="tp">double</span> <span class="vr">Root1</span>, <span class="tp">double</span> <span class="vr">Root2</span>) {
+    <span class="tp">boolean</span> <span class="vr">Result</span>;
+    <span class="tp">double</span> <span class="vr">D</span>;
+    <span class="vr">D</span> <span class="op">=</span> <span class="vr">B</span> <span class="op">*</span> <span class="vr">B</span> <span class="op">-</span> <span class="nu">4</span> <span class="op">*</span> <span class="vr">A</span> <span class="op">*</span> <span class="vr">C</span>;
+    <span class="kw">if</span> (<span class="vr">D</span> <span class="op">&lt;</span> <span class="nu">0</span>) {
+      <span class="vr">Result</span> <span class="op">=</span> <span class="kw">false</span>;
+    } <span class="kw">else</span> {
+      <span class="vr">Root1</span> <span class="op">=</span> (<span class="op">-</span><span class="vr">B</span> <span class="op">+</span> <span class="fn">Math.sqrt</span>(<span class="vr">D</span>)) <span class="op">/</span> (<span class="nu">2</span> <span class="op">*</span> <span class="vr">A</span>);
+      <span class="vr">Root2</span> <span class="op">=</span> (<span class="op">-</span><span class="vr">B</span> <span class="op">-</span> <span class="fn">Math.sqrt</span>(<span class="vr">D</span>)) <span class="op">/</span> (<span class="nu">2</span> <span class="op">*</span> <span class="vr">A</span>);
+      <span class="vr">Result</span> <span class="op">=</span> <span class="kw">true</span>;
+    }
+    <span class="kw">return</span> <span class="vr">Result</span>;
+  }
+}</code></pre>
+
+    <h4>Coupling DU-pairs分析</h4>
+    <table>
+      <thead>
+        <tr>
+          <th>方法对</th>
+          <th>变量</th>
+          <th>语句</th>
+          <th>说明</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>(main, Root)</td>
+          <td>X → A</td>
+          <td>15→38</td>
+          <td>参数传递</td>
+        </tr>
+        <tr>
+          <td>(main, Root)</td>
+          <td>Y → B</td>
+          <td>16→38</td>
+          <td>参数传递</td>
+        </tr>
+        <tr>
+          <td>(main, Root)</td>
+          <td>Z → C</td>
+          <td>17→38</td>
+          <td>参数传递</td>
+        </tr>
+        <tr>
+          <td>(main, Root)</td>
+          <td>X → A</td>
+          <td>21→38</td>
+          <td>参数传递(else分支)</td>
+        </tr>
+        <tr>
+          <td>(main, Root)</td>
+          <td>Y → B</td>
+          <td>22→38</td>
+          <td>参数传递(else分支)</td>
+        </tr>
+        <tr>
+          <td>(main, Root)</td>
+          <td>Z → C</td>
+          <td>23→38</td>
+          <td>参数传递(else分支)</td>
+        </tr>
+        <tr>
+          <td>(Root, main)</td>
+          <td>Root1</td>
+          <td>44→28</td>
+          <td>返回值</td>
+        </tr>
+        <tr>
+          <td>(Root, main)</td>
+          <td>Root2</td>
+          <td>45→28</td>
+          <td>返回值</td>
+        </tr>
+        <tr>
+          <td>(Root, main)</td>
+          <td>Result → ok</td>
+          <td>41→26</td>
+          <td>返回值</td>
+        </tr>
+        <tr>
+          <td>(Root, main)</td>
+          <td>Result → ok</td>
+          <td>46→26</td>
+          <td>返回值</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h4>耦合数据流注意事项</h4>
+    <ul>
+      <li>只考虑在被调用者中使用或定义的变量。</li>
+      <li>类和全局变量的隐式初始化。</li>
+      <li>传递性DU对（A调用B，B调用C，变量在A中定义在C中使用）代价太高。</li>
+      <li>数组：对一个元素的引用被视为对所有元素的引用。</li>
+    </ul>
+
+    <h3 id="modern">现代演进</h3>
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header">
+          从静态调用图到运行时调用图
+          <span class="arrow">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <p>传统静态调用图无法处理多态、反射、动态分派。</p>
+            <p><strong>现代方法：</strong>Dynamic Call Graph（运行时记录实际调用关系）、Hybrid Approach（结合静态分析和运行时信息）。</p>
+            <p><strong>工程实践：</strong>Distributed Tracing（如 Jaeger、Zipkin）在微服务架构中构建跨服务调用链。</p>
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">
+          从耦合DU到数据流传播
+          <span class="arrow">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <p><strong>演进路线：</strong>Last-def/First-use → API-level Data Flow → Taint Analysis（污点分析）。</p>
+            <p><strong>核心区别：</strong>DU基于枚举路径，Taint基于跟踪传播——不需要枚举所有路径，而是追踪数据从源（source）到汇（sink）的传播过程。</p>
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">
+          服务级/API耦合
+          <span class="arrow">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <p>传统概念在微服务架构中的映射：</p>
+            <ul>
+              <li>Caller/Callee → Service A / Service B</li>
+              <li>Actual Parameter → JSON payload（请求体）</li>
+              <li>Return value → HTTP response（响应体）</li>
+            </ul>
+            <p><strong>Service Dependency Graph (SDG)</strong> 用于微服务架构中的依赖分析和测试覆盖。</p>
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">
+          从覆盖到有效性
+          <span class="arrow">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <p>传统 Node/Edge/DU Coverage 关注路径执行，现代更关注测试的有效性。</p>
+            <p><strong>实践趋势：</strong></p>
+            <ul>
+              <li><strong>Fuzzing</strong> — Data-flow-guided fuzzing，利用数据流信息引导模糊测试生成更有效的输入。</li>
+              <li><strong>Mutation Testing</strong> — 通过变异测试评估测试套件的缺陷检测能力。</li>
+              <li><strong>Interface/API Testing</strong> — 聚焦接口契约和数据交换的正确性。</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="pagination">
+      <a href="source-code.html" class="page-nav prev">
+        <span class="label">上一节</span>
+        <span class="title">← 源代码图覆盖</span>
+      </a>
+      <a href="spec.html" class="page-nav next">
+        <span class="label">下一节</span>
+        <span class="title">规约图覆盖 →</span>
+      </a>
+    </div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

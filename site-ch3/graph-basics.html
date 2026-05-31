@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>图基础与覆盖标准 — Ch3 图覆盖</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Toggle menu">☰</button>
+<div class="overlay"></div>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h1>软件测试笔记</h1>
+    <div class="subtitle">Software Testing · Chapter 3</div>
+  </div>
+  <div class="sidebar-nav">
+    <a href="../index.html" class="back-home"><span class="icon">🏠</span> 返回主页</a>
+    <div class="nav-section">章节导航</div>
+    <a href="index.html"><span class="icon">📖</span> 章节总览</a>
+    <a href="graph-basics.html" class="active"><span class="icon">📐</span> 图基础与覆盖标准</a>
+    <a href="source-code.html"><span class="icon">💻</span> 源代码图覆盖</a>
+    <a href="design.html"><span class="icon">🔗</span> 设计元素图覆盖</a>
+    <a href="spec.html"><span class="icon">📋</span> 规约图覆盖</a>
+    <a href="use-case.html"><span class="icon">🎯</span> 用例图覆盖</a>
+    <a href="exercises.html"><span class="icon">✏️</span> 实战练习</a>
+    <div class="nav-section">本页目录</div>
+    <a href="#graph-def" class="toc-link"><span class="icon">📋</span> 图的定义</a>
+    <a href="#structural" class="toc-link"><span class="icon">📊</span> 结构化覆盖标准</a>
+    <a href="#prime-path" class="toc-link"><span class="icon">🔀</span> 主路径覆盖</a>
+    <a href="#touring" class="toc-link"><span class="icon">🚶</span> 游历与侧访</a>
+    <a href="#data-flow" class="toc-link"><span class="icon">💧</span> 数据流覆盖</a>
+  </div>
+  <div class="sidebar-footer">
+    3.1-3.2 Graph Coverage Basics
+  </div>
+</nav>
+
+<main class="main">
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="index.html">Ch3</a>
+      <span class="sep">›</span>
+      <span>图基础与覆盖标准</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-header">
+      <h2>图基础与覆盖标准</h2>
+      <p class="desc">Graph Coverage Basics — 图的形式化定义、结构化覆盖标准（NC、EC、EPC、PPC）以及数据流覆盖标准（ADC、AUC、ADUPC）。</p>
+      <div class="meta">
+        <span class="tag">3.1</span>
+        <span class="tag">3.2</span>
+        <span class="tag">NC</span>
+        <span class="tag">EC</span>
+        <span class="tag">PPC</span>
+        <span class="tag">ADC</span>
+      </div>
+    </div>
+
+    <!-- ==================== 图的定义与基本概念 ==================== -->
+    <h3 id="graph-def">图的定义与基本概念</h3>
+
+    <h4>什么是图覆盖？</h4>
+    <p>图是软件测试中最常用的结构。图可以来自多种来源：<strong>控制流图</strong>、<strong>设计结构</strong>、<strong>有限状态机（FSM）和状态图</strong>、<strong>用例</strong>等。测试通常旨在以某种方式"覆盖"图——即确保测试用例的执行路径遍历图中的节点、边或更长的子路径。</p>
+
+    <h4>图的形式化定义</h4>
+    <p>一个图 G 定义为四元组 &lt;N, N₀, Nf, E&gt;，其组成部分如下：</p>
+    <table>
+      <thead>
+        <tr><th>组成</th><th>说明</th><th>示例</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>节点集合 N</strong></td>
+          <td>图中的所有节点</td>
+          <td><code>{1, 2, 3, 4}</code></td>
+        </tr>
+        <tr>
+          <td><strong>初始节点集合 N₀</strong></td>
+          <td>测试路径的起始节点</td>
+          <td><code>{1}</code></td>
+        </tr>
+        <tr>
+          <td><strong>终结节点集合 Nf</strong></td>
+          <td>测试路径的结束节点</td>
+          <td><code>{4}</code></td>
+        </tr>
+        <tr>
+          <td><strong>边集合 E</strong></td>
+          <td>节点间的连接关系</td>
+          <td><code>{(1,2), (1,3), (2,4), (3,4)}</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="tip">
+      <div><strong>有效图的条件：</strong> N、N₀ 和 Nf 必须非空，E 可以为空（孤立节点的情况）。N₀ 和 Nf 中的节点必须属于 N。</div>
+    </div>
+
+    <h4>路径相关概念</h4>
+    <table>
+      <thead>
+        <tr><th>概念</th><th>定义</th><th>示例</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>路径 (Path)</strong></td>
+          <td>节点和边的交替序列，如 [n₁, e₁, n₂, e₂, …, nₖ]</td>
+          <td><code>[1, 2, 4]</code></td>
+        </tr>
+        <tr>
+          <td><strong>测试路径 (Test Path)</strong></td>
+          <td>从初始节点到终结节点的路径</td>
+          <td><code>[1, 2, 4]</code></td>
+        </tr>
+        <tr>
+          <td><strong>访问 (Visit)</strong></td>
+          <td>测试路径 p 访问节点 n（或边 e），当 n（或 e）出现在 p 中</td>
+          <td>节点或边</td>
+        </tr>
+        <tr>
+          <td><strong>游历 (Tour)</strong></td>
+          <td>测试路径 p 游历子路径 q，当 q 是 p 的子路径</td>
+          <td>子路径</td>
+        </tr>
+        <tr>
+          <td><strong>可达 (Reach)</strong></td>
+          <td>从节点 nᵢ 到节点 n 存在路径，记作 reach(n)</td>
+          <td><code>reach(n)</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h4>语法可达 vs 语义可达</h4>
+    <div class="compare-grid">
+      <div class="compare-box">
+        <h4>🔍 语法可达 (Syntactic Reach)</h4>
+        <p>从图的结构上存在对应的子路径。可以通过图的结构分析来判断，不需要运行程序。</p>
+        <ul>
+          <li>基于图的拓扑结构</li>
+          <li>静态分析即可判断</li>
+          <li>可能存在语法可达但语义不可达的情况</li>
+        </ul>
+      </div>
+      <div class="compare-box">
+        <h4>🧠 语义可达 (Semantic Reach)</h4>
+        <p>存在测试用例能够执行对应的子路径。需要考虑程序的实际行为和条件约束。</p>
+        <ul>
+          <li>基于程序的实际执行语义</li>
+          <li>需要构造满足条件的测试输入</li>
+          <li>不可行路径是语义不可达的</li>
+        </ul>
+      </div>
+    </div>
+
+    <h4>SESE 图</h4>
+    <p><strong>SESE (Single-Entry, Single-Exit) 图</strong>：所有测试路径从单个节点开始，在另一个节点结束。这种图结构在实际程序中非常常见，例如一个函数的控制流图通常就是 SESE 图。典型的 SESE 图——<strong>双菱形图 (Double-diamond graph)</strong>——有 4 条测试路径。</p>
+
+    <!-- ==================== 结构化覆盖标准 ==================== -->
+    <h3 id="structural">结构化覆盖标准</h3>
+
+    <p>结构化覆盖标准定义了测试需要覆盖图中哪些元素。以下六种标准从弱到强排列：</p>
+
+    <div class="tabs">
+      <div class="tab-buttons">
+        <button class="tab-btn active" data-tab="nc">NC 节点覆盖</button>
+        <button class="tab-btn" data-tab="ec">EC 边覆盖</button>
+        <button class="tab-btn" data-tab="epc">EPC 边对覆盖</button>
+        <button class="tab-btn" data-tab="cpc">CPC 完全路径</button>
+        <button class="tab-btn" data-tab="spc">SPC 指定路径</button>
+        <button class="tab-btn" data-tab="ppc">PPC 主路径</button>
+      </div>
+
+      <div class="tab-panel active" data-panel="nc">
+        <h4>Node Coverage (NC) — 节点覆盖</h4>
+        <blockquote>
+          <p><strong>定义：</strong> 测试需求集 TR 包含图 G 中<strong>每个可达节点</strong>。</p>
+        </blockquote>
+        <p>NC 等价于访问图中每个可达节点至少一次。这是最基本的图覆盖标准，确保程序中的每条语句（对应节点）至少被执行一次。</p>
+        <p><strong>测试数量上界：</strong> 节点数。例如图 <code>G = &lt;{1,2,3}, {1}, {3}, {(1,2),(2,3)}&gt;</code>，TR = {1, 2, 3}，测试路径 = [1, 2, 3]。</p>
+      </div>
+
+      <div class="tab-panel" data-panel="ec">
+        <h4>Edge Coverage (EC) — 边覆盖</h4>
+        <blockquote>
+          <p><strong>定义：</strong> 测试需求集 TR 包含图 G 中<strong>每条可达的长度不超过 1 的路径</strong>。</p>
+        </blockquote>
+        <p>EC 要求覆盖每条可达边。定义中"长度不超过 1"的表述允许处理只有一个节点、没有边的特殊情况。</p>
+        <p><strong>EC 比 NC 稍强：</strong> 在一对节点间存在一条边和另一条更长子路径时，NC 和 EC 的要求才会不同（例如 if-else 语句的两个分支）。</p>
+        <div class="tip"><div><strong>EC ⊇ NC：</strong> 边覆盖包含节点覆盖，因为覆盖了所有边必然覆盖了这些边涉及的所有节点。</div></div>
+      </div>
+
+      <div class="tab-panel" data-panel="epc">
+        <h4>Edge-Pair Coverage (EPC) — 边对覆盖</h4>
+        <blockquote>
+          <p><strong>定义：</strong> 测试需求集 TR 包含图 G 中<strong>每条可达的长度不超过 2 的路径</strong>。</p>
+        </blockquote>
+        <p>EPC 要求覆盖所有边对（长度为 2 的子路径）。定义中"长度不超过 2"用于包含少于 2 条边的图。</p>
+        <div class="tip"><div><strong>EPC ⊇ EC：</strong> 边对覆盖包含边覆盖，因为覆盖了所有长度为 2 的路径必然覆盖了所有长度为 1 的路径（边）。</div></div>
+      </div>
+
+      <div class="tab-panel" data-panel="cpc">
+        <h4>Complete Path Coverage (CPC) — 完全路径覆盖</h4>
+        <blockquote>
+          <p><strong>定义：</strong> 测试需求集 TR 包含图 G 中<strong>所有路径</strong>。</p>
+        </blockquote>
+        <p>CPC 要求覆盖图中的所有可能路径。这是最强的结构化覆盖标准。</p>
+        <div class="warning"><div><strong>CPC 在有环路的图中不可行：</strong> 如果图中存在环路，则路径数量是无限的，无法实现完全路径覆盖。实践中只能使用较弱但可行的标准。</div></div>
+      </div>
+
+      <div class="tab-panel" data-panel="spc">
+        <h4>Specified Path Coverage (SPC) — 指定路径覆盖</h4>
+        <blockquote>
+          <p><strong>定义：</strong> 测试需求集 TR 包含一个<strong>给定的路径集合 S</strong>，其中 S 作为参数提供。</p>
+        </blockquote>
+        <p>SPC 由测试者决定覆盖哪些路径，因此结果具有主观性。测试人员根据经验和需求选择一组重要的路径进行覆盖。</p>
+      </div>
+
+      <div class="tab-panel" data-panel="ppc">
+        <h4>Prime Path Coverage (PPC) — 主路径覆盖</h4>
+        <blockquote>
+          <p><strong>定义：</strong> 测试需求集 TR 包含图 G 中<strong>每条主路径</strong>。</p>
+        </blockquote>
+        <p>PPC 是最优雅的结构化覆盖标准，要求覆盖所有主路径。主路径是不可再延伸的简单路径，详见下一节。</p>
+        <div class="tip"><div><strong>PPC 包含关系：</strong> PPC ⊇ NC 且 PPC ⊇ EC。PPC 几乎但不完全包含 EPC（自环边的特殊情况）。</div></div>
+      </div>
+    </div>
+
+    <h4>覆盖标准对比</h4>
+    <table>
+      <thead>
+        <tr><th>标准</th><th>覆盖对象</th><th>包含关系</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>NC</strong></td>
+          <td>每个可达节点</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><strong>EC</strong></td>
+          <td>每条可达边（长度 ≤ 1）</td>
+          <td>⊇ NC</td>
+        </tr>
+        <tr>
+          <td><strong>EPC</strong></td>
+          <td>每对可达边（长度 ≤ 2）</td>
+          <td>⊇ EC</td>
+        </tr>
+        <tr>
+          <td><strong>CPC</strong></td>
+          <td>所有路径</td>
+          <td>⊇ EPC</td>
+        </tr>
+        <tr>
+          <td><strong>PPC</strong></td>
+          <td>所有主路径</td>
+          <td>⊇ EC, almost ⊇ EPC</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ==================== 简单路径与主路径 ==================== -->
+    <h3 id="prime-path">简单路径与主路径</h3>
+
+    <h4>简单路径 (Simple Path)</h4>
+    <p>从节点 nᵢ 到节点 nⱼ 的路径是<strong>简单路径</strong>，当且仅当没有节点重复出现（除了首尾节点可能相同的情况）。简单路径没有内部环路。注意：<strong>环本身也是一条简单路径</strong>。</p>
+
+    <h4>主路径 (Prime Path)</h4>
+    <blockquote>
+      <p>主路径是<strong>不作为其他简单路径的真子路径出现的简单路径</strong>，即不能再延伸的简单路径。主路径是长度最长的简单路径。</p>
+    </blockquote>
+
+    <h4>主路径查找方法</h4>
+    <p>按路径长度从短到长枚举所有简单路径，标记终止路径（!）和循环路径（*），然后找出不被其他简单路径包含的路径作为主路径。</p>
+
+    <p>以下以一个包含节点 {1, 2, 3, 4, 5, 6, 7} 的图为例，展示查找过程：</p>
+
+    <pre><code><span class="cm">// 长度为 0 的简单路径（单个节点）</span>
+[1], [2], [3], [4], [5], [6], [7]
+
+<span class="cm">// 长度为 1 的简单路径（单条边）</span>
+[1, 2], [1, 3], [2, 3], [3, 4], [3, 5], [4, 7], [5, 7], [5, 6], [6, 5]
+
+<span class="cm">// 长度为 2 的简单路径</span>
+[1, 2, 3], [1, 3, 4], [1, 3, 5], [2, 3, 4], [2, 3, 5],
+[3, 4, 7], [3, 5, 7], [3, 5, 6], [5, 6, 5]*, [6, 5, 6]*, [6, 5, 7]
+
+<span class="cm">// 长度为 3 的简单路径</span>
+[1, 2, 3, 4], [1, 2, 3, 5], [1, 3, 4, 7], [1, 3, 5, 7], [1, 3, 5, 6],
+[2, 3, 4, 7], [2, 3, 5, 7], [2, 3, 5, 6], [3, 5, 6, 5]*, [6, 5, 6, 5]*
+
+<span class="cm">// 长度为 4 的简单路径</span>
+[1, 2, 3, 4, 7]!, [1, 2, 3, 5, 7]!, [1, 2, 3, 5, 6],
+[1, 3, 5, 6, 5]*, [2, 3, 5, 6, 5]*
+
+<span class="cm">// 长度为 5 的简单路径</span>
+[1, 2, 3, 5, 6, 5]*, [1, 3, 5, 6, 5]*
+
+<span class="cm">// 共 38 条简单路径</span></code>
+<span class="lang-label">Simple Paths</span></pre>
+
+    <p>从中识别出 <strong>9 条主路径</strong>：</p>
+    <pre><code><span class="cm">// 主路径（不能再延伸的简单路径）</span>
+[1, 2, 3, 4, 7]    <span class="cm">// 终结于终结节点，无法延伸</span>
+[1, 2, 3, 5, 7]    <span class="cm">// 终结于终结节点，无法延伸</span>
+[1, 2, 3, 5, 6]    <span class="cm">// 6→5 构成环路，但 [1,2,3,5,6,5] 也是简单路径 → 需检查</span>
+[1, 3, 4, 7]       <span class="cm">// 终结于终结节点，无法延伸</span>
+[1, 3, 5, 7]       <span class="cm">// 终结于终结节点，无法延伸</span>
+[1, 3, 5, 6]       <span class="cm">// 6→5 构成环路</span>
+[6, 5, 7]          <span class="cm">// 终结于终结节点，无法延伸</span>
+[6, 5, 6]          <span class="cm">// 环路，无法延伸（再延伸会重复内部节点）</span>
+[5, 6, 5]          <span class="cm">// 环路，无法延伸</span></code>
+<span class="lang-label">Prime Paths</span></pre>
+
+    <div class="tip">
+      <div><strong>统计：</strong> 38 条简单路径中仅 9 条是主路径。主路径覆盖显著减少了需要测试的路径数量，同时保持了较高的覆盖强度。</div>
+    </div>
+
+    <h4>PPC 与 EPC 的关系</h4>
+    <p>如果一个节点 n 有指向自己的边（自环），EPC 需要覆盖路径 [n, n, m] 和 [m, n, n]，但这些路径中节点 n 重复出现，<strong>不是简单路径</strong>（也不是主路径）。因此 PPC 不完全包含 EPC。这是 PPC 与 EPC 之间唯一不满足包含关系的情况。</p>
+
+    <!-- ==================== 游历、侧访与绕道 ==================== -->
+    <h3 id="touring">游历、侧访与绕道</h3>
+
+    <h4>三种游历方式</h4>
+    <dl class="def-list">
+      <dt>直接游历 (Direct Tour)</dt>
+      <dd>测试路径 p 直接游历子路径 q，当 q 是 p 的连续子路径。这是最严格的游历方式。</dd>
+      <dt>侧访游历 (Tour with Sidetrips)</dt>
+      <dd>测试路径 p 侧访游历子路径 q，当且仅当 q 中的<strong>每条边</strong>也按相同顺序出现在 p 中。游历可以包含侧访——从子路径的某个节点出发走一段岔路后，<strong>回到同一节点</strong>继续。侧访要求回到岔道的起点。</dd>
+      <dt>绕道游历 (Tour with Detours)</dt>
+      <dd>测试路径 p 绕道游历子路径 q，当且仅当 q 中的<strong>每个节点</strong>也按相同顺序出现在 p 中。游历可以从节点 nᵢ 开始绕道，只要回到 nᵢ 的后继节点继续即可。绕道不要求回到岔道的起点，但要求节点顺序一致。</dd>
+    </dl>
+
+    <h4>不可行测试需求</h4>
+    <p>不可行的测试需求无法被满足，常见的不可行情况包括：</p>
+    <ul>
+      <li><strong>不可达语句（死代码）：</strong> 没有任何输入能执行到的代码</li>
+      <li><strong>矛盾条件的子路径：</strong> 例如同时要求 X &gt; 0 且 X &lt; 0 的路径</li>
+    </ul>
+
+    <div class="tip">
+      <div><strong>实践建议 — 最佳努力游历 (Best Effort Touring)：</strong> 先尽可能用直接游历满足测试需求，再允许使用侧访来满足剩余的（可能因不可行性而难以直接满足的）需求。这种策略在实际项目中非常实用。</div>
+    </div>
+
+    <h4>环路路径</h4>
+    <dl class="def-list">
+      <dt>环路路径 (Round-Trip Path)</dt>
+      <dd>起始和结束于同一节点的主路径，即首尾节点相同的主路径。</dd>
+      <dt>简单环路覆盖 (SRTC — Simple Round Trip Coverage)</dt>
+      <dd>TR 包含每个可开始和结束环路路径的可达节点的<strong>至少一条</strong>环路路径。</dd>
+      <dt>完全环路覆盖 (CRTC — Complete Round Trip Coverage)</dt>
+      <dd>TR 包含每个可达节点的<strong>所有</strong>环路路径。</dd>
+    </dl>
+
+    <div class="warning">
+      <div><strong>注意：</strong> SRTC 和 CRTC 不包含边对覆盖（EPC）、边覆盖（EC）或节点覆盖（NC）。它们只关注环路路径，不保证覆盖所有节点或边。因此在使用时通常需要与其他覆盖标准配合。</div>
+    </div>
+
+    <!-- ==================== 数据流覆盖标准 ==================== -->
+    <h3 id="data-flow">数据流覆盖标准</h3>
+
+    <p>数据流覆盖标准关注变量的<strong>定义</strong>和<strong>使用</strong>之间的关系，比单纯的结构覆盖更能发现与变量相关的缺陷。</p>
+
+    <h4>基本概念</h4>
+    <table>
+      <thead>
+        <tr><th>概念</th><th>定义</th><th>示例</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>定义 (def)</strong></td>
+          <td>变量值被存入内存的位置</td>
+          <td>赋值语句左侧、方法形参、输入语句</td>
+        </tr>
+        <tr>
+          <td><strong>使用 (use)</strong></td>
+          <td>变量值被访问的位置</td>
+          <td>赋值语句右侧、条件判断、方法实参、输出语句</td>
+        </tr>
+        <tr>
+          <td><strong>def(n) 或 def(e)</strong></td>
+          <td>节点 n 或边 e 定义的变量集合</td>
+          <td><code>def(1) = {x, sum}</code></td>
+        </tr>
+        <tr>
+          <td><strong>use(n) 或 use(e)</strong></td>
+          <td>节点 n 或边 e 使用的变量集合</td>
+          <td><code>use(5) = {x, length}</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h4>DU 对与 DU 路径</h4>
+    <dl class="def-list">
+      <dt>DU 对 (DU-pair)</dt>
+      <dd>变量 v 在位置 lᵢ 定义、在位置 lⱼ 使用的位置对 (lᵢ, lⱼ)。</dd>
+      <dt>def-clear 路径</dt>
+      <dd>从 lᵢ 到 lⱼ 的路径关于变量 v 是 def-clear 的，当且仅当 v 在路径的<strong>任何节点或边上</strong>没有被重新赋值（即没有新的定义）。</dd>
+      <dt>到达 (Reach)</dt>
+      <dd>如果从 lᵢ 到 lⱼ 存在关于 v 的 def-clear 路径，则 lᵢ 处对 v 的定义<strong>到达</strong> lⱼ 处的使用。</dd>
+      <dt>du 路径 (du-path)</dt>
+      <dd>关于 v 从定义到使用的<strong>简单 def-clear 子路径</strong>。du 路径是简单路径，没有内部环路。</dd>
+      <dt>du(nᵢ, nⱼ, v)</dt>
+      <dd>从 nᵢ 到 nⱼ 关于 v 的 du 路径集合。</dd>
+      <dt>du(nᵢ, v)</dt>
+      <dd>从 nᵢ 开始的关于 v 的所有 du 路径集合。</dd>
+    </dl>
+
+    <h4>三种数据流覆盖标准</h4>
+
+    <div class="tabs">
+      <div class="tab-buttons">
+        <button class="tab-btn active" data-tab="adc">ADC 全定义覆盖</button>
+        <button class="tab-btn" data-tab="auc">AUC 全使用覆盖</button>
+        <button class="tab-btn" data-tab="adupc">ADUPC 全DU路径</button>
+      </div>
+
+      <div class="tab-panel active" data-panel="adc">
+        <h4>All-Defs Coverage (ADC) — 全定义覆盖</h4>
+        <blockquote>
+          <p><strong>定义：</strong> 对于每组 du 路径集合 S = du(n, v)，TR 包含 S 中<strong>至少一条</strong>路径 d。</p>
+        </blockquote>
+        <p>ADC 确保每个定义到达<strong>至少一个</strong>使用。这是最弱的数据流覆盖标准，只需保证每个变量定义都被使用过（不会定义了变量却不使用）。</p>
+      </div>
+
+      <div class="tab-panel" data-panel="auc">
+        <h4>All-Uses Coverage (AUC) — 全使用覆盖</h4>
+        <blockquote>
+          <p><strong>定义：</strong> 对于每组到使用的 du 路径集合 S = du(nᵢ, nⱼ, v)，TR 包含 S 中<strong>至少一条</strong>路径 d。</p>
+        </blockquote>
+        <p>AUC 确保每个定义到达<strong>所有可能的使用</strong>。比 ADC 更强，因为它要求每个定义-使用对都被至少覆盖一次。</p>
+        <div class="tip"><div><strong>AUC ⊇ ADC：</strong> 全使用覆盖包含全定义覆盖，因为覆盖了所有使用必然覆盖了所有定义。</div></div>
+      </div>
+
+      <div class="tab-panel" data-panel="adupc">
+        <h4>All-DU-Paths Coverage (ADUPC) — 全DU路径覆盖</h4>
+        <blockquote>
+          <p><strong>定义：</strong> 对于每组 S = du(nᵢ, nⱼ, v)，TR 包含 S 中的<strong>每条</strong>路径 d。</p>
+        </blockquote>
+        <p>ADUPC 覆盖所有定义到使用之间的<strong>所有路径</strong>。这是最强的数据流覆盖标准，要求同一个 DU 对之间的所有不同 du 路径都被覆盖。</p>
+        <div class="tip"><div><strong>ADUPC ⊇ AUC：</strong> 全DU路径覆盖包含全使用覆盖。</div></div>
+      </div>
+    </div>
+
+    <h4>数据流覆盖标准对比</h4>
+    <table>
+      <thead>
+        <tr><th>标准</th><th>覆盖对象</th><th>包含关系</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>ADC</strong></td>
+          <td>每个定义至少到达一个使用</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><strong>AUC</strong></td>
+          <td>每个定义到达所有使用</td>
+          <td>⊇ ADC</td>
+        </tr>
+        <tr>
+          <td><strong>ADUPC</strong></td>
+          <td>覆盖所有 DU 路径</td>
+          <td>⊇ AUC</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ==================== 包含关系总结 ==================== -->
+    <h3 id="subsumption">包含关系总结</h3>
+
+    <div class="flow-diagram">
+      <div class="flow-step">
+        <div class="step-box" style="background:#dbeafe;">PPC</div>
+        <div class="step-label">主路径覆盖</div>
+        <div class="step-sub">所有主路径</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#ede9fe;">EC</div>
+        <div class="step-label">边覆盖</div>
+        <div class="step-sub">所有边</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#d1fae5;">NC</div>
+        <div class="step-label">节点覆盖</div>
+        <div class="step-sub">所有节点</div>
+      </div>
+    </div>
+
+    <div class="flow-diagram">
+      <div class="flow-step">
+        <div class="step-box" style="background:#fee2e2;">ADUPC</div>
+        <div class="step-label">全DU路径覆盖</div>
+        <div class="step-sub">所有DU路径</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#ffedd5;">AUC</div>
+        <div class="step-label">全使用覆盖</div>
+        <div class="step-sub">所有使用</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#fef3c7;">ADC</div>
+        <div class="step-label">全定义覆盖</div>
+        <div class="step-sub">所有定义</div>
+      </div>
+    </div>
+
+    <p>结构化覆盖标准关注图的<strong>节点和边</strong>，数据流覆盖标准关注变量的<strong>定义和使用</strong>。两者结合可以更全面地测试软件：结构覆盖确保代码的每个部分都被执行，数据流覆盖确保变量的值被正确地传递和使用。</p>
+
+    <hr>
+    <div class="pagination">
+      <a href="index.html" class="page-nav">
+        <span class="label">上一页</span>
+        <span class="title">← 章节总览</span>
+      </a>
+      <a href="source-code.html" class="page-nav next">
+        <span class="label">下一节</span>
+        <span class="title">源代码图覆盖 →</span>
+      </a>
+    </div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

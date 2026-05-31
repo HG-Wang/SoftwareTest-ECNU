@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>实战练习 — Ch3 图覆盖</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Toggle menu">☰</button>
+<div class="overlay"></div>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h1>软件测试笔记</h1>
+    <div class="subtitle">Software Testing · Chapter 3</div>
+  </div>
+  <div class="sidebar-nav">
+    <a href="../index.html" class="back-home"><span class="icon">🏠</span> 返回主页</a>
+    <div class="nav-section">章节导航</div>
+    <a href="index.html"><span class="icon">📖</span> 章节总览</a>
+    <a href="graph-basics.html"><span class="icon">📐</span> 图基础与覆盖标准</a>
+    <a href="source-code.html"><span class="icon">💻</span> 源代码图覆盖</a>
+    <a href="design.html"><span class="icon">🔗</span> 设计元素图覆盖</a>
+    <a href="spec.html"><span class="icon">📋</span> 规约图覆盖</a>
+    <a href="use-case.html"><span class="icon">🎯</span> 用例图覆盖</a>
+    <a href="exercises.html" class="active"><span class="icon">✏️</span> 实战练习</a>
+  </div>
+  <div class="sidebar-footer">
+    Chapter 3 · Exercises
+  </div>
+</nav>
+
+<main class="main">
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="index.html">Ch3</a>
+      <span class="sep">›</span>
+      <span>实战练习</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-header">
+      <h2>实战练习</h2>
+      <p class="desc">通过完整的控制流图分析和数据流覆盖案例，综合运用图覆盖标准设计测试用例。</p>
+      <div class="meta">
+        <span class="tag">练习</span>
+        <span class="tag">案例分析</span>
+        <span class="tag">测试设计</span>
+      </div>
+    </div>
+
+    <!-- ==================== 练习1 ==================== -->
+    <h3 id="exercise1">练习1：控制流图覆盖分析</h3>
+
+    <h4>题目描述</h4>
+    <p>给定以下Java方法，画出控制流图，并分别给出满足边覆盖(EC)、边对覆盖(EPC)和主路径覆盖(PPC)的测试需求和测试路径。</p>
+    <pre><code>public int findMax(int[] arr) {
+    int max = arr[0];          // 1
+    for (int i = 1; i &lt; arr.length; i++) {  // 2
+        if (arr[i] &gt; max) {    // 3
+            max = arr[i];      // 4
+        }
+    }
+    return max;                // 5
+}</code><span class="lang-label">Java</span></pre>
+
+    <h4>分析步骤</h4>
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>步骤1：画控制流图</span>
+          <span class="accordion-icon">▼</span>
+        </button>
+        <div class="accordion-content">
+          <p>节点1(初始化), 节点2(循环判断), 节点3(条件判断), 节点4(更新max), 节点5(返回)。边: 1→2, 2→3, 2→5, 3→4, 3→2, 4→2。</p>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>步骤2：边覆盖(EC)</span>
+          <span class="accordion-icon">▼</span>
+        </button>
+        <div class="accordion-content">
+          <p>TR = {(1,2), (2,3), (2,5), (3,4), (3,2), (4,2)}。测试路径需要覆盖所有边。</p>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>步骤3：边对覆盖(EPC)</span>
+          <span class="accordion-icon">▼</span>
+        </button>
+        <div class="accordion-content">
+          <p>TR包含所有长度≤2的路径对。</p>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>步骤4：主路径覆盖(PPC)</span>
+          <span class="accordion-icon">▼</span>
+        </button>
+        <div class="accordion-content">
+          <p>找出所有简单路径，识别主路径。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 练习2 ==================== -->
+    <h3 id="exercise2">练习2：数据流覆盖分析</h3>
+
+    <h4>题目描述</h4>
+    <p>对于以下代码，标识所有def和use集合，列出DU对，并给出满足All-Uses覆盖(AUC)的测试路径。</p>
+    <pre><code>public boolean isSorted(int[] a) {
+    boolean sorted = true;        // 1
+    for (int i = 0; i &lt; a.length - 1; i++) {  // 2
+        if (a[i] &gt; a[i+1]) {      // 3
+            sorted = false;       // 4
+            break;
+        }
+    }
+    return sorted;                // 5
+}</code><span class="lang-label">Java</span></pre>
+
+    <h4>分析步骤</h4>
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>步骤1：Def集合</span>
+          <span class="accordion-icon">▼</span>
+        </button>
+        <div class="accordion-content">
+          <p>def(1)={sorted}, def(2)={i}, def(4)={sorted}</p>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>步骤2：Use集合</span>
+          <span class="accordion-icon">▼</span>
+        </button>
+        <div class="accordion-content">
+          <p>use(2)={i, a}, use(3)={a, i, sorted}, use(4)={sorted}, use(5)={sorted}</p>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>步骤3：DU对</span>
+          <span class="accordion-icon">▼</span>
+        </button>
+        <div class="accordion-content">
+          <p>(1,3,sorted), (1,5,sorted), (4,5,sorted), (2,3,i), (2,3,a), ...</p>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>步骤4：AUC测试路径</span>
+          <span class="accordion-icon">▼</span>
+        </button>
+        <div class="accordion-content">
+          <p>需要覆盖每个def到每个use。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 练习3 ==================== -->
+    <h3 id="exercise3">练习3：综合案例 — Stats程序</h3>
+
+    <h4>题目</h4>
+    <p>对于本章的computeStats程序，完成以下任务：</p>
+    <ol>
+      <li>画出完整的控制流图</li>
+      <li>标注每个节点的def和use集合</li>
+      <li>列出所有变量的DU对和DU路径</li>
+      <li>给出满足ADUPC的最小测试路径集合</li>
+    </ol>
+
+    <h4>提示</h4>
+    <div class="tip">
+      <div>参考3.3节的Stats程序案例分析。注意循环中变量i和sum的DU路径，以及varsum在两个循环中的定义和使用关系。</div>
+    </div>
+
+    <!-- ==================== 练习4 ==================== -->
+    <h3 id="exercise4">练习4：Quadratic程序耦合DU分析</h3>
+
+    <h4>题目</h4>
+    <p>对于3.4节的Quadratic程序，完成以下任务：</p>
+    <ol>
+      <li>画出main方法和Root方法的调用图</li>
+      <li>标识所有coupling DU-pairs</li>
+      <li>给出满足All-Coupling-Use覆盖的测试路径</li>
+    </ol>
+
+    <h4>提示</h4>
+    <div class="tip">
+      <div>注意main方法中X、Y、Z通过参数传递到Root方法的A、B、C，以及Root1、Root2和Result通过返回值传回main方法。</div>
+    </div>
+
+    <hr>
+    <div class="pagination">
+      <a href="use-case.html" class="page-nav">
+        <span class="label">上一页</span>
+        <span class="title">← 用例图覆盖</span>
+      </a>
+      <div></div>
+    </div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

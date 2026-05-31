@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>源代码图覆盖 — Ch3 图覆盖</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Toggle menu">☰</button>
+<div class="overlay"></div>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h1>软件测试笔记</h1>
+    <div class="subtitle">Software Testing · Chapter 3</div>
+  </div>
+  <div class="sidebar-nav">
+    <a href="../index.html" class="back-home"><span class="icon">🏠</span> 返回主页</a>
+    <div class="nav-section">章节导航</div>
+    <a href="index.html"><span class="icon">📖</span> 章节总览</a>
+    <a href="graph-basics.html"><span class="icon">📐</span> 图基础与覆盖标准</a>
+    <a href="source-code.html" class="active"><span class="icon">💻</span> 源代码图覆盖</a>
+    <a href="design.html"><span class="icon">🔗</span> 设计元素图覆盖</a>
+    <a href="spec.html"><span class="icon">📋</span> 规约图覆盖</a>
+    <a href="use-case.html"><span class="icon">🎯</span> 用例图覆盖</a>
+    <a href="exercises.html"><span class="icon">✏️</span> 实战练习</a>
+    <div class="nav-section">本页目录</div>
+    <a href="#cfg" class="toc-link"><span class="icon">📋</span> 控制流图 (CFG)</a>
+    <a href="#control-structures" class="toc-link"><span class="icon">🔧</span> 典型控制结构</a>
+    <a href="#data-flow-source" class="toc-link"><span class="icon">📊</span> 源码级数据流覆盖</a>
+    <a href="#stats-example" class="toc-link"><span class="icon">💡</span> 完整案例：Stats</a>
+  </div>
+  <div class="sidebar-footer">
+    3.3 Source Code Coverage
+  </div>
+</nav>
+
+<main class="main">
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="index.html">Ch3</a>
+      <span class="sep">›</span>
+      <span>源代码图覆盖</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-header">
+      <h2>源代码图覆盖</h2>
+      <p class="desc">Graph Coverage for Source Code — 将图覆盖标准应用于程序源码，通过控制流图(CFG)覆盖各种控制结构，并进行源码级数据流分析。</p>
+      <div class="meta">
+        <span class="tag">3.3</span>
+        <span class="tag">CFG</span>
+        <span class="tag">控制流图</span>
+        <span class="tag">数据流</span>
+      </div>
+    </div>
+
+    <!-- ==================== 控制流图 (CFG) ==================== -->
+    <h3 id="cfg">控制流图 (CFG)</h3>
+
+    <h4>什么是控制流图？</h4>
+    <p><strong>控制流图（Control Flow Graph, CFG）</strong>通过描述控制结构来建模方法的所有执行。CFG是图覆盖标准在源代码中最常见的应用。</p>
+
+    <h4>CFG 的基本组成</h4>
+    <table>
+      <thead>
+        <tr><th>组成</th><th>说明</th><th>示例</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>节点 (Node)</strong></td>
+          <td>语句或语句序列（基本块）</td>
+          <td>一个赋值语句</td>
+        </tr>
+        <tr>
+          <td><strong>边 (Edge)</strong></td>
+          <td>控制转移</td>
+          <td>分支判断后的跳转</td>
+        </tr>
+        <tr>
+          <td><strong>基本块 (Basic Block)</strong></td>
+          <td>一串语句，如果第一个被执行，则所有语句都会被执行（无分支）</td>
+          <td>循环体</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h4>CFG与覆盖标准的对应关系</h4>
+    <table>
+      <thead>
+        <tr><th>图覆盖标准</th><th>源代码对应</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>节点覆盖 (NC)</strong></td>
+          <td>执行每条语句</td>
+        </tr>
+        <tr>
+          <td><strong>边覆盖 (EC)</strong></td>
+          <td>执行每个分支</td>
+        </tr>
+        <tr>
+          <td><strong>环路覆盖</strong></td>
+          <td>覆盖循环结构</td>
+        </tr>
+        <tr>
+          <td><strong>数据流覆盖</strong></td>
+          <td>增强CFG，标记def和use</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ==================== 典型控制结构的CFG ==================== -->
+    <h3 id="control-structures">典型控制结构的CFG</h3>
+
+    <h4>if 语句</h4>
+    <p>if语句产生两条边——条件为真和条件为假的分支。</p>
+
+    <pre><code><span class="cm">// 源代码</span>
+<span class="kw">if</span> (x &gt; 0) {
+    y = x;
+} <span class="kw">else</span> {
+    y = -x;
+}
+
+<span class="cm">// CFG 表示</span>
+       [1: <span class="kw">if</span> (x &gt; 0)]
+          /        \
+     <span class="st">true</span>          <span class="st">false</span>
+        /            \
+[2: y = x]      [3: y = -x]
+        \            /
+         [4: 之后]</code>
+<span class="lang-label">CFG</span></pre>
+
+    <h4>if-return 语句</h4>
+    <p>当if中包含return时，产生一个直接到结束节点的边。</p>
+
+    <pre><code><span class="cm">// 源代码</span>
+<span class="kw">if</span> (x &gt; 0) {
+    <span class="kw">return</span> x;
+}
+y = -x;
+
+<span class="cm">// CFG 表示</span>
+       [1: <span class="kw">if</span> (x &gt; 0)]
+          /        \
+     <span class="st">true</span>          <span class="st">false</span>
+        /            \
+[<span class="kw">return</span> x]      [2: y = -x]
+                        |
+                   [EXIT]</code>
+<span class="lang-label">CFG</span></pre>
+
+    <h4>while 和 for 循环</h4>
+    <p>while和for循环产生一个回到循环开始的边，以及一个退出循环的边。for循环中的增量操作隐含在循环结构中。</p>
+
+    <pre><code><span class="cm">// while 循环 CFG</span>
+       [1: <span class="kw">while</span> (i &lt; n)]
+          /        \
+     <span class="st">true</span>          <span class="st">false</span>
+        /            \
+   [2: body]       [3: 之后]
+        |
+        +--→ [1]
+
+<span class="cm">// for 循环 CFG</span>
+       [1: i = 0]
+            |
+       [2: <span class="kw">if</span> (i &lt; n)]
+          /        \
+     <span class="st">true</span>          <span class="st">false</span>
+        /            \
+   [3: body]       [5: 之后]
+        |
+   [4: i++]
+        |
+        +--→ [2]</code>
+<span class="lang-label">CFG</span></pre>
+
+    <h4>do-while 循环</h4>
+    <p>do-while循环至少执行一次循环体，然后判断条件。</p>
+
+    <pre><code><span class="cm">// do-while CFG</span>
+       [1: body]
+            |
+       [2: <span class="kw">if</span> (cond)]
+          /        \
+     <span class="st">true</span>          <span class="st">false</span>
+        /            \
+      [1]         [3: 之后]</code>
+<span class="lang-label">CFG</span></pre>
+
+    <h4>break 和 continue</h4>
+    <p>break产生直接退出循环的边，continue产生回到循环判断的边。</p>
+
+    <pre><code><span class="cm">// break / continue CFG</span>
+       [1: <span class="kw">while</span> (cond)]
+          /    |     \
+     <span class="st">true</span>   <span class="st">brk</span>    <span class="st">false</span>
+        /      |       \
+   [2: body]  |      [4: 之后]
+    /    \     |
+[<span class="kw">continue</span>] [<span class="kw">break</span>]
+   |          |
+  [1]       [4]</code>
+<span class="lang-label">CFG</span></pre>
+
+    <h4>switch/case 结构</h4>
+    <p>每个case产生一条边，没有break的case会穿透到下一个case。</p>
+
+    <pre><code><span class="cm">// switch/case CFG</span>
+       [1: <span class="kw">switch</span> (x)]
+       /      |      \
+   case 1  case 2  default
+      |       |       |
+   [2: ...] [3: ...] [4: ...]
+      \       |       /
+       [5: 之后]</code>
+<span class="lang-label">CFG</span></pre>
+
+    <h4>try-catch 异常处理</h4>
+    <p>try块中的每个可能抛出异常的语句都产生到对应catch块的边。</p>
+
+    <pre><code><span class="cm">// try-catch CFG</span>
+       [1: <span class="kw">try</span> { stmt1 }]</span>
+          /        \
+     <span class="st">normal</span>      <span class="st">exception</span>
+        /            \
+[2: stmt2]      [4: <span class="kw">catch</span> { ... }]
+        \            /
+         [3: 之后]</code>
+<span class="lang-label">CFG</span></pre>
+
+    <!-- ==================== 源码级数据流覆盖 ==================== -->
+    <h3 id="data-flow-source">源码级数据流覆盖</h3>
+
+    <h4>源码中的 def 和 use</h4>
+    <p>在源代码层面，def和use的识别规则如下：</p>
+
+    <table>
+      <thead>
+        <tr><th>类型</th><th>规则</th><th>示例</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>def</strong></td>
+          <td>x出现在赋值左侧</td>
+          <td><code>x = 44;</code></td>
+        </tr>
+        <tr>
+          <td><strong>def</strong></td>
+          <td>x是方法的形参</td>
+          <td><code>void foo(int x)</code></td>
+        </tr>
+        <tr>
+          <td><strong>def</strong></td>
+          <td>x是程序的输入</td>
+          <td><code>read(x)</code></td>
+        </tr>
+        <tr>
+          <td><strong>use</strong></td>
+          <td>x出现在赋值右侧</td>
+          <td><code>y = x + 1;</code></td>
+        </tr>
+        <tr>
+          <td><strong>use</strong></td>
+          <td>x出现在条件判断中</td>
+          <td><code>if (x > 0)</code></td>
+        </tr>
+        <tr>
+          <td><strong>use</strong></td>
+          <td>x是方法的实参</td>
+          <td><code>foo(x)</code></td>
+        </tr>
+        <tr>
+          <td><strong>use</strong></td>
+          <td>x是程序的输出</td>
+          <td><code>print(x)</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="tip">
+      <div>
+        <strong>注意：</strong>如果def和use出现在同一节点，只有当def发生在use之后且节点在循环中时，才构成DU对。
+      </div>
+    </div>
+
+    <!-- ==================== 完整案例：Stats程序 ==================== -->
+    <h3 id="stats-example">完整案例：Stats程序</h3>
+
+    <h4>程序代码</h4>
+    <pre><code><span class="kw">public static void</span> computeStats(<span class="kw">int</span>[] numbers) {
+    <span class="kw">int</span> length = numbers.length;
+    <span class="kw">double</span> med, var, sd, mean, sum, varsum;
+    sum = 0;
+    <span class="kw">for</span> (<span class="kw">int</span> i = 0; i &lt; length; i++) {
+        sum += numbers[i];
+    }
+    med = numbers[length / 2];
+    mean = sum / (<span class="kw">double</span>) length;
+    varsum = 0;
+    <span class="kw">for</span> (<span class="kw">int</span> i = 0; i &lt; length; i++) {
+        varsum = varsum + ((numbers[i] - mean) * (numbers[i] - mean));
+    }
+    var = varsum / (length - 1.0);
+    sd = Math.sqrt(var);
+    System.out.println(<span class="st">"length: "</span> + length);
+    System.out.println(<span class="st">"mean: "</span> + mean);
+    System.out.println(<span class="st">"median: "</span> + med);
+    System.out.println(<span class="st">"variance: "</span> + var);
+    System.out.println(<span class="st">"standard deviation: "</span> + sd);
+}</code>
+<span class="lang-label">Java</span></pre>
+
+    <h4>节点编号</h4>
+    <table>
+      <thead>
+        <tr><th>节点</th><th>语句</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td><code>int length = numbers.length; sum = 0;</code></td></tr>
+        <tr><td>2</td><td><code>int i = 0;</code>（循环初始化）</td></tr>
+        <tr><td>3</td><td><code>if (i &lt; length)</code>（循环判断）</td></tr>
+        <tr><td>4</td><td><code>sum += numbers[i]; i++;</code>（循环体）</td></tr>
+        <tr><td>5</td><td><code>med = ...; mean = ...; varsum = 0; int i = 0;</code></td></tr>
+        <tr><td>6</td><td><code>if (i &lt; length)</code>（循环判断）</td></tr>
+        <tr><td>7</td><td><code>varsum = ...; i++;</code>（循环体）</td></tr>
+        <tr><td>8</td><td><code>var = ...; sd = ...; print(...);</code></td></tr>
+      </tbody>
+    </table>
+
+    <h4>Def/Use 标注</h4>
+    <table>
+      <thead>
+        <tr><th>节点</th><th>Def</th><th>Use</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>{numbers, sum, length}</td><td>{numbers}</td></tr>
+        <tr><td>2</td><td>{i}</td><td></td></tr>
+        <tr><td>3</td><td></td><td>{i, length}</td></tr>
+        <tr><td>4</td><td>{sum, i}</td><td>{numbers, i, sum}</td></tr>
+        <tr><td>5</td><td>{med, mean, varsum, i}</td><td>{numbers, length, sum}</td></tr>
+        <tr><td>6</td><td></td><td>{i, length}</td></tr>
+        <tr><td>7</td><td>{varsum, i}</td><td>{varsum, numbers, i, mean}</td></tr>
+        <tr><td>8</td><td>{var, sd}</td><td>{varsum, length, var, mean, med, var, sd}</td></tr>
+      </tbody>
+    </table>
+
+    <h4>边使用 (Edge Uses)</h4>
+    <table>
+      <thead>
+        <tr><th>边</th><th>Use</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>(3, 4)</td><td>{i, length}</td></tr>
+        <tr><td>(3, 5)</td><td>{i, length}</td></tr>
+        <tr><td>(6, 7)</td><td>{i, length}</td></tr>
+        <tr><td>(6, 8)</td><td>{i, length}</td></tr>
+      </tbody>
+    </table>
+
+    <h4>DU对与DU路径分析</h4>
+    <table>
+      <thead>
+        <tr><th>变量</th><th>DU对</th><th>DU路径</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>numbers</strong></td>
+          <td>(1, 1), (1, 4), (1, 5), (1, 7)</td>
+          <td>[1], [1,2,3,4], [1,2,3,5], [1,2,3,4,3,5], [1,2,3,5,6,7]</td>
+        </tr>
+        <tr>
+          <td><strong>length</strong></td>
+          <td>(1, 3), (1, 5), (1, 6), (1, 8)</td>
+          <td>[1,2,3], [1,2,3,4,3], [1,2,3,5], [1,2,3,5,6], [1,2,3,5,6,7,6], [1,2,3,5,6,8]</td>
+        </tr>
+        <tr>
+          <td><strong>sum</strong></td>
+          <td>(1, 4), (4, 4), (1, 5), (4, 5)</td>
+          <td>[1,2,3,4], [4,3,4], [1,2,3,5], [4,3,5]</td>
+        </tr>
+        <tr>
+          <td><strong>i</strong></td>
+          <td>(2, 3), (4, 3), (4, 4), (5, 6), (7, 6), (7, 7)</td>
+          <td>[2,3], [4,3], [4,3,4], [5,6], [7,6], [7,6,7]</td>
+        </tr>
+        <tr>
+          <td><strong>mean</strong></td>
+          <td>(5, 7)</td>
+          <td>[5,6,7]</td>
+        </tr>
+        <tr>
+          <td><strong>varsum</strong></td>
+          <td>(5, 7), (7, 7), (5, 8), (7, 8)</td>
+          <td>[5,6,7], [7,6,7], [5,6,8], [7,6,8]</td>
+        </tr>
+        <tr>
+          <td><strong>med</strong></td>
+          <td>(5, 8)</td>
+          <td>[5,6,8]</td>
+        </tr>
+        <tr>
+          <td><strong>var</strong></td>
+          <td>(8, 8)</td>
+          <td>[8]</td>
+        </tr>
+        <tr>
+          <td><strong>sd</strong></td>
+          <td>(8, 8)</td>
+          <td>[8]</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h4>测试用例设计</h4>
+
+    <div class="tabs">
+      <div class="tab-buttons">
+        <button class="tab-btn active" data-tab="ec">EC 边覆盖</button>
+        <button class="tab-btn" data-tab="epc">EPC 边对覆盖</button>
+        <button class="tab-btn" data-tab="ppc">PPC 主路径覆盖</button>
+      </div>
+
+      <div class="tab-panel active" data-panel="ec">
+        <h4>Edge Coverage (EC)</h4>
+        <blockquote>
+          <p><strong>测试需求：</strong>覆盖CFG中的每条边。</p>
+        </blockquote>
+        <p><strong>边集合：</strong> (1,2), (2,3), (3,4), (3,5), (4,3), (5,6), (6,7), (6,8), (7,6)</p>
+
+        <p><strong>测试路径：</strong></p>
+        <pre><code><span class="cm">// 测试用例 1: numbers = [10, 20, 30] (length=3)</span>
+<span class="cm">// 执行路径: 1 → 2 → 3 → 4 → 3 → 4 → 3 → 4 → 3 → 5 → 6 → 7 → 6 → 7 → 6 → 7 → 6 → 8</span>
+<span class="st">Test Path: [1, 2, 3, 4, 3, 4, 3, 4, 3, 5, 6, 7, 6, 7, 6, 7, 6, 8]</span>
+<span class="cm">// 覆盖所有边 ✓</span></code>
+<span class="lang-label">EC Test Path</span></pre>
+
+        <p>对于含循环的程序，<strong>一个测试用例</strong>即可覆盖所有边（循环至少执行一次即可覆盖循环边和退出边）。</p>
+      </div>
+
+      <div class="tab-panel" data-panel="epc">
+        <h4>Edge-Pair Coverage (EPC)</h4>
+        <blockquote>
+          <p><strong>测试需求：</strong>覆盖CFG中所有长度为2的边序列（边对）。</p>
+        </blockquote>
+        <p><strong>边对集合：</strong></p>
+        <ul>
+          <li>(1,2,3), (2,3,4), (2,3,5)</li>
+          <li>(3,4,3), (4,3,4), (4,3,5)</li>
+          <li>(3,5,6), (5,6,7), (5,6,8)</li>
+          <li>(6,7,6), (7,6,7), (7,6,8)</li>
+        </ul>
+
+        <p><strong>测试路径：</strong></p>
+        <pre><code><span class="cm">// 测试用例 1: numbers = [10] (length=1, 循环体执行一次)</span>
+<span class="st">Path 1: [1, 2, 3, 4, 3, 5, 6, 7, 6, 8]</span>
+<span class="cm">// 覆盖边对: (1,2,3),(2,3,4),(3,4,3),(4,3,5),(3,5,6),(5,6,7),(6,7,6),(7,6,8)</span>
+
+<span class="cm">// 测试用例 2: numbers = [10, 20] (length=2, 循环体执行两次)</span>
+<span class="st">Path 2: [1, 2, 3, 4, 3, 4, 3, 5, 6, 7, 6, 7, 6, 8]</span>
+<span class="cm">// 覆盖额外边对: (2,3,5),(4,3,4),(5,6,8),(7,6,7)</span>
+<span class="cm">// 两个测试用例覆盖所有边对 ✓</span></code>
+<span class="lang-label">EPC Test Paths</span></pre>
+      </div>
+
+      <div class="tab-panel" data-panel="ppc">
+        <h4>Prime Path Coverage (PPC)</h4>
+        <blockquote>
+          <p><strong>测试需求：</strong>覆盖CFG中所有主路径（不能再延伸的简单路径）。</p>
+        </blockquote>
+        <p><strong>主路径集合：</strong></p>
+        <ul>
+          <li>[2, 3, 5, 6, 8] — 两个循环都执行0次（不可行，因为循环至少判断一次后进入）</li>
+          <li>[3, 4, 3] — 第一个循环内部</li>
+          <li>[4, 3, 5, 6, 8] — 第一个循环退出到结束</li>
+          <li>[6, 7, 6] — 第二个循环内部</li>
+          <li>[7, 6, 8] — 第二个循环退出到结束</li>
+          <li>[4, 3, 4] — 第一个循环重复</li>
+          <li>[7, 6, 7] — 第二个循环重复</li>
+        </ul>
+
+        <p><strong>测试路径：</strong></p>
+        <pre><code><span class="cm">// 测试用例 1: numbers = [10] (length=1)</span>
+<span class="st">Path 1: [1, 2, 3, 4, 3, 5, 6, 7, 6, 8]</span>
+
+<span class="cm">// 测试用例 2: numbers = [10, 20, 30] (length=3)</span>
+<span class="st">Path 2: [1, 2, 3, 4, 3, 4, 3, 4, 3, 5, 6, 7, 6, 7, 6, 7, 6, 8]</span>
+
+<span class="cm">// 两个测试用例覆盖所有主路径 ✓</span></code>
+<span class="lang-label">PPC Test Paths</span></pre>
+
+        <div class="tip">
+          <div>
+            <strong>PPC ⊇ EPC ⊇ EC：</strong> 主路径覆盖包含边对覆盖，边对覆盖包含边覆盖。对于Stats程序，最少需要2个测试用例即可满足PPC。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 现代趋势 ==================== -->
+    <h3 id="trends">现代趋势</h3>
+
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span class="accordion-icon">▸</span>
+          CFG → SSA → Dataflow Graph
+        </button>
+        <div class="accordion-body">
+          <p>传统CFG+def-use分析 → SSA（静态单赋值形式）直接编码def-use关系 → Dataflow IR直接消除控制依赖。</p>
+          <p><strong>本质：</strong>把数据流从"分析结果"变成"程序表示本身"。LLVM IR、MLIR等现代编译器中间表示已经将数据流关系显式编码在程序表示中。</p>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span class="accordion-icon">▸</span>
+          数据流分析 + 约束求解
+        </button>
+        <div class="accordion-body">
+          <p>Datalog/SMT方法，如Rust编译器中的<strong>Polonius</strong>借用检查器，将def-use转换为逻辑规则，通过约束求解来验证数据流性质。</p>
+          <p>这种方法可以更精确地处理复杂的生命周期和借用关系，减少误报。</p>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span class="accordion-icon">▸</span>
+          数据流分析 + 安全语义
+        </button>
+        <div class="accordion-body">
+          <p>从"变量是否被定义使用"到"信息是否非法传播"。<strong>Taint分析</strong>追踪不可信数据（污点源）是否流向安全敏感位置（污点汇），是数据流分析在安全领域的重要应用。</p>
+          <p>典型工具：FlowDroid（Android污点分析）、Joana（Java信息流分析）。</p>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span class="accordion-icon">▸</span>
+          路径敏感数据流分析
+        </button>
+        <div class="accordion-body">
+          <p>结合Symbolic Execution的path-sensitive分析，不仅追踪数据流的定义和使用，还考虑路径条件对数据流可达性的影响。</p>
+          <p>可以消除不可行路径上的误报，提高分析精度，但代价是更高的计算复杂度。</p>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span class="accordion-icon">▸</span>
+          数据流分析 + 在线学习
+        </button>
+        <div class="accordion-body">
+          <p>Trace-based dataflow inference和runtime taint tracking，通过运行时监控和机器学习技术动态推断数据流关系。</p>
+          <p>适用于动态语言和高度反射的系统，传统静态分析难以处理的场景。</p>
+        </div>
+      </div>
+    </div>
+
+    <hr>
+    <div class="pagination">
+      <a href="graph-basics.html" class="page-nav">
+        <span class="label">上一页</span>
+        <span class="title">← 图基础与覆盖标准</span>
+      </a>
+      <a href="design.html" class="page-nav next">
+        <span class="label">下一节</span>
+        <span class="title">设计元素图覆盖 →</span>
+      </a>
+    </div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
