@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文法覆盖标准 — Ch5 基于语法的测试</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Toggle menu">☰</button>
+<div class="overlay"></div>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h1>软件测试笔记</h1>
+    <div class="subtitle">Software Testing · Chapter 5</div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section">章节导航</div>
+    <a href="index.html"><span class="icon">📖</span> 章节总览</a>
+    <a href="grammar.html" class="active"><span class="icon">📐</span> 文法覆盖标准</a>
+    <a href="mutation-basics.html"><span class="icon">🧬</span> 变异测试基础</a>
+    <a href="ripr.html"><span class="icon">🎯</span> RIPR 模型</a>
+    <a href="program-mutation.html"><span class="icon">💻</span> 程序级变异测试</a>
+    <a href="mutation-operators.html"><span class="icon">⚙️</span> 变异运算符</a>
+    <a href="exercises.html"><span class="icon">✏️</span> 实战练习</a>
+    <div class="nav-section">本页目录</div>
+    <a href="#bnf" class="toc-link"><span class="icon">📋</span> BNF 文法基础</a>
+    <a href="#using-grammar" class="toc-link"><span class="icon">🔧</span> 文法的使用</a>
+    <a href="#coverage" class="toc-link"><span class="icon">📊</span> 覆盖标准</a>
+    <a href="#example" class="toc-link"><span class="icon">💡</span> 完整示例</a>
+  </div>
+  <div class="sidebar-footer">
+    5.1 Syntax-Based Coverage Criteria
+  </div>
+</nav>
+
+<main class="main">
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="index.html">Ch5</a>
+      <span class="sep">›</span>
+      <span>文法覆盖标准</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-header">
+      <h2>文法覆盖标准</h2>
+      <p class="desc">Grammar Coverage Criteria — 利用 BNF 文法描述来定义测试覆盖标准，确保测试充分覆盖软件构件的语法结构。</p>
+      <div class="meta">
+        <span class="tag">5.1.1</span>
+        <span class="tag">TSC</span>
+        <span class="tag">PDC</span>
+        <span class="tag">DC</span>
+      </div>
+    </div>
+
+    <!-- ==================== BNF 基础 ==================== -->
+    <h3 id="bnf">BNF 文法基础</h3>
+
+    <h4>什么是 BNF？</h4>
+    <p><strong>BNF（Backus-Naur Form，巴科斯-诺尔范式）</strong>是一种用来描述计算机语言语法的元语言。它使用产生式规则来定义语言的结构，是定义编程语言、标记语言和协议语法的标准方法。</p>
+
+    <h4>文法的基本组成</h4>
+    <table>
+      <thead>
+        <tr><th>组成</th><th>说明</th><th>示例</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>非终结符</strong></td>
+          <td>可以被进一步展开的符号，用尖括号或大写表示</td>
+          <td><code>&lt;expression&gt;</code>, <code>Stream</code></td>
+        </tr>
+        <tr>
+          <td><strong>终结符</strong></td>
+          <td>不能再被展开的基本符号，是最终字符串的组成部分</td>
+          <td><code>"G"</code>, <code>"B"</code>, <code>"0"</code></td>
+        </tr>
+        <tr>
+          <td><strong>产生式</strong></td>
+          <td>推导规则，形如 <code>A ::= α</code>，表示 A 可推导为 α</td>
+          <td><code>action ::= actG | actB</code></td>
+        </tr>
+        <tr>
+          <td><strong>起始符</strong></td>
+          <td>推导的起点，通常是第一个定义的非终结符</td>
+          <td><code>Stream</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h4>文法示例：数据流</h4>
+    <p>以下是一个描述数据流格式的 BNF 文法，其中 <code>G</code> 和 <code>B</code> 是两种动作命令，<code>s</code>、<code>t</code> 是参数，<code>n</code> 是日期：</p>
+
+    <pre><code><span class="cm">// 数据流文法 (Stream Grammar)</span>
+Stream   ::=  action*
+action   ::=  actG | actB
+actG     ::=  <span class="st">"G"</span> s n
+actB     ::=  <span class="st">"B"</span> t n
+s        ::=  digit1-3
+t        ::=  digit1-3
+n        ::=  digit2 <span class="st">"."</span> digit2 <span class="st">"."</span> digit2
+digit    ::=  <span class="st">"0"</span> | <span class="st">"1"</span> | <span class="st">"2"</span> | <span class="st">"3"</span> | <span class="st">"4"</span> | <span class="st">"5"</span> | <span class="st">"6"</span> | <span class="st">"7"</span> | <span class="st">"8"</span> | <span class="st">"9"</span></code>
+<span class="lang-label">BNF</span></pre>
+
+    <p>在该文法中：</p>
+    <ul>
+      <li><strong>终结符：</strong> <code>"G"</code>, <code>"B"</code>, <code>"."</code>, <code>"0"</code>~<code>"9"</code> — 共 13 个</li>
+      <li><strong>非终结符：</strong> <code>Stream</code>, <code>action</code>, <code>actG</code>, <code>actB</code>, <code>s</code>, <code>t</code>, <code>n</code>, <code>digit</code></li>
+      <li><strong>产生式：</strong> 共 18 条规则</li>
+    </ul>
+
+    <div class="tip">
+      <div>
+        <strong>满足文法的字符串示例：</strong><br>
+        <code>G 26 08.01.90</code> — 一个 actG，参数 s=26，日期 n=08.01.90<br>
+        <code>B 22 06.27.94</code> — 一个 actB，参数 t=22，日期 n=06.27.94<br>
+        多个 action 组成一个 Stream：<code>G 26 08.01.90 B 22 06.27.94 G 22 11.21.94</code>
+      </div>
+    </div>
+
+    <!-- ==================== 文法的使用 ==================== -->
+    <h3 id="using-grammar">文法的使用</h3>
+
+    <p>文法有两个核心用途：<strong>识别</strong>和<strong>生成</strong>。</p>
+
+    <div class="compare-grid">
+      <div class="compare-box">
+        <h4>🔍 识别器 (Recognizer)</h4>
+        <p>判断一个给定的字符串是否在文法中 — 这就是<strong>解析 (Parsing)</strong>。</p>
+        <ul>
+          <li>已有成熟的解析工具支持</li>
+          <li>程序可以用它来做输入验证</li>
+          <li>例：编译器解析源代码</li>
+        </ul>
+      </div>
+      <div class="compare-box">
+        <h4>🏗️ 生成器 (Generator)</h4>
+        <p>给定一个文法，推导出属于该文法的字符串 — 这就是<strong>测试生成</strong>。</p>
+        <ul>
+          <li>从起始符开始，逐步展开产生式</li>
+          <li>最终得到由终结符组成的字符串</li>
+          <li>例：自动生成测试输入</li>
+        </ul>
+      </div>
+    </div>
+
+    <h4>推导过程示例</h4>
+    <p>以下展示了如何从 <code>Stream</code> 起始符推导出字符串 <code>G 25 08.01.90</code>：</p>
+
+    <pre><code><span class="cm">// 从起始符开始推导</span>
+Stream
+  ::= action action*           <span class="cm">// 展开 Stream</span>
+  ::= actG action*             <span class="cm">// 选择 action → actG</span>
+  ::= <span class="st">"G"</span> s n action*           <span class="cm">// 展开 actG</span>
+  ::= <span class="st">"G"</span> digit1-3 n action*     <span class="cm">// 展开 s</span>
+  ::= <span class="st">"G"</span> <span class="nu">25</span> n action*           <span class="cm">// 选择具体数字</span>
+  ::= <span class="st">"G"</span> <span class="nu">25</span> <span class="nu">08</span>.<span class="nu">01</span>.<span class="nu">90</span> action*  <span class="cm">// 展开 n</span>
+  ::= <span class="st">"G"</span> <span class="nu">25</span> <span class="nu">08</span>.<span class="nu">01</span>.<span class="nu">90</span>        <span class="cm">// 选择 action* 为空</span></code>
+<span class="lang-label">Derivation</span></pre>
+
+    <!-- ==================== 覆盖标准 ==================== -->
+    <h3 id="coverage">文法覆盖标准</h3>
+
+    <p>基于文法可以定义三种覆盖标准，从简单到严格递进：</p>
+
+    <div class="tabs">
+      <div class="tab-buttons">
+        <button class="tab-btn active" data-tab="tsc">TSC 终端符号覆盖</button>
+        <button class="tab-btn" data-tab="pdc">PDC 产生式覆盖</button>
+        <button class="tab-btn" data-tab="dc">DC 推导覆盖</button>
+      </div>
+
+      <div class="tab-panel active" data-panel="tsc">
+        <h4>Terminal Symbol Coverage (TSC)</h4>
+        <blockquote>
+          <p><strong>定义：</strong> 测试需求集 TR 包含文法 G 中<strong>每一个终端符号</strong> t。</p>
+        </blockquote>
+        <p>TSC 要求测试用例覆盖文法中的每一个终结符至少一次。这是最基本的文法覆盖标准。</p>
+        <p><strong>测试数量上界：</strong> 终结符的数量。在 stream 文法中为 <strong>13</strong> 个。</p>
+        <p><strong>与图覆盖的关系：</strong> TSC 等价于图覆盖中的<strong>节点覆盖 (NC)</strong>。</p>
+      </div>
+
+      <div class="tab-panel" data-panel="pdc">
+        <h4>Production Coverage (PDC)</h4>
+        <blockquote>
+          <p><strong>定义：</strong> 测试需求集 TR 包含文法 G 中<strong>每一个产生式</strong> p。</p>
+        </blockquote>
+        <p>PDC 要求测试用例覆盖文法中的每一条产生式规则至少一次。由于产生式包含终端符号，PDC 自然包含 TSC。</p>
+        <p><strong>测试数量上界：</strong> 产生式的数量。在 stream 文法中为 <strong>18</strong> 条。</p>
+        <p><strong>与图覆盖的关系：</strong> PDC 等价于图覆盖中的<strong>边覆盖 (EC)</strong>。</p>
+        <div class="tip"><div><strong>PDC ⊇ TSC：</strong> 产生式覆盖包含终端符号覆盖，因为覆盖了所有产生式必然覆盖了所有终端符号。</div></div>
+      </div>
+
+      <div class="tab-panel" data-panel="dc">
+        <h4>Derivation Coverage (DC)</h4>
+        <blockquote>
+          <p><strong>定义：</strong> 测试需求集 TR 包含文法 G 中能推导出的<strong>每一个可能的字符串</strong>。</p>
+        </blockquote>
+        <p>DC 是最严格的文法覆盖标准，要求测试用例覆盖所有可能的推导结果。这通常是不现实的。</p>
+        <p><strong>测试数量上界：</strong> 取决于文法细节。在 stream 文法中约为 <strong>20 亿</strong>！</p>
+        <div class="warning"><div><strong>DC 通常不可行：</strong> 大多数文法能生成无限多的字符串，即使有限，数量也往往极其庞大。实践中通常使用 TSC 或 PDC。</div></div>
+      </div>
+    </div>
+
+    <h4>覆盖标准对比</h4>
+    <table>
+      <thead>
+        <tr><th>标准</th><th>覆盖对象</th><th>等价图覆盖</th><th>Stream 文法测试数</th><th>包含关系</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>TSC</strong></td>
+          <td>每个终端符号</td>
+          <td>节点覆盖 (NC)</td>
+          <td>≤ 13</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><strong>PDC</strong></td>
+          <td>每个产生式</td>
+          <td>边覆盖 (EC)</td>
+          <td>≤ 18</td>
+          <td>⊇ TSC</td>
+        </tr>
+        <tr>
+          <td><strong>DC</strong></td>
+          <td>每个可能的字符串</td>
+          <td>—</td>
+          <td>~2,000,000,000</td>
+          <td>⊇ PDC ⊇ TSC</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="warning">
+      <div>
+        <strong>局限性：</strong> TSC、PDC 和 DC 生成的测试都是<strong>文法内 (in the grammar)</strong>的有效字符串。它们无法测试程序对<strong>无效输入</strong>的处理能力。变异测试（下一节）可以解决这个问题。
+      </div>
+    </div>
+
+    <!-- ==================== 完整示例 ==================== -->
+    <h3 id="example">完整示例</h3>
+
+    <h4>用 TSC 和 PDC 测试 stream 文法</h4>
+
+    <p>以下测试用例展示了如何用最少的字符串覆盖 stream 文法的所有终端符号和产生式：</p>
+
+    <pre><code><span class="cm">// 测试用例 1：覆盖 actG 的所有产生式</span>
+<span class="st">G 26 08.01.90</span>
+
+<span class="cm">// 测试用例 2：覆盖 actB 的所有产生式</span>
+<span class="st">B 22 06.27.94</span>
+
+<span class="cm">// 两个测试用例即可覆盖：</span>
+<span class="cm">// - 所有终端符号: G, B, 0-9, "."  (TSC ✓)</span>
+<span class="cm">// - 所有产生式: Stream→action*, action→actG, action→actB,</span>
+<span class="cm">//   actG→"G" s n, actB→"B" t n, s→digit, t→digit,</span>
+<span class="cm">//   n→digit2.digit2.digit2, digit→"0"~"9"  (PDC ✓)</span></code>
+<span class="lang-label">Test Cases</span></pre>
+
+    <h4>无效测试（违反语法）</h4>
+    <p>基于语法的测试不仅要生成有效测试，还要生成违反语法的无效测试：</p>
+    <pre><code><span class="cm">// 无效测试示例</span>
+<span class="st">7 26 08.01.90</span>      <span class="cm">// "7" 不是有效的动作命令（应为 G 或 B）</span>
+<span class="st">B 22 06.27.1</span>       <span class="cm">// 日期格式不完整（digit2 只有一位）</span>
+<span class="st">G 22</span>                <span class="cm">// 缺少日期参数 n</span></code>
+<span class="lang-label">Invalid Tests</span></pre>
+
+    <hr>
+    <div class="pagination">
+      <a href="index.html" class="page-nav">
+        <span class="label">上一页</span>
+        <span class="title">← 章节总览</span>
+      </a>
+      <a href="mutation-basics.html" class="page-nav next">
+        <span class="label">下一节</span>
+        <span class="title">变异测试基础 →</span>
+      </a>
+    </div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

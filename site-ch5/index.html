@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ch5 基于语法的测试 — 软件测试笔记</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Toggle menu">☰</button>
+<div class="overlay"></div>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h1>软件测试笔记</h1>
+    <div class="subtitle">Software Testing · Chapter 5</div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section">章节导航</div>
+    <a href="index.html" class="active"><span class="icon">📖</span> 章节总览</a>
+    <a href="grammar.html"><span class="icon">📐</span> 文法覆盖标准</a>
+    <a href="mutation-basics.html"><span class="icon">🧬</span> 变异测试基础</a>
+    <a href="ripr.html"><span class="icon">🎯</span> RIPR 模型</a>
+    <a href="program-mutation.html"><span class="icon">💻</span> 程序级变异测试</a>
+    <a href="mutation-operators.html"><span class="icon">⚙️</span> 变异运算符</a>
+    <a href="exercises.html"><span class="icon">✏️</span> 实战练习</a>
+    <div class="nav-section">附录</div>
+    <a href="#summary"><span class="icon">📊</span> 本章总结</a>
+  </div>
+  <div class="sidebar-footer">
+    Chapter 5 · Syntax-based Testing<br>
+    基于语法的测试 · 软件工程课程
+  </div>
+</nav>
+
+<main class="main">
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="#">Ch5 基于语法的测试</a>
+      <span class="sep">›</span>
+      <span>章节总览</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="hero">
+      <h2>Chapter 5<br>基于语法的测试</h2>
+      <p>Syntax-based Testing — 利用软件构件的语法结构（BNF 文法、程序源码等）来系统地生成测试用例和评估测试质量的方法论。</p>
+      <div class="hero-stats">
+        <div class="stat"><div class="stat-num">6</div><div class="stat-label">覆盖标准</div></div>
+        <div class="stat"><div class="stat-num">11</div><div class="stat-label">变异运算符</div></div>
+        <div class="stat"><div class="stat-num">4</div><div class="stat-label">RIPR 条件</div></div>
+        <div class="stat"><div class="stat-num">7</div><div class="stat-label">知识页面</div></div>
+      </div>
+    </div>
+
+    <h3 id="overview">章节概述</h3>
+    <p>大量软件构件遵循严格的语法规则，这些语法通常用 <strong>BNF（巴科斯范式）</strong> 等形式来描述。基于语法的测试利用这些结构化描述来：</p>
+    <ul>
+      <li><strong>生成有效测试</strong> — 覆盖语法中的各种结构（终端符号、产生式等）</li>
+      <li><strong>生成无效测试</strong> — 故意违反语法规则，测试程序的容错能力</li>
+      <li><strong>变异测试</strong> — 通过系统地修改程序或输入来评估测试集的有效性</li>
+    </ul>
+
+    <h3 id="four-structures">四种建模结构</h3>
+    <p>软件测试使用四种结构来建模软件，基于语法的测试横跨所有四种结构：</p>
+
+    <div class="card-grid">
+      <a href="grammar.html" class="card">
+        <div class="card-icon blue">📝</div>
+        <h3>程序级 (Program)</h3>
+        <p>对编程语言的 BNF 文法进行覆盖测试，常用于编译器测试和源码级变异测试。</p>
+        <div class="card-arrow">查看详情 →</div>
+      </a>
+      <a href="grammar.html" class="card">
+        <div class="card-icon purple">🔗</div>
+        <h3>集成级 (Integration)</h3>
+        <p>对集成接口的语法进行测试，应用变异运算符到集成元素上。</p>
+        <div class="card-arrow">查看详情 →</div>
+      </a>
+      <a href="mutation-basics.html" class="card">
+        <div class="card-icon green">📊</div>
+        <h3>模型级 (Model)</h3>
+        <p>对代数规约、有限状态机等模型进行基于语法的测试。</p>
+        <div class="card-arrow">查看详情 →</div>
+      </a>
+      <a href="grammar.html" class="card">
+        <div class="card-icon orange">📥</div>
+        <h3>输入空间 (Input)</h3>
+        <p>对输入语言（XML、SQL、HTML 等）的文法进行覆盖测试。</p>
+        <div class="card-arrow">查看详情 →</div>
+      </a>
+    </div>
+
+    <h3 id="roadmap">学习路线</h3>
+    <p>本章内容按照以下路线展开，建议按顺序学习：</p>
+
+    <ol class="step-list">
+      <li>
+        <div>
+          <strong><a href="grammar.html">文法覆盖标准</a></strong> — 理解 BNF 文法、终端符号、产生式等基本概念；掌握 TSC、PDC、DC 三种覆盖标准的定义与关系。
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong><a href="mutation-basics.html">变异测试基础</a></strong> — 理解基本字符串、变异运算符、变体、杀死变体等核心概念；理解变异覆盖（MC）、变异运算符覆盖（MOC）和变异产生式覆盖（MPC）。
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong><a href="ripr.html">RIPR 模型</a></strong> — 掌握 Reachability（到达）、Infection（感染）、Propagation（传播）、Revealability（可观察性）四个条件；理解强杀死与弱杀死的区别。
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong><a href="program-mutation.html">程序级变异测试</a></strong> — 学习如何在实际程序中应用变异测试；通过 Min() 函数和 isEven() 函数的案例深入理解等价变体、弱变异等概念。
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong><a href="mutation-operators.html">变异运算符</a></strong> — 掌握 Java/C 语言的 11 种变异运算符（AOR、ROR、COR、SOR、LOR、ASR、UOI、UOD、SVR、BSR、ABS），理解每种运算符的作用和示例。
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong><a href="exercises.html">实战练习</a></strong> — 通过 Min() 函数变体分析和 findVal() 方法变体分析两个完整案例，综合运用 RIPR 模型进行变体杀死分析。
+        </div>
+      </li>
+    </ol>
+
+    <h3 id="summary">本章核心覆盖标准一览</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>缩写</th>
+          <th>全称</th>
+          <th>中文</th>
+          <th>类型</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>TSC</strong></td><td>Terminal Symbol Coverage</td><td>终端符号覆盖</td><td>文法覆盖</td></tr>
+        <tr><td><strong>PDC</strong></td><td>Production Coverage</td><td>产生式覆盖</td><td>文法覆盖</td></tr>
+        <tr><td><strong>DC</strong></td><td>Derivation Coverage</td><td>推导覆盖</td><td>文法覆盖</td></tr>
+        <tr><td><strong>MC</strong></td><td>Mutation Coverage</td><td>变异覆盖</td><td>变异测试</td></tr>
+        <tr><td><strong>MOC</strong></td><td>Mutation Operator Coverage</td><td>变异运算符覆盖</td><td>变异测试</td></tr>
+        <tr><td><strong>MPC</strong></td><td>Mutation Production Coverage</td><td>变异产生式覆盖</td><td>变异测试</td></tr>
+        <tr><td><strong>WMC</strong></td><td>Weak Mutation Coverage</td><td>弱变异覆盖</td><td>变异测试</td></tr>
+      </tbody>
+    </table>
+
+    <h3 id="subsumption">包含关系</h3>
+    <div class="flow-diagram">
+      <div class="flow-step">
+        <div class="step-box" style="background:#dbeafe;">DC</div>
+        <div class="step-label">推导覆盖</div>
+        <div class="step-sub">所有字符串</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#ede9fe;">PDC</div>
+        <div class="step-label">产生式覆盖</div>
+        <div class="step-sub">所有产生式</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#d1fae5;">TSC</div>
+        <div class="step-label">终端符号覆盖</div>
+        <div class="step-sub">所有终端符号</div>
+      </div>
+    </div>
+    <p style="text-align:center; color:var(--text-light); font-size:.88rem;">DC ⊇ PDC ⊇ TSC — 推导覆盖包含产生式覆盖，产生式覆盖包含终端符号覆盖</p>
+
+    <div class="flow-diagram">
+      <div class="flow-step">
+        <div class="step-box" style="background:#fee2e2;">MC</div>
+        <div class="step-label">变异覆盖</div>
+        <div class="step-sub">杀死所有变体</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#ffedd5;">MPC</div>
+        <div class="step-label">变异产生式覆盖</div>
+        <div class="step-sub">每个运算符×产生式</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#fef3c7;">MOC</div>
+        <div class="step-label">变异运算符覆盖</div>
+        <div class="step-sub">每个运算符一次</div>
+      </div>
+    </div>
+    <p style="text-align:center; color:var(--text-light); font-size:.88rem;">MC ⊇ MPC ⊇ MOC — 变异覆盖包含变异产生式覆盖，变异产生式覆盖包含变异运算符覆盖</p>
+
+    <hr>
+
+    <h3 id="key-terms">关键术语速查</h3>
+    <dl class="def-list">
+      <dt>文法 (Grammar)</dt>
+      <dd>用产生式规则定义语言结构的形式化描述，通常使用 BNF 表示。</dd>
+      <dt>终端符号 (Terminal Symbol)</dt>
+      <dd>文法中不能再被展开的基本符号，是最终字符串的组成部分。</dd>
+      <dt>产生式 (Production)</dt>
+      <dd>文法中的推导规则，形如 A ::= α，表示非终结符 A 可推导为 α。</dd>
+      <dt>基本字符串 (Ground String)</dt>
+      <dd>文法中的一个有效字符串，作为变异的起始点。类比代数中的 ground term。</dd>
+      <dt>变异运算符 (Mutation Operator)</dt>
+      <dd>指定如何对基本字符串进行语法变化的规则，如替换运算符、替换变量等。</dd>
+      <dt>变体 (Mutant)</dt>
+      <dd>对基本字符串应用一次变异运算符后得到的结果字符串。</dd>
+      <dt>杀死变体 (Killing Mutant)</dt>
+      <dd>当测试 t 在原程序上的输出与在变体上的输出不同时，称 t 杀死了该变体。</dd>
+      <dt>等价变体 (Equivalent Mutant)</dt>
+      <dd>与原程序行为完全相同的变体，没有任何测试能杀死它。</dd>
+    </dl>
+
+    <div class="pagination">
+      <div></div>
+      <a href="grammar.html" class="page-nav next">
+        <span class="label">下一节</span>
+        <span class="title">文法覆盖标准 →</span>
+      </a>
+    </div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RIPR 模型 — Ch5 基于语法的测试</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Toggle menu">☰</button>
+<div class="overlay"></div>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h1>软件测试笔记</h1>
+    <div class="subtitle">Software Testing · Chapter 5</div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section">章节导航</div>
+    <a href="index.html"><span class="icon">📖</span> 章节总览</a>
+    <a href="grammar.html"><span class="icon">📐</span> 文法覆盖标准</a>
+    <a href="mutation-basics.html"><span class="icon">🧬</span> 变异测试基础</a>
+    <a href="ripr.html" class="active"><span class="icon">🎯</span> RIPR 模型</a>
+    <a href="program-mutation.html"><span class="icon">💻</span> 程序级变异测试</a>
+    <a href="mutation-operators.html"><span class="icon">⚙️</span> 变异运算符</a>
+    <a href="exercises.html"><span class="icon">✏️</span> 实战练习</a>
+    <div class="nav-section">本页目录</div>
+    <a href="#model" class="toc-link"><span class="icon">🧩</span> 模型概述</a>
+    <a href="#conditions" class="toc-link"><span class="icon">📋</span> 四个条件</a>
+    <a href="#strong-weak" class="toc-link"><span class="icon">⚡</span> 强杀死 vs 弱杀死</a>
+    <a href="#analysis" class="toc-link"><span class="icon">🔬</span> 分析方法</a>
+    <a href="#example" class="toc-link"><span class="icon">💡</span> 案例分析</a>
+  </div>
+  <div class="sidebar-footer">
+    RIPR Model · Chapter 2 Extension
+  </div>
+</nav>
+
+<main class="main">
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="index.html">Ch5</a>
+      <span class="sep">›</span>
+      <span>RIPR 模型</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-header">
+      <h2>RIPR 模型</h2>
+      <p class="desc">Reachability, Infection, Propagation, Revealability — 分析测试用例是否能检测到程序故障（或杀死变异体）的四条件分析框架。</p>
+      <div class="meta">
+        <span class="tag">RIPR</span>
+        <span class="tag">强杀死</span>
+        <span class="tag">弱杀死</span>
+        <span class="tag">故障检测</span>
+      </div>
+    </div>
+
+    <!-- ==================== 模型概述 ==================== -->
+    <h3 id="model">模型概述</h3>
+
+    <p>RIPR 模型来自第 2 章，是分析<strong>故障检测条件</strong>的系统化框架。在变异测试中，它被用来判断一个测试用例是否能够杀死某个变体。</p>
+
+    <p>一个测试用例要成功检测到故障（或杀死变体），必须同时满足以下四个条件：</p>
+
+    <div class="flow-diagram">
+      <div class="flow-step">
+        <div class="step-box" style="background:#dbeafe;">R</div>
+        <div class="step-label">Reachability</div>
+        <div class="step-sub">到达</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#fef3c7;">I</div>
+        <div class="step-label">Infection</div>
+        <div class="step-sub">感染</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#fee2e2;">P</div>
+        <div class="step-label">Propagation</div>
+        <div class="step-sub">传播</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#d1fae5;">R</div>
+        <div class="step-label">Revealability</div>
+        <div class="step-sub">可观察</div>
+      </div>
+    </div>
+
+    <div class="tip">
+      <div>
+        <strong>记忆技巧：</strong> RIPR 可以理解为"故障检测的四道关卡" — 故障必须先被<strong>到达</strong>，然后<strong>感染</strong>程序状态，接着<strong>传播</strong>到输出，最后被测试者<strong>观察到</strong>。任何一道关卡失败，故障都无法被检测到。
+      </div>
+    </div>
+
+    <!-- ==================== 四个条件 ==================== -->
+    <h3 id="conditions">四个条件详解</h3>
+
+    <div class="accordion">
+      <div class="accordion-item open">
+        <button class="accordion-header">
+          <span>🔵 R — Reachability（到达条件）</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="accordion-body" style="max-height:300px;">
+          <div class="accordion-body-inner">
+            <blockquote>
+              <p><strong>定义：</strong> 测试用例必须导致包含故障（或变异）的语句<strong>被执行</strong>。</p>
+            </blockquote>
+            <p>如果程序的执行路径不经过故障所在的位置，那么无论故障多么严重，都不可能被检测到。</p>
+            <p><strong>分析要点：</strong></p>
+            <ul>
+              <li>确定故障/变异点在程序中的位置</li>
+              <li>分析哪些条件控制着执行路径到达该位置</li>
+              <li>设计测试输入使程序执行经过该位置</li>
+            </ul>
+            <p><strong>示例：</strong> 如果故障在 <code>if (B &lt; A)</code> 的分支体内，则需要 <code>B &lt; A</code> 为真才能到达。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>🟡 I — Infection（感染条件）</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <blockquote>
+              <p><strong>定义：</strong> 故障语句（或变异语句）执行后，程序的<strong>内部状态</strong>必须与正确执行不同。</p>
+            </blockquote>
+            <p>即使到达了故障位置，如果故障没有导致程序状态发生变化（例如故障代码与正确代码碰巧产生相同结果），那么故障也不会被检测到。</p>
+            <p><strong>分析要点：</strong></p>
+            <ul>
+              <li>比较原程序和变体在变异点之后的状态</li>
+              <li>找到使状态不同的输入条件</li>
+              <li>注意：到达即感染的情况（如 Bomb()）和需要额外条件的情况</li>
+            </ul>
+            <p><strong>示例：</strong> 变体 <code>if (B &gt; A)</code> 替换 <code>if (B &lt; A)</code>，需要 <code>A ≠ B</code> 才能使分支判定不同。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>🔴 P — Propagation（传播条件）</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <blockquote>
+              <p><strong>定义：</strong> 被感染的程序状态必须<strong>传播到最终输出</strong>，导致输出与正确执行不同。</p>
+            </blockquote>
+            <p>即使内部状态被感染，如果后续的代码"修复"了这个差异（例如覆盖了被感染的变量），那么故障也不会在输出中体现。</p>
+            <p><strong>分析要点：</strong></p>
+            <ul>
+              <li>追踪被感染变量在后续代码中的使用</li>
+              <li>确认差异是否传播到 <code>return</code> 语句或副作用</li>
+              <li>注意：异常（如 Bomb()）会自动传播</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>🟢 R — Revealability（可观察性条件）</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <blockquote>
+              <p><strong>定义：</strong> 测试者必须能够<strong>观察到</strong>输出中的差异。</p>
+            </blockquote>
+            <p>即使输出不同，如果测试者没有检查相关的输出，或者输出差异被忽略了，故障也不会被发现。</p>
+            <p><strong>分析要点：</strong></p>
+            <ul>
+              <li>测试用例必须有明确的<strong>预期输出</strong></li>
+              <li>测试者必须比较实际输出和预期输出</li>
+              <li>在自动化测试中，断言 (assertion) 实现了可观察性</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 强杀死 vs 弱杀死 ==================== -->
+    <h3 id="strong-weak">强杀死 vs 弱杀死</h3>
+
+    <p>根据满足 RIPR 条件的程度，可以定义两种"杀死"变体的方式：</p>
+
+    <div class="compare-grid">
+      <div class="compare-box" style="border-color: var(--danger);">
+        <h4>💪 强杀死 (Strongly Killing)</h4>
+        <blockquote style="border-color: var(--danger);">
+          <p>给定程序 P 的变体 m 和测试 t，当且仅当 <strong>output(t, P) ≠ output(t, m)</strong> 时，称 t 强杀死 m。</p>
+        </blockquote>
+        <p><strong>满足条件：</strong></p>
+        <ul>
+          <li>✅ Reachability — 到达变异点</li>
+          <li>✅ Infection — 状态不同</li>
+          <li>✅ Propagation — 差异传播到输出</li>
+          <li>✅ Revealability — 输出可观察</li>
+        </ul>
+        <p>这是最严格的杀死方式，要求变体的<strong>最终输出</strong>与原程序不同。</p>
+      </div>
+      <div class="compare-box" style="border-color: var(--warning);">
+        <h4>⚡ 弱杀死 (Weakly Killing)</h4>
+        <blockquote style="border-color: var(--warning);">
+          <p>给定修改位置 l 的变体 m 和测试 t，当且仅当执行到 l <strong>之后</strong>，P 的状态 ≠ m 的状态时，称 t 弱杀死 m。</p>
+        </blockquote>
+        <p><strong>满足条件：</strong></p>
+        <ul>
+          <li>✅ Reachability — 到达变异点</li>
+          <li>✅ Infection — 状态不同</li>
+          <li>❌ Propagation — 不要求传播到输出</li>
+          <li>❌ Revealability — 不要求可观察</li>
+        </ul>
+        <p>弱杀死只要求变异点之后的<strong>程序状态</strong>不同，不要求传播到最终输出。</p>
+      </div>
+    </div>
+
+    <h4>强杀死与弱杀死的关系</h4>
+    <table>
+      <thead>
+        <tr><th>特性</th><th>强杀死</th><th>弱杀死</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>满足 R + I</td><td>✅</td><td>✅</td></tr>
+        <tr><td>满足 P（传播）</td><td>✅</td><td>❌</td></tr>
+        <tr><td>满足 R（可观察）</td><td>✅</td><td>❌</td></tr>
+        <tr><td>杀死难度</td><td>更难</td><td>更容易</td></tr>
+        <tr><td>分析复杂度</td><td>更高</td><td>更低</td></tr>
+        <tr><td>实际效果</td><td>更严格</td><td>通常足够</td></tr>
+      </tbody>
+    </table>
+
+    <div class="tip">
+      <div>
+        <strong>重要发现：</strong> 研究表明，能弱杀死所有变体的测试集通常也能强杀死大部分变体。因此弱变异覆盖 (WMC) 在实践中是一种有效且高效的替代方案。
+      </div>
+    </div>
+
+    <h4>对应的覆盖标准</h4>
+    <table>
+      <thead>
+        <tr><th>覆盖标准</th><th>定义</th><th>要求</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>MC (变异覆盖)</strong></td>
+          <td>对于每个 m∈M，TR 包含一个需求 — <strong>强杀死</strong> m</td>
+          <td>R + I + P + R</td>
+        </tr>
+        <tr>
+          <td><strong>WMC (弱变异覆盖)</strong></td>
+          <td>对于每个 m∈M，TR 包含一个需求 — <strong>弱杀死</strong> m</td>
+          <td>R + I</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ==================== 分析方法 ==================== -->
+    <h3 id="analysis">RIPR 分析方法</h3>
+
+    <p>对于给定的程序和变体，分析 RIPR 条件的步骤：</p>
+
+    <ol class="step-list">
+      <li>
+        <div>
+          <strong>定位变异点</strong><br>
+          找到变体与原程序的差异所在位置。明确变异运算符做了什么修改。
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>分析 Reachability</strong><br>
+          确定哪些条件控制着执行路径到达变异点。写出到达条件的逻辑表达式。
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>分析 Infection</strong><br>
+          比较原程序和变体在变异点执行后的状态。确定使状态不同的输入条件。注意：有些变异（如 Bomb()）到达即感染。
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>分析 Propagation</strong><br>
+          追踪被感染的变量在后续代码中的流动。确认差异是否到达 return 语句或输出。注意异常会自动传播。
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>设计测试用例</strong><br>
+          根据 R + I + P 条件设计具体的输入值。验证测试用例是否能杀死变体。
+        </div>
+      </li>
+    </ol>
+
+    <!-- ==================== 案例分析 ==================== -->
+    <h3 id="example">案例分析</h3>
+
+    <h4>案例：Min() 函数变体 Δ2</h4>
+    <p>将条件 <code>if (B &lt; A)</code> 修改为 <code>if (B &gt; A)</code>。</p>
+
+    <div class="code-compare">
+      <div class="code-panel">
+        <span class="code-label original">原程序</span>
+        <pre><code><span class="tp">int</span> <span class="fn">Min</span>(<span class="tp">int</span> A, <span class="tp">int</span> B) {
+  <span class="tp">int</span> minVal;
+  minVal = A;
+  <span class="kw">if</span> (B <span class="op">&lt;</span> A) {
+    minVal = B;
+  }
+  <span class="kw">return</span> minVal;
+}</code></pre>
+      </div>
+      <div class="code-panel">
+        <span class="code-label mutant">变体 Δ2</span>
+        <pre><code><span class="tp">int</span> <span class="fn">Min</span>(<span class="tp">int</span> A, <span class="tp">int</span> B) {
+  <span class="tp">int</span> minVal;
+  minVal = A;
+  <span class="kw">if</span> (B <span class="op">&gt;</span> A) {  <span class="cm">// ← 变异点</span>
+    minVal = B;
+  }
+  <span class="kw">return</span> minVal;
+}</code></pre>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>条件</th><th>分析</th><th>表达式</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>R</strong></td>
+          <td>条件判断在每次调用时都会执行</td>
+          <td>无条件（始终到达）</td>
+        </tr>
+        <tr>
+          <td><strong>I</strong></td>
+          <td>原程序在 B&lt;A 时进入分支，变体在 B&gt;A 时进入。需要两个条件的布尔值不同。</td>
+          <td><code>A ≠ B</code></td>
+        </tr>
+        <tr>
+          <td><strong>P</strong></td>
+          <td>若 B&lt;A：原程序 minVal=B，变体 minVal=A → 输出不同。若 B&gt;A：反之亦然。</td>
+          <td><code>A ≠ B</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p><strong>杀死测试：</strong> <code>A=5, B=3</code></p>
+    <ul>
+      <li>原程序：B&lt;A 成立 → minVal=3 → 返回 3</li>
+      <li>变体：B&gt;A 不成立 → minVal=5 → 返回 5</li>
+      <li>输出不同（3 ≠ 5）→ <strong>变体被杀死</strong> ✅</li>
+    </ul>
+
+    <hr>
+    <div class="pagination">
+      <a href="mutation-basics.html" class="page-nav">
+        <span class="label">上一页</span>
+        <span class="title">← 变异测试基础</span>
+      </a>
+      <a href="program-mutation.html" class="page-nav next">
+        <span class="label">下一节</span>
+        <span class="title">程序级变异测试 →</span>
+      </a>
+    </div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

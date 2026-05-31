@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>变异运算符 — Ch5 基于语法的测试</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Toggle menu">☰</button>
+<div class="overlay"></div>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h1>软件测试笔记</h1>
+    <div class="subtitle">Software Testing · Chapter 5</div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section">章节导航</div>
+    <a href="index.html"><span class="icon">📖</span> 章节总览</a>
+    <a href="grammar.html"><span class="icon">📐</span> 文法覆盖标准</a>
+    <a href="mutation-basics.html"><span class="icon">🧬</span> 变异测试基础</a>
+    <a href="ripr.html"><span class="icon">🎯</span> RIPR 模型</a>
+    <a href="program-mutation.html"><span class="icon">💻</span> 程序级变异测试</a>
+    <a href="mutation-operators.html" class="active"><span class="icon">⚙️</span> 变异运算符</a>
+    <a href="exercises.html"><span class="icon">✏️</span> 实战练习</a>
+    <div class="nav-section">本页目录</div>
+    <a href="#design" class="toc-link"><span class="icon">🎨</span> 设计原则</a>
+    <a href="#categories" class="toc-link"><span class="icon">📂</span> 运算符分类</a>
+    <a href="#operator-list" class="toc-link"><span class="icon">📋</span> 完整列表</a>
+    <a href="#examples" class="toc-link"><span class="icon">💡</span> 详细示例</a>
+    <a href="#effective" class="toc-link"><span class="icon">🏆</span> 有效集</a>
+  </div>
+  <div class="sidebar-footer">
+    Mutation Operators for Java/C
+  </div>
+</nav>
+
+<main class="main">
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="index.html">Ch5</a>
+      <span class="sep">›</span>
+      <span>变异运算符</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-header">
+      <h2>变异运算符</h2>
+      <p class="desc">Mutation Operators — 定义如何对程序进行系统性修改的规则集合。不同编程语言有各自的变异运算符，但方法级别的运算符在不同语言间是相似的。</p>
+      <div class="meta">
+        <span class="tag">AOR</span>
+        <span class="tag">ROR</span>
+        <span class="tag">COR</span>
+        <span class="tag">SVR</span>
+        <span class="tag">BSR</span>
+      </div>
+    </div>
+
+    <!-- ==================== 设计原则 ==================== -->
+    <h3 id="design">变异运算符的设计原则</h3>
+
+    <p>变异运算符的设计遵循两个核心原则：</p>
+
+    <div class="compare-grid">
+      <div class="compare-box">
+        <h4>🐛 模拟程序员错误</h4>
+        <p>变异运算符模拟程序员在编码时<strong>常见的典型错误</strong>：</p>
+        <ul>
+          <li>使用了错误的变量名</li>
+          <li>使用了错误的运算符</li>
+          <li>遗漏了某个语句</li>
+          <li>使用了错误的常量值</li>
+        </ul>
+      </div>
+      <div class="compare-box">
+        <h4>🧪 鼓励测试启发式</h4>
+        <p>变异运算符鼓励使用<strong>常见的测试策略</strong>：</p>
+        <ul>
+          <li>使算术表达式为 0</li>
+          <li>使条件表达式为 false</li>
+          <li>使数组访问越界</li>
+          <li>触发异常情况</li>
+        </ul>
+      </div>
+    </div>
+
+    <p>研究人员通常先设计大量的运算符，然后通过实验选择最有效的一组。</p>
+
+    <!-- ==================== 分类 ==================== -->
+    <h3 id="categories">变异运算符的分类</h3>
+
+    <p>变异运算符可以按照被修改的程序元素类型分为四大类：</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon blue">📝</div>
+        <h3>语句变异</h3>
+        <p>Statement Mutations — 对整个语句进行修改，如删除语句、插入语句等。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon purple">🔢</div>
+        <h3>运算符变异</h3>
+        <p>Operator Mutations — 替换程序中的运算符，如算术、关系、逻辑运算符等。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon green">📦</div>
+        <h3>变量变异</h3>
+        <p>Variable Mutations — 替换程序中的变量引用，如用其他变量替换当前变量。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon orange">💎</div>
+        <h3>常量变异</h3>
+        <p>Constant Mutations — 修改程序中的常量值或插入特殊函数调用。</p>
+      </div>
+    </div>
+
+    <!-- ==================== 完整列表 ==================== -->
+    <h3 id="operator-list">Java 变异运算符完整列表</h3>
+
+    <table>
+      <thead>
+        <tr><th>缩写</th><th>全称</th><th>中文</th><th>分类</th><th>描述</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>ABS</strong></td>
+          <td>Absolute Value Insertion</td>
+          <td>绝对值插入</td>
+          <td>运算符</td>
+          <td>在表达式周围插入 <code>abs()</code></td>
+        </tr>
+        <tr>
+          <td><strong>AOR</strong></td>
+          <td>Arithmetic Operator Replacement</td>
+          <td>算术运算符替换</td>
+          <td>运算符</td>
+          <td>替换算术运算符（+、-、*、/、%）</td>
+        </tr>
+        <tr>
+          <td><strong>ROR</strong></td>
+          <td>Relational Operator Replacement</td>
+          <td>关系运算符替换</td>
+          <td>运算符</td>
+          <td>替换关系运算符（&lt;、&gt;、==、!=、&lt;=、&gt;=）</td>
+        </tr>
+        <tr>
+          <td><strong>COR</strong></td>
+          <td>Conditional Operator Replacement</td>
+          <td>条件运算符替换</td>
+          <td>运算符</td>
+          <td>替换条件运算符（&&、||）</td>
+        </tr>
+        <tr>
+          <td><strong>SOR</strong></td>
+          <td>Shift Operator Replacement</td>
+          <td>移位运算符替换</td>
+          <td>运算符</td>
+          <td>替换移位运算符（&lt;&lt;、&gt;&gt;、&gt;&gt;&gt;）</td>
+        </tr>
+        <tr>
+          <td><strong>LOR</strong></td>
+          <td>Logical Operator Replacement</td>
+          <td>逻辑运算符替换</td>
+          <td>运算符</td>
+          <td>替换位逻辑运算符（&amp;、|、^）</td>
+        </tr>
+        <tr>
+          <td><strong>ASR</strong></td>
+          <td>Assignment Operator Replacement</td>
+          <td>赋值运算符替换</td>
+          <td>运算符</td>
+          <td>替换赋值运算符（=、+=、-=、*= 等）</td>
+        </tr>
+        <tr>
+          <td><strong>UOI</strong></td>
+          <td>Unary Operator Insertion</td>
+          <td>一元运算符插入</td>
+          <td>运算符</td>
+          <td>插入一元运算符（-、!、~）</td>
+        </tr>
+        <tr>
+          <td><strong>UOD</strong></td>
+          <td>Unary Operator Deletion</td>
+          <td>一元运算符删除</td>
+          <td>运算符</td>
+          <td>删除一元运算符（-、!、~）</td>
+        </tr>
+        <tr>
+          <td><strong>SVR</strong></td>
+          <td>Scalar Variable Replacement</td>
+          <td>标量变量替换</td>
+          <td>变量</td>
+          <td>将变量替换为同一作用域中的其他变量</td>
+        </tr>
+        <tr>
+          <td><strong>BSR</strong></td>
+          <td>Bomb Statement Replacement</td>
+          <td>炸弹语句替换</td>
+          <td>语句</td>
+          <td>将语句替换为 <code>Bomb()</code>（到达时抛出异常）</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ==================== 详细示例 ==================== -->
+    <h3 id="examples">运算符详细示例</h3>
+
+    <h4>AOR — 算术运算符替换</h4>
+    <p>将一个算术运算符替换为另一个。这是最常见的变异运算符之一。</p>
+    <div class="code-compare">
+      <div class="code-panel">
+        <span class="code-label original">原始</span>
+        <pre><code>a = m <span class="op">*</span> (o <span class="op">+</span> p);</code></pre>
+      </div>
+      <div class="code-panel">
+        <span class="code-label mutant">变体</span>
+        <pre><code><span class="diff-change">Δ1</span> a = m <span class="op">+</span> (o + p);   <span class="cm">// * → +</span>
+<span class="diff-change">Δ2</span> a = m <span class="op">*</span> (o <span class="op">*</span> p);   <span class="cm">// + → *</span>
+<span class="diff-change">Δ3</span> a = m <span class="op">%</span> (o + p);   <span class="cm">// * → %</span></code></pre>
+      </div>
+    </div>
+
+    <h4>ROR — 关系运算符替换</h4>
+    <p>将一个关系运算符替换为另一个，用于测试边界条件和比较逻辑。</p>
+    <div class="code-compare">
+      <div class="code-panel">
+        <span class="code-label original">原始</span>
+        <pre><code><span class="kw">if</span> (X <span class="op">&lt;=</span> Y)</code></pre>
+      </div>
+      <div class="code-panel">
+        <span class="code-label mutant">变体</span>
+        <pre><code><span class="diff-change">Δ1</span> <span class="kw">if</span> (X <span class="op">&gt;</span> Y)    <span class="cm">// &lt;= → &gt;</span>
+<span class="diff-change">Δ2</span> <span class="kw">if</span> (X <span class="op">&lt;</span> Y)    <span class="cm">// &lt;= → &lt;</span>
+<span class="diff-change">Δ3</span> <span class="kw">if</span> (X <span class="op">==</span> Y)   <span class="cm">// &lt;= → ==</span>
+<span class="diff-change">Δ4</span> <span class="kw">if</span> (<span class="nu">false</span>)     <span class="cm">// &lt;= → false</span></code></pre>
+      </div>
+    </div>
+
+    <h4>COR — 条件运算符替换</h4>
+    <p>替换逻辑连接词（&amp;&amp; 和 ||），测试逻辑组合的正确性。</p>
+    <div class="code-compare">
+      <div class="code-panel">
+        <span class="code-label original">原始</span>
+        <pre><code><span class="kw">if</span> (X <span class="op">&lt;=</span> Y <span class="op">&amp;&amp;</span> a <span class="op">&gt;</span> <span class="nu">0</span>)</code></pre>
+      </div>
+      <div class="code-panel">
+        <span class="code-label mutant">变体</span>
+        <pre><code><span class="diff-change">Δ1</span> <span class="kw">if</span> (X &lt;= Y <span class="op">||</span> a &gt; <span class="nu">0</span>)  <span class="cm">// &amp;&amp; → ||</span>
+<span class="diff-change">Δ2</span> <span class="kw">if</span> (X &lt;= Y <span class="op">leftOp</span> a &gt; <span class="nu">0</span>) <span class="cm">// 返回左操作数</span></code></pre>
+      </div>
+    </div>
+
+    <h4>SOR — 移位运算符替换</h4>
+    <p>替换移位运算符，测试位操作的正确性。</p>
+    <div class="code-compare">
+      <div class="code-panel">
+        <span class="code-label original">原始</span>
+        <pre><code>b = b <span class="op">&gt;&gt;</span> <span class="nu">2</span>;</code></pre>
+      </div>
+      <div class="code-panel">
+        <span class="code-label mutant">变体</span>
+        <pre><code><span class="diff-change">Δ1</span> b = b <span class="op">&lt;&lt;</span> <span class="nu">2</span>;   <span class="cm">// &gt;&gt; → &lt;&lt;</span>
+<span class="diff-change">Δ2</span> b = b <span class="op">&gt;&gt;&gt;</span> <span class="nu">2</span>;  <span class="cm">// &gt;&gt; → &gt;&gt;&gt;</span></code></pre>
+      </div>
+    </div>
+
+    <h4>LOR — 逻辑运算符替换</h4>
+    <p>替换位逻辑运算符。</p>
+    <div class="code-compare">
+      <div class="code-panel">
+        <span class="code-label original">原始</span>
+        <pre><code><span class="tp">int</span> c = a <span class="op">&amp;</span> b;</code></pre>
+      </div>
+      <div class="code-panel">
+        <span class="code-label mutant">变体</span>
+        <pre><code><span class="diff-change">Δ1</span> <span class="tp">int</span> c = a <span class="op">|</span> b;   <span class="cm">// &amp; → |</span>
+<span class="diff-change">Δ2</span> <span class="tp">int</span> c = a <span class="op">^</span> b;   <span class="cm">// &amp; → ^</span></code></pre>
+      </div>
+    </div>
+
+    <h4>ASR — 赋值运算符替换</h4>
+    <p>替换赋值运算符，测试复合赋值的正确性。</p>
+    <div class="code-compare">
+      <div class="code-panel">
+        <span class="code-label original">原始</span>
+        <pre><code>a <span class="op">=</span> m * (o + p);</code></pre>
+      </div>
+      <div class="code-panel">
+        <span class="code-label mutant">变体</span>
+        <pre><code><span class="diff-change">Δ1</span> a <span class="op">+=</span> m * (o + p);  <span class="cm">// = → +=</span>
+<span class="diff-change">Δ2</span> a <span class="op">*=</span> m * (o + p);  <span class="cm">// = → *=</span>
+<span class="diff-change">Δ3</span> a <span class="op">-=</span> m * (o + p);  <span class="cm">// = → -=</span></code></pre>
+      </div>
+    </div>
+
+    <h4>UOI — 一元运算符插入</h4>
+    <p>在一元运算符位置插入取反、逻辑非等运算符。</p>
+    <div class="code-compare">
+      <div class="code-panel">
+        <span class="code-label original">原始</span>
+        <pre><code>a = m * (o + p);</code></pre>
+      </div>
+      <div class="code-panel">
+        <span class="code-label mutant">变体</span>
+        <pre><code><span class="diff-change">Δ1</span> a = m * <span class="op">-</span>(o + p);  <span class="cm">// 插入 -</span>
+<span class="diff-change">Δ2</span> a = <span class="op">-</span>(m * (o + p)); <span class="cm">// 插入 -</span></code></pre>
+      </div>
+    </div>
+
+    <h4>UOD — 一元运算符删除</h4>
+    <p>删除已有的一元运算符。</p>
+    <div class="code-compare">
+      <div class="code-panel">
+        <span class="code-label original">原始</span>
+        <pre><code><span class="kw">if</span> (<span class="op">!</span>(X &lt;= Y <span class="op">&amp;&amp;</span> <span class="op">!</span>Z))</code></pre>
+      </div>
+      <div class="code-panel">
+        <span class="code-label mutant">变体</span>
+        <pre><code><span class="diff-change">Δ1</span> <span class="kw">if</span> (X &gt; Y <span class="op">&amp;&amp;</span> !Z)   <span class="cm">// 删除外层 !</span>
+<span class="diff-change">Δ2</span> <span class="kw">if</span> (!(X &lt;= Y <span class="op">&amp;&amp;</span> Z)) <span class="cm">// 删除内层 !</span></code></pre>
+      </div>
+    </div>
+
+    <h4>SVR — 标量变量替换</h4>
+    <p>将变量替换为同一作用域中的其他变量，模拟"用错变量"的错误。</p>
+    <div class="code-compare">
+      <div class="code-panel">
+        <span class="code-label original">原始</span>
+        <pre><code>a = <span class="vr">m</span> * (<span class="vr">o</span> + <span class="vr">p</span>);</code></pre>
+      </div>
+      <div class="code-panel">
+        <span class="code-label mutant">变体</span>
+        <pre><code><span class="diff-change">Δ1</span> a = <span class="vr">o</span> * (o + p);   <span class="cm">// m → o</span>
+<span class="diff-change">Δ2</span> a = m * (<span class="vr">m</span> + p);   <span class="cm">// o → m</span>
+<span class="diff-change">Δ3</span> a = m * (o + <span class="vr">o</span>);   <span class="cm">// p → o</span>
+<span class="diff-change">Δ4</span> <span class="vr">p</span> = m * (o + p);   <span class="cm">// a → p</span></code></pre>
+      </div>
+    </div>
+
+    <h4>BSR — 炸弹语句替换</h4>
+    <p>将语句替换为 <code>Bomb()</code>，在到达时抛出异常。用于测试代码可达性。</p>
+    <div class="code-compare">
+      <div class="code-panel">
+        <span class="code-label original">原始</span>
+        <pre><code>a = m * (o + p);</code></pre>
+      </div>
+      <div class="code-panel">
+        <span class="code-label mutant">变体</span>
+        <pre><code><span class="diff-change">Δ1</span> <span class="fn">Bomb</span>();  <span class="cm">// 到达时抛出异常</span></code></pre>
+      </div>
+    </div>
+
+    <!-- ==================== 有效集 ==================== -->
+    <h3 id="effective">有效变异运算符集</h3>
+
+    <p>并非所有变异运算符都同等重要。研究表明，一小部分运算符就能产生大部分测试效果。</p>
+
+    <blockquote>
+      <p><strong>有效变异运算符集的定义：</strong><br>
+      如果专门为杀死由运算符集 O = {o1, o2, ...} 创建的变体而设计的测试，也能以<strong>极高的概率</strong>杀死由所有剩余变异运算符创建的变体，则 O 定义了一个<strong>有效的变异运算符集</strong>。</p>
+    </blockquote>
+
+    <p>这意味着：</p>
+    <ul>
+      <li>我们不需要使用所有可能的变异运算符</li>
+      <li>选择最有效的子集即可获得大部分测试效果</li>
+      <li>这大大降低了变异测试的成本</li>
+      <li>具体的最优子集取决于编程语言和应用场景</li>
+    </ul>
+
+    <div class="tip">
+      <div>
+        <strong>实践建议：</strong> 在实际项目中，建议先使用一组经过验证的有效变异运算符，而不是尝试所有可能的运算符。这样可以在测试效果和成本之间取得良好的平衡。
+      </div>
+    </div>
+
+    <hr>
+    <div class="pagination">
+      <a href="program-mutation.html" class="page-nav">
+        <span class="label">上一页</span>
+        <span class="title">← 程序级变异测试</span>
+      </a>
+      <a href="exercises.html" class="page-nav next">
+        <span class="label">下一节</span>
+        <span class="title">实战练习 →</span>
+      </a>
+    </div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>程序级变异测试 — Ch5 基于语法的测试</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Toggle menu">☰</button>
+<div class="overlay"></div>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h1>软件测试笔记</h1>
+    <div class="subtitle">Software Testing · Chapter 5</div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section">章节导航</div>
+    <a href="index.html"><span class="icon">📖</span> 章节总览</a>
+    <a href="grammar.html"><span class="icon">📐</span> 文法覆盖标准</a>
+    <a href="mutation-basics.html"><span class="icon">🧬</span> 变异测试基础</a>
+    <a href="ripr.html"><span class="icon">🎯</span> RIPR 模型</a>
+    <a href="program-mutation.html" class="active"><span class="icon">💻</span> 程序级变异测试</a>
+    <a href="mutation-operators.html"><span class="icon">⚙️</span> 变异运算符</a>
+    <a href="exercises.html"><span class="icon">✏️</span> 实战练习</a>
+    <div class="nav-section">本页目录</div>
+    <a href="#process" class="toc-link"><span class="icon">🔄</span> 基本流程</a>
+    <a href="#min-example" class="toc-link"><span class="icon">📝</span> Min() 案例</a>
+    <a href="#equivalent" class="toc-link"><span class="icon">🧩</span> 等价变体</a>
+    <a href="#weak-example" class="toc-link"><span class="icon">⚡</span> 弱变异案例</a>
+    <a href="#premise" class="toc-link"><span class="icon">💡</span> 为什么有效</a>
+  </div>
+  <div class="sidebar-footer">
+    5.2.2 Program-based Grammars
+  </div>
+</nav>
+
+<main class="main">
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="index.html">Ch5</a>
+      <span class="sep">›</span>
+      <span>程序级变异测试</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-header">
+      <h2>程序级变异测试</h2>
+      <p class="desc">Program-based Mutation — 将变异测试应用于实际程序源码，通过修改程序语句来生成变体，评估和改进测试集的质量。</p>
+      <div class="meta">
+        <span class="tag">5.2.2</span>
+        <span class="tag">程序变异</span>
+        <span class="tag">等价变体</span>
+        <span class="tag">弱变异</span>
+      </div>
+    </div>
+
+    <!-- ==================== 基本流程 ==================== -->
+    <h3 id="process">程序级变异测试的基本流程</h3>
+
+    <p>基于语法的测试最原始和最广为人知的应用是<strong>修改程序</strong>。在程序级变异测试中：</p>
+
+    <div class="flow-diagram">
+      <div class="flow-step">
+        <div class="step-box" style="background:#dbeafe;">📄</div>
+        <div class="step-label">被测程序</div>
+        <div class="step-sub">Ground String</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#fef3c7;">⚙️</div>
+        <div class="step-label">变异运算符</div>
+        <div class="step-sub">修改程序语句</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#fee2e2;">🔄</div>
+        <div class="step-label">变体程序</div>
+        <div class="step-sub">必须能编译</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#d1fae5;">🧪</div>
+        <div class="step-label">设计测试</div>
+        <div class="step-sub">杀死变体</div>
+      </div>
+    </div>
+
+    <ul>
+      <li>运算符修改<strong>基本字符串</strong>（被测程序）以创建<strong>变体程序</strong></li>
+      <li>变体程序必须能<strong>正确编译</strong>（有效字符串）</li>
+      <li>变体<strong>不是测试</strong>，而是用于<strong>寻找测试</strong></li>
+      <li>一旦定义了变体，必须找到测试使变体在执行时失败 — 即"杀死变体"</li>
+    </ul>
+
+    <h4>变体的分类</h4>
+    <table>
+      <thead>
+        <tr><th>类型</th><th>英文</th><th>说明</th><th>状态</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>死亡变体</strong></td>
+          <td>Dead Mutant</td>
+          <td>已被某个测试用例杀死</td>
+          <td style="color:var(--success);">✅ 目标达成</td>
+        </tr>
+        <tr>
+          <td><strong>夭折变体</strong></td>
+          <td>Stillborn Mutant</td>
+          <td>语法不合法，无法编译</td>
+          <td style="color:var(--text-light);">⬜ 忽略</td>
+        </tr>
+        <tr>
+          <td><strong>平凡变体</strong></td>
+          <td>Trivial Mutant</td>
+          <td>几乎任何测试都能杀死</td>
+          <td style="color:var(--success);">✅ 容易处理</td>
+        </tr>
+        <tr>
+          <td><strong>等价变体</strong></td>
+          <td>Equivalent Mutant</td>
+          <td>与原程序行为完全相同</td>
+          <td style="color:var(--danger);">❌ 不可杀死</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ==================== Min() 案例 ==================== -->
+    <h3 id="min-example">经典案例：Min() 函数</h3>
+
+    <p>以下是一个经典的变异测试案例，展示了如何对一个简单的求最小值函数进行变异分析：</p>
+
+    <h4>原始程序</h4>
+    <pre><code><span class="tp">int</span> <span class="fn">Min</span>(<span class="tp">int</span> A, <span class="tp">int</span> B) {
+    <span class="tp">int</span> minVal;
+    minVal = A;
+    <span class="kw">if</span> (B <span class="op">&lt;</span> A) {
+        minVal = B;
+    }
+    <span class="kw">return</span> (minVal);
+}</code>
+<span class="lang-label">C++</span></pre>
+
+    <h4>嵌入变体的程序</h4>
+    <p>在原始程序的基础上，通过变异运算符生成了 6 个变体：</p>
+
+    <pre><code><span class="tp">int</span> <span class="fn">Min</span>(<span class="tp">int</span> A, <span class="tp">int</span> B) {
+    <span class="tp">int</span> minVal;
+    minVal = A;
+    <span class="diff-change">Δ1  minVal = B;</span>              <span class="cm">// 变体1：额外赋值</span>
+    <span class="kw">if</span> (B <span class="op">&lt;</span> A)
+    <span class="diff-change">Δ2  if (B &gt; A)</span>               <span class="cm">// 变体2：条件反转</span>
+    <span class="diff-change">Δ3  if (B &lt; minVal)</span>          <span class="cm">// 变体3：替换条件</span>
+    {
+        minVal = B;
+        <span class="diff-change">Δ4  Bomb();</span>               <span class="cm">// 变体4：炸弹语句</span>
+        <span class="diff-change">Δ5  minVal = A;</span>           <span class="cm">// 变体5：赋值替换</span>
+        <span class="diff-change">Δ6  minVal = failOnZero(B);</span> <span class="cm">// 变体6：函数替换</span>
+    }
+    <span class="kw">return</span> (minVal);
+}</code>
+<span class="lang-label">C++ with Mutants</span></pre>
+
+    <h4>变体分析</h4>
+    <table>
+      <thead>
+        <tr><th>变体</th><th>变异描述</th><th>变异位置</th><th>类型</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Δ1</strong></td><td>在 if 之前插入 <code>minVal = B</code></td><td>if 之前</td><td>语句插入</td></tr>
+        <tr><td><strong>Δ2</strong></td><td>条件 <code>B &lt; A</code> → <code>B &gt; A</code></td><td>if 条件</td><td>条件替换</td></tr>
+        <tr><td><strong>Δ3</strong></td><td>条件 <code>B &lt; A</code> → <code>B &lt; minVal</code></td><td>if 条件</td><td>条件替换</td></tr>
+        <tr><td><strong>Δ4</strong></td><td><code>minVal = B</code> → <code>Bomb()</code></td><td>if 分支体</td><td>炸弹语句</td></tr>
+        <tr><td><strong>Δ5</strong></td><td><code>minVal = B</code> → <code>minVal = A</code></td><td>if 分支体</td><td>变量替换</td></tr>
+        <tr><td><strong>Δ6</strong></td><td><code>minVal = B</code> → <code>minVal = failOnZero(B)</code></td><td>if 分支体</td><td>函数替换</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ==================== 等价变体 ==================== -->
+    <h3 id="equivalent">等价变体 (Equivalent Mutant)</h3>
+
+    <p>等价变体是变异测试中最棘手的问题之一。它是指与原程序<strong>行为完全相同</strong>的变体 — 不存在任何测试能杀死它。</p>
+
+    <h4>案例：变体 Δ3 的等价性证明</h4>
+
+    <div class="code-compare">
+      <div class="code-panel">
+        <span class="code-label original">原程序</span>
+        <pre><code>minVal = A;
+<span class="kw">if</span> (B <span class="op">&lt;</span> A)    <span class="cm">// 原始条件</span>
+{
+    minVal = B;
+}</code></pre>
+      </div>
+      <div class="code-panel">
+        <span class="code-label mutant">变体 Δ3</span>
+        <pre><code>minVal = A;
+<span class="kw">if</span> (B <span class="op">&lt;</span> minVal)  <span class="cm">// 修改后的条件</span>
+{
+    minVal = B;
+}</code></pre>
+      </div>
+    </div>
+
+    <p><strong>证明过程：</strong></p>
+    <ol>
+      <li>在 <code>if</code> 语句之前，执行了 <code>minVal = A</code></li>
+      <li>因此在条件判断处，<code>minVal = A</code></li>
+      <li>变体的条件是 <code>B &lt; minVal</code>，代入得 <code>B &lt; A</code></li>
+      <li>这与原程序的条件 <code>B &lt; A</code> 完全相同！</li>
+      <li>Infection 条件：<code>(B &lt; A) ≠ (B &lt; minVal)</code> → <code>(B &lt; A) ≠ (B &lt; A)</code> → <strong>矛盾</strong></li>
+    </ol>
+
+    <div class="danger-block">
+      <div>
+        <strong>结论：</strong> 变体 Δ3 是<strong>等价变体</strong>。无论使用什么测试输入，变体 Δ3 的行为都与原程序完全相同。等价变体的存在是变异测试的主要挑战之一，因为判断一个变体是否等价通常是不可判定的问题。
+      </div>
+    </div>
+
+    <!-- ==================== 弱变异案例 ==================== -->
+    <h3 id="weak-example">弱变异案例分析</h3>
+
+    <h4>案例：变体 Δ1 的弱变异分析</h4>
+
+    <p>变体 Δ1 在 <code>if</code> 之前插入了 <code>minVal = B</code>：</p>
+
+    <div class="code-compare">
+      <div class="code-panel">
+        <span class="code-label original">原程序</span>
+        <pre><code>minVal = A;
+<span class="cm">// (无额外语句)</span>
+<span class="kw">if</span> (B <span class="op">&lt;</span> A) {
+    minVal = B;
+}
+<span class="kw">return</span> minVal;</code></pre>
+      </div>
+      <div class="code-panel">
+        <span class="code-label mutant">变体 Δ1</span>
+        <pre><code>minVal = A;
+<span class="diff-change">minVal = B;</span>  <span class="cm">// ← 插入</span>
+<span class="kw">if</span> (B <span class="op">&lt;</span> A) {
+    minVal = B;
+}
+<span class="kw">return</span> minVal;</code></pre>
+      </div>
+    </div>
+
+    <p><strong>RIP 分析：</strong></p>
+    <table>
+      <thead>
+        <tr><th>条件</th><th>分析</th><th>表达式</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>R</strong></td>
+          <td>插入的语句在每次调用时都会执行</td>
+          <td>无条件</td>
+        </tr>
+        <tr>
+          <td><strong>I</strong></td>
+          <td>原程序 minVal=A，变体 minVal=B → 需要 A≠B</td>
+          <td><code>A ≠ B</code></td>
+        </tr>
+        <tr>
+          <td><strong>P (强杀死)</strong></td>
+          <td>需要差异传播到 return。若 B&lt;A：两程序都执行 minVal=B → 输出相同！</td>
+          <td><code>B ≥ A</code>（取不同分支）</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h4>弱杀死但非强杀死的测试</h4>
+    <p><strong>测试用例：A=5, B=3</strong></p>
+    <table>
+      <thead>
+        <tr><th>步骤</th><th>原程序</th><th>变体 Δ1</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>minVal = A</td><td>minVal = 5</td><td>minVal = 5</td></tr>
+        <tr><td>minVal = B（仅变体）</td><td>—</td><td><span class="diff-change">minVal = 3</span></td></tr>
+        <tr><td>if (B &lt; A)</td><td>true (3&lt;5)</td><td>true (3&lt;5)</td></tr>
+        <tr><td>minVal = B</td><td>minVal = 3</td><td>minVal = 3</td></tr>
+        <tr><td>return</td><td><strong>3</strong></td><td><strong>3</strong></td></tr>
+      </tbody>
+    </table>
+    <p>输出相同（都是 3）→ <strong>未强杀死</strong>。但在变异点之后状态不同（minVal=5 vs minVal=3）→ <strong>弱杀死</strong> ✅</p>
+
+    <h4>强杀死的测试</h4>
+    <p><strong>测试用例：A=3, B=5</strong></p>
+    <table>
+      <thead>
+        <tr><th>步骤</th><th>原程序</th><th>变体 Δ1</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>minVal = A</td><td>minVal = 3</td><td>minVal = 3</td></tr>
+        <tr><td>minVal = B（仅变体）</td><td>—</td><td><span class="diff-change">minVal = 5</span></td></tr>
+        <tr><td>if (B &lt; A)</td><td>false (5&lt;3?)</td><td>false (5&lt;3?)</td></tr>
+        <tr><td>return</td><td><strong>3</strong></td><td><strong>5</strong></td></tr>
+      </tbody>
+    </table>
+    <p>输出不同（3 ≠ 5）→ <strong>强杀死</strong> ✅</p>
+
+    <!-- ==================== 为什么有效 ==================== -->
+    <h3 id="premise">变异测试为什么有效？</h3>
+
+    <blockquote>
+      <p><strong>变异测试的基本前提 (Fundamental Premise)：</strong><br>
+      如果软件包含一个故障，通常会存在一组变体，只有能检测到该故障的测试用例才能杀死这些变体。</p>
+    </blockquote>
+
+    <p>这意味着：</p>
+    <ul>
+      <li>如果测试集能杀死所有（非等价的）变体，那么它很可能也能检测到程序中的实际故障</li>
+      <li>变体引导测试者找到<strong>有效的测试集</strong></li>
+      <li>变异测试被广泛认为是测试的<strong>"黄金标准"</strong></li>
+    </ul>
+
+    <div class="compare-grid">
+      <div class="compare-box">
+        <h4>✅ 优势</h4>
+        <ul>
+          <li>非常强大的测试标准</li>
+          <li>可以包含其他覆盖标准</li>
+          <li>有坚实的理论基础</li>
+          <li>可自动化执行</li>
+        </ul>
+      </div>
+      <div class="compare-box">
+        <h4>⚠️ 挑战</h4>
+        <ul>
+          <li>计算成本高（变体数量大）</li>
+          <li>等价变体问题</li>
+          <li>需要语言特定的变异运算符</li>
+          <li>执行时间长</li>
+        </ul>
+      </div>
+    </div>
+
+    <h4>变异包含其他标准</h4>
+    <p>通过包含特定的变异运算符，变异测试可以包含其他测试标准：</p>
+    <table>
+      <thead>
+        <tr><th>标准</th><th>是否被包含</th><th>说明</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>节点覆盖 (NC)</td><td>✅</td><td>通过变异条件语句包含</td></tr>
+        <tr><td>边覆盖 (EC)</td><td>✅</td><td>通过变异分支条件包含</td></tr>
+        <tr><td>子句覆盖 (CC)</td><td>✅</td><td>通过变异子句包含</td></tr>
+        <tr><td>一般主动子句覆盖</td><td>✅</td><td>对单个测试的需求</td></tr>
+        <tr><td>关联主动子句覆盖</td><td>❌</td><td>对测试对的需求，无法通过弱变异包含</td></tr>
+        <tr><td>全定义数据流覆盖</td><td>✅</td><td>通过变异定义点包含</td></tr>
+      </tbody>
+    </table>
+
+    <hr>
+    <div class="pagination">
+      <a href="ripr.html" class="page-nav">
+        <span class="label">上一页</span>
+        <span class="title">← RIPR 模型</span>
+      </a>
+      <a href="mutation-operators.html" class="page-nav next">
+        <span class="label">下一节</span>
+        <span class="title">变异运算符 →</span>
+      </a>
+    </div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

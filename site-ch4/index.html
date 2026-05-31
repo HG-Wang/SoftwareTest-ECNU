@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ch4 逻辑覆盖 — 软件测试笔记</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Toggle menu">☰</button>
+<div class="overlay"></div>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h1>软件测试笔记</h1>
+    <div class="subtitle">Software Testing · Chapter 4</div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section">章节导航</div>
+    <a href="index.html" class="active"><span class="icon">📖</span> 章节总览</a>
+    <a href="semantic.html"><span class="icon">🧠</span> 语义覆盖标准</a>
+    <a href="inactive.html"><span class="icon">🚫</span> 非活动子句覆盖</a>
+    <a href="dnf.html"><span class="icon">📝</span> DNF语法覆盖</a>
+    <a href="source.html"><span class="icon">💻</span> 源代码逻辑覆盖</a>
+    <a href="spec.html"><span class="icon">📋</span> 规约逻辑覆盖</a>
+    <a href="fsm.html"><span class="icon">🔄</span> FSM逻辑覆盖</a>
+    <div class="nav-section">附录</div>
+    <a href="#glossary"><span class="icon">📊</span> 术语表</a>
+  </div>
+  <div class="sidebar-footer">
+    Chapter 4 · Logic Coverage<br>
+    逻辑覆盖 · 软件工程课程
+  </div>
+</nav>
+
+<main class="main">
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="#">Ch4 逻辑覆盖</a>
+      <span class="sep">›</span>
+      <span>章节总览</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="hero">
+      <h2>Chapter 4<br>逻辑覆盖</h2>
+      <p>Logic Coverage Criteria — 针对软件中的逻辑表达式（谓词与子句），系统地定义测试覆盖标准，确保测试充分验证逻辑判断的正确性。</p>
+      <div class="hero-stats">
+        <div class="stat"><div class="stat-num">8</div><div class="stat-label">覆盖标准</div></div>
+        <div class="stat"><div class="stat-num">9</div><div class="stat-label">DNF故障类型</div></div>
+        <div class="stat"><div class="stat-num">5</div><div class="stat-label">核心章节</div></div>
+        <div class="stat"><div class="stat-num">6</div><div class="stat-label">知识页面</div></div>
+      </div>
+    </div>
+
+    <h3 id="overview">章节概述</h3>
+    <p>逻辑覆盖（Logic Coverage）是软件测试中基于<strong>谓词（predicate）</strong>和<strong>子句（clause）</strong>的覆盖标准体系。它广泛应用于以下场景：</p>
+    <ul>
+      <li><strong>程序源码</strong> — 测试 <code>if</code>、<code>while</code> 等控制流中的布尔表达式</li>
+      <li><strong>规约文档</strong> — 验证需求规约中的逻辑条件是否被充分测试</li>
+      <li><strong>有限状态机 (FSM)</strong> — 测试状态转换中的守卫条件</li>
+      <li><strong>判定表 / 因果图</strong> — 覆盖复杂业务规则中的逻辑组合</li>
+    </ul>
+    <p>本章涵盖 8 种主要覆盖标准：<strong>PC</strong>（谓词覆盖）、<strong>CC</strong>（子句覆盖）、<strong>CoC</strong>（组合覆盖）、<strong>GACC</strong>（一般主动子句覆盖）、<strong>CACC</strong>（相关主动子句覆盖）、<strong>RACC</strong>（限制性主动子句覆盖）、<strong>GICC</strong>（一般非活动子句覆盖）、<strong>RICC</strong>（限制性非活动子句覆盖），以及 DNF 形式下的语法覆盖方法。</p>
+
+    <h3 id="sections">核心章节</h3>
+    <div class="card-grid">
+      <a href="semantic.html" class="card">
+        <div class="card-icon blue">🧠</div>
+        <h3>语义覆盖标准</h3>
+        <p>PC、CC、CoC、ACC 四大家族的语义定义、真值表示例、限制性条件与包含关系。</p>
+        <div class="card-arrow">查看详情 →</div>
+      </a>
+      <a href="inactive.html" class="card">
+        <div class="card-icon purple">🚫</div>
+        <h3>非活动子句覆盖</h3>
+        <p>GICC 与 RICC — 当子句不影响谓词取值时的覆盖策略。</p>
+        <div class="card-arrow">查看详情 →</div>
+      </a>
+      <a href="dnf.html" class="card">
+        <div class="card-icon green">📝</div>
+        <h3>DNF 语法覆盖</h3>
+        <p>将逻辑表达式化为 DNF 后，利用蕴含项、UTP、NFP 等概念定义的 9 种故障类型。</p>
+        <div class="card-arrow">查看详情 →</div>
+      </a>
+      <a href="source.html" class="card">
+        <div class="card-icon orange">💻</div>
+        <h3>源代码逻辑覆盖</h3>
+        <p>在程序源码层面应用逻辑覆盖标准，处理短路求值等实现细节。</p>
+        <div class="card-arrow">查看详情 →</div>
+      </a>
+      <a href="fsm.html" class="card">
+        <div class="card-icon teal">🔄</div>
+        <h3>FSM 逻辑覆盖</h3>
+        <p>在有限状态机中，将守卫条件视为谓词，应用逻辑覆盖标准测试状态转换。</p>
+        <div class="card-arrow">查看详情 →</div>
+      </a>
+    </div>
+
+    <h3 id="coverage-criteria">覆盖标准一览</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>缩写</th>
+          <th>全称</th>
+          <th>中文</th>
+          <th>类型</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>PC</strong></td><td>Predicate Coverage</td><td>谓词覆盖</td><td>语义覆盖</td></tr>
+        <tr><td><strong>CC</strong></td><td>Clause Coverage</td><td>子句覆盖</td><td>语义覆盖</td></tr>
+        <tr><td><strong>CoC</strong></td><td>Combinatorial Coverage</td><td>组合覆盖</td><td>语义覆盖</td></tr>
+        <tr><td><strong>GACC</strong></td><td>General Active Clause Coverage</td><td>一般主动子句覆盖</td><td>ACC 家族</td></tr>
+        <tr><td><strong>CACC</strong></td><td>Correlated Active Clause Coverage</td><td>相关主动子句覆盖</td><td>ACC 家族</td></tr>
+        <tr><td><strong>RACC</strong></td><td>Restricted Active Clause Coverage</td><td>限制性主动子句覆盖</td><td>ACC 家族</td></tr>
+        <tr><td><strong>GICC</strong></td><td>General Inactive Clause Coverage</td><td>一般非活动子句覆盖</td><td>ICC 家族</td></tr>
+        <tr><td><strong>RICC</strong></td><td>Restricted Inactive Clause Coverage</td><td>限制性非活动子句覆盖</td><td>ICC 家族</td></tr>
+      </tbody>
+    </table>
+
+    <h3 id="glossary">关键术语速查</h3>
+    <dl class="def-list">
+      <dt>谓词 (Predicate)</dt>
+      <dd>一个返回布尔值的逻辑表达式，由多个子句通过逻辑运算符连接而成。例如 <code>p = a ∧ (b ∨ c)</code>。</dd>
+      <dt>子句 (Clause)</dt>
+      <dd>谓词中的基本布尔变量或取反的布尔变量。例如上式中的 <code>a</code>、<code>b</code>、<code>c</code> 各为一个子句。</dd>
+      <dt>主子句 (Major Clause)</dt>
+      <dd>在 ACC 测试中，被选为"决定谓词取值"的子句。其取值变化会导致谓词变化。</dd>
+      <dt>次子句 (Minor Clause)</dt>
+      <dd>谓词中除主子句外的其他子句。在 ACC 测试中需要固定次子句的取值。</dd>
+      <dt>蕴含项 (Implicant)</dt>
+      <dd>DNF 中的一个合取项，当其所有文字为真时，整个 DNF 表达式为真。</dd>
+      <dt>UTP (Unique True Point)</dt>
+      <dd>唯真点 — 使某个蕴含项恰好为真、而其他蕴含项为假的输入点。</dd>
+      <dt>NFP (Near False Point)</dt>
+      <dd>近假点 — 使某个蕴含项恰好为假（仅一个文字为假）、而其他蕴含项为假的输入点。</dd>
+    </dl>
+
+    <h3 id="subsumption">包含关系图</h3>
+    <p>覆盖标准之间存在严格的包含关系（A ⊇ B 表示满足 A 一定满足 B）：</p>
+
+    <h4>ACC 家族包含关系</h4>
+    <div class="flow-diagram">
+      <div class="flow-step">
+        <div class="step-box" style="background:#dbeafe;">CoC</div>
+        <div class="step-label">组合覆盖</div>
+        <div class="step-sub">2^N 组合</div>
+      </div>
+      <div class="flow-arrow">⊇</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#ede9fe;">RACC</div>
+        <div class="step-label">限制性 ACC</div>
+        <div class="step-sub">最强 ACC</div>
+      </div>
+      <div class="flow-arrow">⊇</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#d1fae5;">CACC</div>
+        <div class="step-label">相关 ACC</div>
+        <div class="step-sub">中等强度</div>
+      </div>
+      <div class="flow-arrow">⊇</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#ffedd5;">GACC</div>
+        <div class="step-label">一般 ACC</div>
+        <div class="step-sub">最弱 ACC</div>
+      </div>
+    </div>
+    <p style="text-align:center; color:var(--text-light); font-size:.88rem;">CoC ⊇ RACC ⊇ CACC ⊇ GACC</p>
+
+    <h4>ICC 家族包含关系</h4>
+    <div class="flow-diagram">
+      <div class="flow-step">
+        <div class="step-box" style="background:#fee2e2;">ICC</div>
+        <div class="step-label">非活动子句覆盖</div>
+        <div class="step-sub">完整 ICC</div>
+      </div>
+      <div class="flow-arrow">⊇</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#fef3c7;">RICC</div>
+        <div class="step-label">限制性 ICC</div>
+        <div class="step-sub">约束版 ICC</div>
+      </div>
+      <div class="flow-arrow">⊇</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#ccfbf1;">PC</div>
+        <div class="step-label">谓词覆盖</div>
+        <div class="step-sub">基础覆盖</div>
+      </div>
+    </div>
+    <p style="text-align:center; color:var(--text-light); font-size:.88rem;">ICC ⊇ RICC ⊇ PC — 非活动子句覆盖包含谓词覆盖</p>
+
+    <div class="tip">
+      <div>
+        <strong>核心关系：</strong> RACC 是与 <strong>MC/DC（修改条件/判定覆盖）</strong> 最接近的标准。在航空安全标准 DO-178B 中，MC/DC 是 Level A 软件必须满足的覆盖标准。
+      </div>
+    </div>
+
+    <div class="pagination">
+      <div></div>
+      <a href="semantic.html" class="page-nav next">
+        <span class="label">下一节</span>
+        <span class="title">语义覆盖标准 →</span>
+      </a>
+    </div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>变异测试基础 — Ch5 基于语法的测试</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Toggle menu">☰</button>
+<div class="overlay"></div>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h1>软件测试笔记</h1>
+    <div class="subtitle">Software Testing · Chapter 5</div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section">章节导航</div>
+    <a href="index.html"><span class="icon">📖</span> 章节总览</a>
+    <a href="grammar.html"><span class="icon">📐</span> 文法覆盖标准</a>
+    <a href="mutation-basics.html" class="active"><span class="icon">🧬</span> 变异测试基础</a>
+    <a href="ripr.html"><span class="icon">🎯</span> RIPR 模型</a>
+    <a href="program-mutation.html"><span class="icon">💻</span> 程序级变异测试</a>
+    <a href="mutation-operators.html"><span class="icon">⚙️</span> 变异运算符</a>
+    <a href="exercises.html"><span class="icon">✏️</span> 实战练习</a>
+    <div class="nav-section">本页目录</div>
+    <a href="#what" class="toc-link"><span class="icon">🔍</span> 什么是变异</a>
+    <a href="#concepts" class="toc-link"><span class="icon">📚</span> 核心概念</a>
+    <a href="#mutant-types" class="toc-link"><span class="icon">🏷️</span> 变体类型</a>
+    <a href="#coverage-criteria" class="toc-link"><span class="icon">📊</span> 覆盖标准</a>
+    <a href="#questions" class="toc-link"><span class="icon">❓</span> 关键问题</a>
+  </div>
+  <div class="sidebar-footer">
+    5.1.2 Mutation Testing
+  </div>
+</nav>
+
+<main class="main">
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="index.html">Ch5</a>
+      <span class="sep">›</span>
+      <span>变异测试基础</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-header">
+      <h2>变异测试基础</h2>
+      <p class="desc">Mutation Testing — 通过系统地修改（变异）软件构件来生成测试用例、评估测试集质量的测试方法。被广泛认为是测试的"黄金标准"。</p>
+      <div class="meta">
+        <span class="tag">5.1.2</span>
+        <span class="tag">变异测试</span>
+        <span class="tag">变体</span>
+        <span class="tag">杀死变体</span>
+      </div>
+    </div>
+
+    <!-- ==================== 什么是变异 ==================== -->
+    <h3 id="what">什么是变异？</h3>
+
+    <p><strong>变异（Mutation）</strong>是一种基于语法的测试方法。其核心思想是：对一个已有的程序或字符串（称为<strong>基本字符串</strong>），按照明确定义的规则（称为<strong>变异运算符</strong>），进行系统性的微小修改，生成新的版本（称为<strong>变体</strong>）。</p>
+
+    <div class="flow-diagram">
+      <div class="flow-step">
+        <div class="step-box" style="background:#dbeafe;">📄</div>
+        <div class="step-label">基本字符串</div>
+        <div class="step-sub">Ground String</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#fef3c7;">⚙️</div>
+        <div class="step-label">变异运算符</div>
+        <div class="step-sub">Mutation Operator</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#fee2e2;">🔄</div>
+        <div class="step-label">变体</div>
+        <div class="step-sub">Mutant</div>
+      </div>
+    </div>
+
+    <blockquote>
+      <p><strong>变异的通用定义：</strong> 当我们使用明确定义的规则，基于语法描述，对语法或由语法开发的对象进行系统性更改时，就是在进行变异分析。</p>
+    </blockquote>
+
+    <p>变异的核心公式可以简单表示为：</p>
+    <pre><code><span class="cm">// 变异过程</span>
+基本字符串 <span class="op">+</span> 变异运算符 <span class="op">→</span> 变体
+
+<span class="cm">// 示例</span>
+<span class="st">G 26 08.01.90</span>  <span class="op">+</span>  交换G/B  <span class="op">→</span>  <span class="st">B 26 08.01.90</span></code>
+<span class="lang-label">Formula</span></pre>
+
+    <!-- ==================== 核心概念 ==================== -->
+    <h3 id="concepts">核心概念</h3>
+
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>📄 基本字符串 (Ground String)</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <p><strong>定义：</strong> 文法中的一个有效字符串，作为变异的起始点。</p>
+            <p>术语 "ground" 来源于代数中的 <strong>ground term</strong>（基础项），指的是不含变量的项。类似地，基本字符串是已经被完全实例化的有效字符串。</p>
+            <p><strong>示例：</strong></p>
+            <ul>
+              <li><code>G 26 08.01.90</code> — 一个有效的 actG 字符串</li>
+              <li><code>B 22 06.27.94</code> — 一个有效的 actB 字符串</li>
+              <li>一个完整的 Java 程序 — 作为程序级变异的基本字符串</li>
+            </ul>
+            <p>基本字符串用于生成<strong>有效测试</strong>；无效测试不需要基本字符串，可以直接从文法推导。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>⚙️ 变异运算符 (Mutation Operator)</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <p><strong>定义：</strong> 一条规则，指定由文法生成的字符串的语法变化方式。</p>
+            <p>变异运算符通常做以下两类事情之一：</p>
+            <ul>
+              <li><strong>模拟程序员的典型错误</strong> — 例如使用了错误的变量名、错误的运算符</li>
+              <li><strong>鼓励常见的测试启发式</strong> — 例如使表达式为 0、使条件为 false</p>
+            </ul>
+            <p><strong>示例：</strong></p>
+            <ul>
+              <li><strong>交换动作：</strong> 将 <code>G</code> 替换为 <code>B</code>（或反之）</li>
+              <li><strong>替换数字：</strong> 将某位数字替换为其他数字</li>
+              <li><strong>算术运算符替换：</strong> 将 <code>+</code> 替换为 <code>-</code></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>🔄 变体 (Mutant)</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <p><strong>定义：</strong> 对基本字符串应用一次变异运算符后得到的结果。</p>
+            <p>变体是一个字符串，它要么在文法中（有效变体），要么非常接近于在文法中（无效变体）。</p>
+            <div class="tip"><div><strong>关键原则：</strong> 通常每次只应用一个变异运算符。多个变异可能相互干扰，降低测试效果。经验表明，单次变异更有效。</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>💀 杀死变体 (Killing Mutant)</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <p><strong>定义：</strong> 给定推导 D 的变体 m∈M 和测试 t，当且仅当 <strong>t 在 D 上的输出 ≠ t 在 m 上的输出</strong>时，称 t 杀死 m。</p>
+            <p>简单来说：如果一个测试用例能让原程序和变体产生不同的输出，那么这个测试就"杀死"了该变体。</p>
+            <pre><code><span class="cm">// 杀死变体的条件</span>
+output(t, 原程序) <span class="op">≠</span> output(t, 变体)  →  t 杀死了变体 m</code>
+<span class="lang-label">Definition</span></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 变体类型 ==================== -->
+    <h3 id="mutant-types">变体的类型</h3>
+
+    <p>在实际的变异测试中，产生的变体可以分为以下几种类型：</p>
+
+    <table>
+      <thead>
+        <tr><th>类型</th><th>英文</th><th>说明</th><th>能否被杀死</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>死亡变体</strong></td>
+          <td>Dead Mutant</td>
+          <td>已被某个测试用例杀死的变体</td>
+          <td>✅ 已被杀死</td>
+        </tr>
+        <tr>
+          <td><strong>存活变体</strong></td>
+          <td>Live Mutant</td>
+          <td>尚未被任何测试用例杀死的变体</td>
+          <td>⚠️ 需要更多测试</td>
+        </tr>
+        <tr>
+          <td><strong>等价变体</strong></td>
+          <td>Equivalent Mutant</td>
+          <td>与原程序行为完全相同的变体</td>
+          <td>❌ 不可能被杀死</td>
+        </tr>
+        <tr>
+          <td><strong>夭折变体</strong></td>
+          <td>Stillborn Mutant</td>
+          <td>语法不合法的变体（无法编译）</td>
+          <td>❌ 无需杀死</td>
+        </tr>
+        <tr>
+          <td><strong>平凡变体</strong></td>
+          <td>Trivial Mutant</td>
+          <td>几乎任何测试都能杀死的变体</td>
+          <td>✅ 容易杀死</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h4>变体示例</h4>
+    <p>以 stream 文法为例，展示有效变体和无效变体：</p>
+
+    <div class="code-compare">
+      <div class="code-panel">
+        <span class="code-label original">有效变体</span>
+        <pre><code><span class="cm">基本字符串          变体</span>
+<span class="st">G 26 08.01.90</span>  →  <span class="st">B 26 08.01.90</span>  <span class="cm">// G→B</span>
+<span class="st">B 22 06.27.94</span>  →  <span class="st">B 45 06.27.94</span>  <span class="cm">// 22→45</span></code></pre>
+      </div>
+      <div class="code-panel">
+        <span class="code-label mutant">无效变体</span>
+        <pre><code><span class="cm">违反语法的变体</span>
+<span class="st">7 26 08.01.90</span>     <span class="cm">// 7不是有效动作</span>
+<span class="st">B 22 06.27.1</span>      <span class="cm">// 日期格式错误</span></code></pre>
+      </div>
+    </div>
+
+    <!-- ==================== 覆盖标准 ==================== -->
+    <h3 id="coverage-criteria">变异测试覆盖标准</h3>
+
+    <p>基于变异测试，可以定义三种覆盖标准：</p>
+
+    <div class="accordion">
+      <div class="accordion-item open">
+        <button class="accordion-header">
+          <span>🎯 变异覆盖 MC (Mutation Coverage)</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="accordion-body" style="max-height: 500px;">
+          <div class="accordion-body-inner">
+            <blockquote>
+              <p><strong>定义：</strong> 对于每个变体 m∈M，测试需求集 TR 恰好包含一个需求 — <strong>杀死 m</strong>。</p>
+            </blockquote>
+            <p>MC 是最强的变异测试标准，要求测试集能够杀死所有非等价变体。</p>
+            <p>覆盖程度用<strong>变异分数 (Mutation Score)</strong> 衡量：</p>
+            <pre><code>变异分数 <span class="op">=</span> 被杀死的变体数 <span class="op">/</span> 非等价变体总数 <span class="op">×</span> <span class="nu">100%</span></code></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>📝 变异运算符覆盖 MOC (Mutation Operator Coverage)</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <blockquote>
+              <p><strong>定义：</strong> 对于每个变异运算符，TR 恰好包含一个需求 — 创建一个使用该运算符推导的变异字符串。</p>
+            </blockquote>
+            <p>MOC 要求每个变异运算符至少被使用一次。它不要求杀死变体，只要求创建变体。</p>
+            <p>用于生成<strong>无效字符串</strong>的覆盖标准。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>📋 变异产生式覆盖 MPC (Mutation Production Coverage)</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <blockquote>
+              <p><strong>定义：</strong> 对于每个变异运算符，TR 包含多个需求 — 创建一个包含该运算符可变异的<strong>每个产生式</strong>的变异字符串。</p>
+            </blockquote>
+            <p>MPC 比 MOC 更严格，要求每个运算符在每个可应用的产生式上都被使用。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h4>包含关系</h4>
+    <div class="flow-diagram">
+      <div class="flow-step">
+        <div class="step-box" style="background:#fee2e2;">MC</div>
+        <div class="step-label">变异覆盖</div>
+      </div>
+      <div class="flow-arrow">⊇</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#ffedd5;">MPC</div>
+        <div class="step-label">变异产生式覆盖</div>
+      </div>
+      <div class="flow-arrow">⊇</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#fef3c7;">MOC</div>
+        <div class="step-label">变异运算符覆盖</div>
+      </div>
+    </div>
+
+    <!-- ==================== 关键问题 ==================== -->
+    <h3 id="questions">变异测试的关键问题</h3>
+
+    <div class="compare-grid">
+      <div class="compare-box">
+        <h4>❓ 是否应同时应用多个运算符？</h4>
+        <ul>
+          <li>通常<strong>不需要</strong></li>
+          <li>多重变异可能相互干扰</li>
+          <li>程序级变异的经验表明单次变异更有效</li>
+          <li>但近年研究发现了例外情况</li>
+        </ul>
+      </div>
+      <div class="compare-box">
+        <h4>❓ 是否应考虑每个可能的应用？</h4>
+        <ul>
+          <li>在程序级变异中是<strong>必要的</strong></li>
+          <li>每个可能的变异点都需要考虑</li>
+          <li>这导致变体数量可能非常庞大</li>
+          <li>需要工具支持自动化</li>
+        </ul>
+      </div>
+    </div>
+
+    <h4>变异测试的应用领域</h4>
+    <p>变异运算符已为多种语言和领域定义：</p>
+    <table>
+      <thead>
+        <tr><th>领域</th><th>语言/技术</th><th>应用场景</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>编程语言</td><td>Fortran, Lisp, Ada, C, C++, Java</td><td>单元测试、集成测试</td></tr>
+        <tr><td>规约语言</td><td>SMV, Z, Object-Z, 代数规约</td><td>规约验证</td></tr>
+        <tr><td>建模语言</td><td>Statecharts, 活动图</td><td>模型测试</td></tr>
+        <tr><td>输入文法</td><td>XML, SQL, HTML</td><td>输入验证、安全测试</td></tr>
+      </tbody>
+    </table>
+
+    <div class="tip">
+      <div>
+        <strong>变异测试的本质：</strong> 变异测试不是直接生成测试用例，而是通过变体来<strong>引导</strong>测试者找到有效的测试集。如果一个测试集能杀死所有（非等价的）变体，那么它被认为是非常强大的测试集。
+      </div>
+    </div>
+
+    <hr>
+    <div class="pagination">
+      <a href="grammar.html" class="page-nav">
+        <span class="label">上一页</span>
+        <span class="title">← 文法覆盖标准</span>
+      </a>
+      <a href="ripr.html" class="page-nav next">
+        <span class="label">下一节</span>
+        <span class="title">RIPR 模型 →</span>
+      </a>
+    </div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

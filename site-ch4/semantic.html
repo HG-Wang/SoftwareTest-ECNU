@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>语义逻辑覆盖标准 — Ch4 逻辑覆盖</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Toggle menu">☰</button>
+<div class="overlay"></div>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h1>软件测试笔记</h1>
+    <div class="subtitle">Software Testing · Chapter 4</div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section">章节导航</div>
+    <a href="index.html"><span class="icon">📖</span> 章节总览</a>
+    <a href="semantic.html" class="active"><span class="icon">🧠</span> 语义覆盖标准</a>
+    <a href="inactive.html"><span class="icon">🚫</span> 非活动子句覆盖</a>
+    <a href="dnf.html"><span class="icon">📝</span> DNF语法覆盖</a>
+    <a href="source.html"><span class="icon">💻</span> 源代码逻辑覆盖</a>
+    <a href="spec.html"><span class="icon">📋</span> 规约逻辑覆盖</a>
+    <a href="fsm.html"><span class="icon">🔄</span> FSM逻辑覆盖</a>
+    <div class="nav-section">本页目录</div>
+    <a href="#concepts" class="toc-link"><span class="icon">📋</span> 基本概念</a>
+    <a href="#basic" class="toc-link"><span class="icon">📊</span> 基础覆盖标准</a>
+    <a href="#acc" class="toc-link"><span class="icon">🎯</span> 有效子句覆盖 ACC</a>
+    <a href="#subsumption" class="toc-link"><span class="icon">🔗</span> 包含关系</a>
+    <a href="#practice" class="toc-link"><span class="icon">💡</span> 实践指导</a>
+  </div>
+  <div class="sidebar-footer">
+    4.1 Semantic Coverage Criteria<br>
+    语义逻辑覆盖标准
+  </div>
+</nav>
+
+<main class="main">
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="index.html">Ch4 逻辑覆盖</a>
+      <span class="sep">›</span>
+      <span>语义逻辑覆盖标准</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-header">
+      <h2>语义逻辑覆盖标准</h2>
+      <p class="desc">Semantic Logic Coverage Criteria — 基于谓词和子句的语义定义，从最基础的谓词覆盖到强大的 ACC 家族，系统地定义逻辑表达式的测试标准。</p>
+      <div class="meta">
+        <span class="tag">8.1</span>
+        <span class="tag">PC</span>
+        <span class="tag">CC</span>
+        <span class="tag">CoC</span>
+        <span class="tag">ACC</span>
+        <span class="tag">MC/DC</span>
+      </div>
+    </div>
+
+    <!-- ==================== 基本概念 ==================== -->
+    <h3 id="concepts">基本概念</h3>
+
+    <h4>谓词 (Predicate)</h4>
+    <p><strong>谓词</strong>是一个返回布尔值的逻辑表达式，由多个<strong>子句</strong>通过逻辑运算符（<code>∧</code>、<code>∨</code>、<code>¬</code> 等）连接而成。在程序中，谓词通常出现在 <code>if</code>、<code>while</code>、<code>for</code> 等控制流语句中。</p>
+
+    <blockquote>
+      <p><strong>形式化定义：</strong> 谓词 <code>p</code> 是一个函数 <code>p: {T, F}^n → {T, F}</code>，其中 <code>n</code> 是子句的数量。</p>
+    </blockquote>
+
+    <h4>子句 (Clause)</h4>
+    <p><strong>子句</strong>是谓词中的基本布尔变量或取反的布尔变量。子句的取值只能为 <code>true</code> 或 <code>false</code>。</p>
+
+    <h4>示例</h4>
+    <p>考虑谓词 <code>p = a ∧ (b ∨ c)</code>：</p>
+    <table>
+      <thead>
+        <tr><th>组成部分</th><th>类型</th><th>说明</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>p</code></td><td>谓词</td><td>整个逻辑表达式</td></tr>
+        <tr><td><code>a</code></td><td>子句</td><td>第一个合取项</td></tr>
+        <tr><td><code>b</code></td><td>子句</td><td>第二个合取项的第一个析取项</td></tr>
+        <tr><td><code>c</code></td><td>子句</td><td>第二个合取项的第二个析取项</td></tr>
+      </tbody>
+    </table>
+
+    <h4>实证统计</h4>
+    <div class="tip">
+      <div>
+        <strong>工业实践中的统计：</strong> 约 <strong>88.5%</strong> 的谓词仅包含 1 个子句（即简单布尔变量），约 <strong>9.4%</strong> 包含 2 个子句，仅 <strong>2.1%</strong> 包含 3 个或更多子句。这意味着大多数情况下，PC 和 CC 就能满足需求。
+      </div>
+    </div>
+
+    <!-- ==================== 基础覆盖标准 ==================== -->
+    <h3 id="basic">基础覆盖标准</h3>
+    <p>三种基础覆盖标准从简单到严格递进：</p>
+
+    <div class="tabs">
+      <div class="tab-buttons">
+        <button class="tab-btn active" data-tab="pc">PC 谓词覆盖</button>
+        <button class="tab-btn" data-tab="cc">CC 子句覆盖</button>
+        <button class="tab-btn" data-tab="coc">CoC 组合覆盖</button>
+      </div>
+
+      <div class="tab-panel active" data-panel="pc">
+        <h4>Predicate Coverage (PC)</h4>
+        <blockquote>
+          <p><strong>定义：</strong> 对于谓词 <code>p</code>，测试集必须包含使 <code>p = true</code> 和 <code>p = false</code> 的测试用例各至少一次。</p>
+        </blockquote>
+
+        <p>PC 是最基本的逻辑覆盖标准，等价于分支覆盖（Branch Coverage）。它只要求谓词整体取到两个值。</p>
+
+        <h4>真值表示例：p = a ∧ b</h4>
+        <table>
+          <thead>
+            <tr><th>测试</th><th>a</th><th>b</th><th>p = a ∧ b</th><th>PC 满足？</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>t₁</td><td>T</td><td>T</td><td>T</td><td>✓ p=T</td></tr>
+            <tr><td>t₂</td><td>F</td><td>T</td><td>F</td><td>✓ p=F</td></tr>
+          </tbody>
+        </table>
+        <p>测试集 {t₁, t₂} 即可满足 PC。</p>
+
+        <div class="warning">
+          <div>
+            <strong>PC 的局限性：</strong> PC 不保证每个子句都取到两个值。例如上面的测试中，<code>b</code> 始终为 <code>T</code>，如果 <code>b</code> 的实现有误（恒为 true），PC 无法发现。
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" data-panel="cc">
+        <h4>Clause Coverage (CC)</h4>
+        <blockquote>
+          <p><strong>定义：</strong> 对于谓词 <code>p</code> 中的每个子句 <code>cᵢ</code>，测试集必须包含使 <code>cᵢ = true</code> 和 <code>cᵢ = false</code> 的测试用例各至少一次。</p>
+        </blockquote>
+
+        <p>CC 要求每个子句都取到两个值，但不要求在同一测试中同时观察谓词的变化。</p>
+
+        <h4>真值表示例：p = a ∧ b</h4>
+        <table>
+          <thead>
+            <tr><th>测试</th><th>a</th><th>b</th><th>p = a ∧ b</th><th>CC 满足？</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>t₁</td><td>T</td><td>T</td><td>T</td><td>a=T✓ b=T✓</td></tr>
+            <tr><td>t₂</td><td>F</td><td>F</td><td>F</td><td>a=F✓ b=F✓</td></tr>
+          </tbody>
+        </table>
+        <p>测试集 {t₁, t₂} 满足 CC，每个子句都取到了 T 和 F。</p>
+
+        <div class="warning">
+          <div>
+            <strong>CC 的局限性：</strong> CC 不保证谓词随子句变化而变化。例如 <code>p = a ∨ ¬a</code>，无论 <code>a</code> 取何值 <code>p</code> 恒为 true，但 CC 仍可被满足。这意味着 CC 不能保证子句对谓词有"影响力"。
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" data-panel="coc">
+        <h4>Combinatorial Coverage (CoC)</h4>
+        <blockquote>
+          <p><strong>定义：</strong> 对于谓词 <code>p</code> 中的 <code>N</code> 个子句，测试集必须覆盖所有 <code>2^N</code> 种子句取值组合。</p>
+        </blockquote>
+
+        <p>CoC 是最严格的语义覆盖标准，等价于真值表的每一行都被测试到。它自然包含 PC 和 CC。</p>
+
+        <h4>真值表示例：p = a ∧ b</h4>
+        <table>
+          <thead>
+            <tr><th>测试</th><th>a</th><th>b</th><th>p = a ∧ b</th><th>CoC 行</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>t₁</td><td>T</td><td>T</td><td>T</td><td>行 1</td></tr>
+            <tr><td>t₂</td><td>T</td><td>F</td><td>F</td><td>行 2</td></tr>
+            <tr><td>t₃</td><td>F</td><td>T</td><td>F</td><td>行 3</td></tr>
+            <tr><td>t₄</td><td>F</td><td>F</td><td>F</td><td>行 4</td></tr>
+          </tbody>
+        </table>
+
+        <div class="warning">
+          <div>
+            <strong>CoC 的局限性：</strong> 测试数量随子句数指数增长（2^N）。当 N=10 时需要 1024 个测试，实际中往往不可行。ACC 家族正是为了解决这个问题而提出的。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== ACC ==================== -->
+    <h3 id="acc">有效子句覆盖 ACC</h3>
+
+    <h4>核心思想</h4>
+    <p>ACC（Active Clause Coverage）的核心思想是：一个子句应该是<strong>"有效的"（active）</strong>，即它能够<strong>决定</strong>整个谓词的取值。换句话说，当主子句改变取值时，谓词也应该随之改变。</p>
+
+    <blockquote>
+      <p><strong>决定 (Determination) 的定义：</strong> 子句 <code>cᵢ</code> 在赋值 <code>a</code> 下决定谓词 <code>p</code>，当且仅当：<br>
+      <code>p[a] ≠ p[a[cᵢ→¬a(cᵢ)]]</code><br>
+      即：保持其他子句不变，仅翻转 <code>cᵢ</code> 的取值，谓词的值发生了变化。</p>
+    </blockquote>
+
+    <h4>决定示例</h4>
+    <p>对于 <code>p = a ∨ b</code>：</p>
+    <table>
+      <thead>
+        <tr><th>a</th><th>b</th><th>p = a ∨ b</th><th>翻转 a</th><th>新 p</th><th>a 决定 p？</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>T</td><td>T</td><td>T</td><td>F</td><td>T</td><td>否（p 不变）</td></tr>
+        <tr><td>T</td><td>F</td><td>T</td><td>F</td><td>F</td><td><strong>是（p 改变）</strong></td></tr>
+        <tr><td>F</td><td>T</td><td>T</td><td>T</td><td>T</td><td>否（p 不变）</td></tr>
+        <tr><td>F</td><td>F</td><td>F</td><td>T</td><td>T</td><td><strong>是（p 改变）</strong></td></tr>
+      </tbody>
+    </table>
+    <p>可以看到，<code>a</code> 仅在 <code>b = F</code> 时能决定 <code>p</code>。</p>
+
+    <h4>ACC 的三个变体</h4>
+    <p>ACC 有三个变体，区别在于对<strong>次子句</strong>取值的约束以及是否要求谓词改变：</p>
+
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>GACC — 一般主动子句覆盖 (General Active Clause Coverage)</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <blockquote>
+              <p><strong>定义：</strong> 对于谓词 <code>p</code> 中的每个子句 <code>cᵢ</code>，存在两个测试 <code>a, b</code> 使得：<br>
+              1. <code>cᵢ</code> 在 <code>a, b</code> 中取值不同<br>
+              2. <code>cᵢ</code> 在赋值 <code>a</code> 下决定 <code>p</code><br>
+              3. 次子句的取值<strong>可以不同</strong>（无约束）</p>
+            </blockquote>
+            <p>GACC 是最弱的 ACC 变体。它不要求次子句在两个测试中保持一致，也不要求谓词必须改变。</p>
+            <p><strong>问题：</strong> GACC 不保证满足 PC。因为次子句取值不同，谓词可能在两次测试中恰好同为 true 或同为 false。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>CACC — 相关主动子句覆盖 (Correlated Active Clause Coverage)</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <blockquote>
+              <p><strong>定义：</strong> 对于谓词 <code>p</code> 中的每个子句 <code>cᵢ</code>，存在两个测试 <code>a, b</code> 使得：<br>
+              1. <code>cᵢ</code> 在 <code>a, b</code> 中取值不同<br>
+              2. <code>cᵢ</code> 在赋值 <code>a</code> 下决定 <code>p</code><br>
+              3. 次子句的取值<strong>可以不同</strong>（无约束）<br>
+              4. <code>p(a) ≠ p(b)</code> — 谓词<strong>必须改变</strong></p>
+            </blockquote>
+            <p>CACC 在 GACC 的基础上增加了谓词必须改变的要求。次子句可以取不同值，只要谓词最终改变即可。</p>
+            <p><strong>CACC 保证满足 PC</strong>，因为谓词在两个测试中取值不同。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>RACC — 限制性主动子句覆盖 (Restricted Active Clause Coverage)</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <blockquote>
+              <p><strong>定义：</strong> 对于谓词 <code>p</code> 中的每个子句 <code>cᵢ</code>，存在两个测试 <code>a, b</code> 使得：<br>
+              1. <code>cᵢ</code> 在 <code>a, b</code> 中取值不同<br>
+              2. <code>cᵢ</code> 在赋值 <code>a</code> 下决定 <code>p</code><br>
+              3. 次子句的取值<strong>必须相同</strong>（<code>a(d) = b(d)</code>，对所有 <code>d ≠ cᵢ</code>）<br>
+              4. <code>p(a) ≠ p(b)</code> — 谓词<strong>必须改变</strong></p>
+            </blockquote>
+            <p>RACC 是最强的 ACC 变体。它要求次子句取值完全一致，只有主子句不同，且谓词随之改变。</p>
+            <p><strong>RACC 等价于 MC/DC（修改条件/判定覆盖）</strong>，是航空安全标准 DO-178B Level A 软件的要求。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h4>ACC 三变体对比</h4>
+    <table>
+      <thead>
+        <tr><th>特性</th><th>GACC</th><th>CACC</th><th>RACC</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>主子句必须决定谓词</td><td>✓</td><td>✓</td><td>✓</td></tr>
+        <tr><td>次子句取值必须相同</td><td>✗</td><td>✗</td><td><strong>✓</strong></td></tr>
+        <tr><td>谓词必须改变</td><td>✗</td><td><strong>✓</strong></td><td><strong>✓</strong></td></tr>
+        <tr><td>保证满足 PC</td><td>✗</td><td>✓</td><td>✓</td></tr>
+        <tr><td>等价于 MC/DC</td><td>✗</td><td>✗</td><td><strong>✓</strong></td></tr>
+        <tr><td>强度</td><td>最弱</td><td>中等</td><td>最强</td></tr>
+      </tbody>
+    </table>
+
+    <h4>完整示例：p = a ∧ (b ∨ c)</h4>
+    <p>以下真值表展示了所有 8 种组合，以及每个子句是否"决定"谓词：</p>
+    <table>
+      <thead>
+        <tr><th>#</th><th>a</th><th>b</th><th>c</th><th>p = a∧(b∨c)</th><th>a 决定？</th><th>b 决定？</th><th>c 决定？</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>T</td><td>T</td><td>T</td><td>T</td><td>✓（翻转 a→F, p=F）</td><td>✗（翻转 b→F, p=T）</td><td>✗（翻转 c→F, p=T）</td></tr>
+        <tr><td>2</td><td>T</td><td>T</td><td>F</td><td>T</td><td>✓</td><td>✗</td><td>✗</td></tr>
+        <tr><td>3</td><td>T</td><td>F</td><td>T</td><td>T</td><td>✓</td><td>✗</td><td>✗</td></tr>
+        <tr><td>4</td><td>T</td><td>F</td><td>F</td><td>F</td><td>✗</td><td>✓</td><td>✓</td></tr>
+        <tr><td>5</td><td>F</td><td>T</td><td>T</td><td>F</td><td>✓</td><td>✗</td><td>✗</td></tr>
+        <tr><td>6</td><td>F</td><td>T</td><td>F</td><td>F</td><td>✓</td><td>✗</td><td>✗</td></tr>
+        <tr><td>7</td><td>F</td><td>F</td><td>T</td><td>F</td><td>✓</td><td>✗</td><td>✗</td></tr>
+        <tr><td>8</td><td>F</td><td>F</td><td>F</td><td>F</td><td>✗</td><td>✗</td><td>✗</td></tr>
+      </tbody>
+    </table>
+
+    <h4>RACC 测试用例设计</h4>
+    <p>为满足 RACC，需要为每个子句找到一对测试：</p>
+    <table>
+      <thead>
+        <tr><th>主子句</th><th>测试 a</th><th>测试 b</th><th>次子句相同？</th><th>p 改变？</th><th>RACC？</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>a</strong></td>
+          <td>#1 (T,T,T) → p=T</td>
+          <td>#5 (F,T,T) → p=F</td>
+          <td>b=T,T ✓ c=T,T ✓</td>
+          <td>T→F ✓</td>
+          <td>✓</td>
+        </tr>
+        <tr>
+          <td><strong>b</strong></td>
+          <td>#4 (T,F,F) → p=F</td>
+          <td>#2 (T,T,F) → p=T</td>
+          <td>a=T,T ✓ c=F,F ✓</td>
+          <td>F→T ✓</td>
+          <td>✓</td>
+        </tr>
+        <tr>
+          <td><strong>c</strong></td>
+          <td>#4 (T,F,F) → p=F</td>
+          <td>#3 (T,F,T) → p=T</td>
+          <td>a=T,T ✓ b=F,F ✓</td>
+          <td>F→T ✓</td>
+          <td>✓</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>测试集 {#1, #2, #3, #4} 满足 RACC（也满足 CACC 和 GACC）。</p>
+
+    <!-- ==================== 包含关系 ==================== -->
+    <h3 id="subsumption">包含关系</h3>
+    <p>语义覆盖标准之间的包含关系如下：</p>
+
+    <h4>ACC 家族</h4>
+    <div class="flow-diagram">
+      <div class="flow-step">
+        <div class="step-box" style="background:#dbeafe;">CoC</div>
+        <div class="step-label">组合覆盖</div>
+        <div class="step-sub">2^N 组合</div>
+      </div>
+      <div class="flow-arrow">⊇</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#ede9fe;">RACC</div>
+        <div class="step-label">限制性 ACC</div>
+        <div class="step-sub">≈ MC/DC</div>
+      </div>
+      <div class="flow-arrow">⊇</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#d1fae5;">CACC</div>
+        <div class="step-label">相关 ACC</div>
+        <div class="step-sub">中等强度</div>
+      </div>
+      <div class="flow-arrow">⊇</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#ffedd5;">GACC</div>
+        <div class="step-label">一般 ACC</div>
+        <div class="step-sub">最弱</div>
+      </div>
+    </div>
+    <p style="text-align:center; color:var(--text-light); font-size:.88rem;">CoC ⊇ RACC ⊇ CACC ⊇ GACC</p>
+
+    <h4>基础标准</h4>
+    <div class="flow-diagram">
+      <div class="flow-step">
+        <div class="step-box" style="background:#dbeafe;">CoC</div>
+        <div class="step-label">组合覆盖</div>
+        <div class="step-sub">2^N</div>
+      </div>
+      <div class="flow-arrow">⊇</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#d1fae5;">CC</div>
+        <div class="step-label">子句覆盖</div>
+        <div class="step-sub">每子句 T/F</div>
+      </div>
+      <div class="flow-arrow">⊇</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#ffedd5;">PC</div>
+        <div class="step-label">谓词覆盖</div>
+        <div class="step-sub">p=T, p=F</div>
+      </div>
+    </div>
+    <p style="text-align:center; color:var(--text-light); font-size:.88rem;">CoC ⊇ CC ⊇ PC — 且 CoC ⊇ RACC，RACC ⊇ PC</p>
+
+    <div class="compare-grid">
+      <div class="compare-box">
+        <h4>✓ RACC 包含 PC</h4>
+        <p>RACC 要求谓词必须改变，因此自然满足 PC（谓词取到 T 和 F）。</p>
+      </div>
+      <div class="compare-box">
+        <h4>✗ GACC 不包含 PC</h4>
+        <p>GACC 不要求谓词改变，可能两个测试中谓词都为 T 或都为 F。</p>
+      </div>
+      <div class="compare-box">
+        <h4>✗ CC 不包含 PC</h4>
+        <p>CC 保证每个子句取到 T 和 F，但不保证谓词也取到两个值。</p>
+      </div>
+      <div class="compare-box">
+        <h4>✓ CoC 包含一切</h4>
+        <p>CoC 覆盖所有 2^N 种组合，自然满足所有其他标准。</p>
+      </div>
+    </div>
+
+    <!-- ==================== 实践指导 ==================== -->
+    <h3 id="practice">实践指导</h3>
+    <p>根据谓词中子句的数量，推荐使用不同的覆盖标准：</p>
+
+    <table>
+      <thead>
+        <tr><th>子句数 N</th><th>推荐标准</th><th>测试数上界</th><th>理由</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>N = 1</strong></td>
+          <td>PC</td>
+          <td>2</td>
+          <td>只有一个子句，PC 即可覆盖所有情况。</td>
+        </tr>
+        <tr>
+          <td><strong>N = 2</strong></td>
+          <td>RACC</td>
+          <td>4</td>
+          <td>测试数量可控，RACC 提供最强保障。</td>
+        </tr>
+        <tr>
+          <td><strong>N = 3~5</strong></td>
+          <td>CACC</td>
+          <td>2N</td>
+          <td>RACC 可能不总是可行，CACC 是很好的折中。</td>
+        </tr>
+        <tr>
+          <td><strong>N = 6~10</strong></td>
+          <td>GACC</td>
+          <td>2N</td>
+          <td>子句较多时，使用较弱但实用的 GACC。</td>
+        </tr>
+        <tr>
+          <td><strong>N > 10</strong></td>
+          <td>PC</td>
+          <td>2</td>
+          <td>子句极多时，建议先重构简化谓词，再用 PC。</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="tip">
+      <div>
+        <strong>最佳实践：</strong> 如果谓词包含太多子句（N > 5），通常说明代码需要重构。将复杂条件拆分为多个简单条件，不仅可以降低测试难度，还能提高代码可读性和可维护性。
+      </div>
+    </div>
+
+    <div class="warning">
+      <div>
+        <strong>注意：</strong> 以上测试数上界是理论最大值。实际中，很多覆盖标准的测试需求可以被同一个测试用例同时满足，因此实际需要的测试数通常远小于上界。
+      </div>
+    </div>
+
+    <hr>
+    <div class="pagination">
+      <a href="index.html" class="page-nav">
+        <span class="label">上一页</span>
+        <span class="title">← 章节总览</span>
+      </a>
+      <a href="inactive.html" class="page-nav next">
+        <span class="label">下一节</span>
+        <span class="title">非活动子句覆盖 →</span>
+      </a>
+    </div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

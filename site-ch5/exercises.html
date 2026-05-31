@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>实战练习 — Ch5 基于语法的测试</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Toggle menu">☰</button>
+<div class="overlay"></div>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h1>软件测试笔记</h1>
+    <div class="subtitle">Software Testing · Chapter 5</div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section">章节导航</div>
+    <a href="index.html"><span class="icon">📖</span> 章节总览</a>
+    <a href="grammar.html"><span class="icon">📐</span> 文法覆盖标准</a>
+    <a href="mutation-basics.html"><span class="icon">🧬</span> 变异测试基础</a>
+    <a href="ripr.html"><span class="icon">🎯</span> RIPR 模型</a>
+    <a href="program-mutation.html"><span class="icon">💻</span> 程序级变异测试</a>
+    <a href="mutation-operators.html"><span class="icon">⚙️</span> 变异运算符</a>
+    <a href="exercises.html" class="active"><span class="icon">✏️</span> 实战练习</a>
+    <div class="nav-section">本页目录</div>
+    <a href="#task1" class="toc-link"><span class="icon">📝</span> Task 1: Min() 变体分析</a>
+    <a href="#task1-d2" class="toc-link"><span class="icon">🔹</span> Δ2 条件反转</a>
+    <a href="#task1-d4" class="toc-link"><span class="icon">🔹</span> Δ4 Bomb 语句</a>
+    <a href="#task1-d5" class="toc-link"><span class="icon">🔹</span> Δ5 赋值替换</a>
+    <a href="#task1-d6" class="toc-link"><span class="icon">🔹</span> Δ6 函数替换</a>
+    <a href="#task2" class="toc-link"><span class="icon">📝</span> Task 2: findVal() 分析</a>
+  </div>
+  <div class="sidebar-footer">
+    实战练习 · RIPR 条件分析
+  </div>
+</nav>
+
+<main class="main">
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="index.html">Ch5</a>
+      <span class="sep">›</span>
+      <span>实战练习</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-header">
+      <h2>实战练习</h2>
+      <p class="desc">通过两个完整的案例，综合运用 RIPR 模型对程序变体进行分析，找到杀死每个变体的测试用例。</p>
+      <div class="meta">
+        <span class="tag">RIPR 分析</span>
+        <span class="tag">变体杀死</span>
+        <span class="tag">测试设计</span>
+      </div>
+    </div>
+
+    <!-- ==================== TASK 1 ==================== -->
+    <h3 id="task1">Task 1：Min() 函数变体分析</h3>
+
+    <p><strong>任务：</strong> 为以下 Min() 函数的变体 Δ2、Δ4、Δ5、Δ6 提供到达条件、感染条件、传播条件和杀死变体的测试用例。</p>
+
+    <div class="code-compare">
+      <div class="code-panel">
+        <span class="code-label original">原始程序</span>
+        <pre><code><span class="tp">int</span> <span class="fn">Min</span>(<span class="tp">int</span> A, <span class="tp">int</span> B) {
+    <span class="tp">int</span> minVal;
+    minVal = A;
+    <span class="kw">if</span> (B <span class="op">&lt;</span> A) {
+        minVal = B;
+    }
+    <span class="kw">return</span> (minVal);
+}</code></pre>
+      </div>
+      <div class="code-panel">
+        <span class="code-label mutant">嵌入变体</span>
+        <pre><code><span class="tp">int</span> <span class="fn">Min</span>(<span class="tp">int</span> A, <span class="tp">int</span> B) {
+    <span class="tp">int</span> minVal;
+    minVal = A;
+    <span class="diff-change">Δ1 minVal = B;</span>
+    <span class="kw">if</span> (B <span class="op">&lt;</span> A)
+    <span class="diff-change">Δ2 if (B &gt; A)</span>
+    <span class="diff-change">Δ3 if (B &lt; minVal)</span>
+    {
+        minVal = B;
+        <span class="diff-change">Δ4 Bomb();</span>
+        <span class="diff-change">Δ5 minVal = A;</span>
+        <span class="diff-change">Δ6 minVal = failOnZero(B);</span>
+    }
+    <span class="kw">return</span> (minVal);
+}</code></pre>
+      </div>
+    </div>
+
+    <h4>程序控制流</h4>
+    <pre><code><span class="cm">// 原程序控制流</span>
+[<span class="nu">1</span>] minVal = A
+[<span class="nu">2</span>] <span class="kw">if</span> (B &lt; A)
+      ├── <span class="nu">true</span>  → [<span class="nu">3</span>] minVal = B
+      └── <span class="nu">false</span> → (跳过)
+[<span class="nu">4</span>] <span class="kw">return</span> (minVal)</code>
+<span class="lang-label">Control Flow</span></pre>
+
+    <!-- ========== Δ2 ========== -->
+    <h4 id="task1-d2" style="margin-top:40px;">变体 Δ2：条件 <code>B &lt; A</code> → <code>B &gt; A</code></h4>
+
+    <p>变异点在 <code>if</code> 条件处，将 <code>B &lt; A</code> 反转为 <code>B &gt; A</code>。</p>
+
+    <table>
+      <thead>
+        <tr><th style="width:140px;">RIPR 条件</th><th>分析过程</th><th style="width:180px;">逻辑表达式</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Reachability</strong></td>
+          <td>条件判断语句在每次函数调用时都会被执行。执行路径无条件经过该语句。</td>
+          <td><span class="diff-add">无条件（始终到达）</span></td>
+        </tr>
+        <tr>
+          <td><strong>Infection</strong></td>
+          <td>原程序在 <code>B &lt; A</code> 为 true 时进入 if 分支；变体在 <code>B &gt; A</code> 为 true 时进入。要使分支走向不同，需要 <code>(B &lt; A) ≠ (B &gt; A)</code>，即 <code>A ≠ B</code>。</td>
+          <td><code>A ≠ B</code></td>
+        </tr>
+        <tr>
+          <td><strong>Propagation</strong></td>
+          <td>
+            <strong>情况 1：B &lt; A</strong> — 原程序进入分支 (minVal=B)，变体不进入 (minVal=A)。输出 B vs A，不同。<br>
+            <strong>情况 2：B &gt; A</strong> — 原程序不进入 (minVal=A)，变体进入 (minVal=B)。输出 A vs B，不同。<br>
+            两种情况下输出均不同。传播条件与感染条件相同。
+          </td>
+          <td><code>A ≠ B</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p><strong>杀死测试：</strong></p>
+    <table>
+      <thead>
+        <tr><th>A</th><th>B</th><th>原程序输出</th><th>变体输出</th><th>结果</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>5</strong></td><td><strong>3</strong></td><td>3 (minVal=B)</td><td>5 (minVal=A)</td><td style="color:var(--success);">✅ 杀死</td></tr>
+        <tr><td><strong>2</strong></td><td><strong>7</strong></td><td>2 (minVal=A)</td><td>7 (minVal=B)</td><td style="color:var(--success);">✅ 杀死</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ========== Δ4 ========== -->
+    <h4 id="task1-d4" style="margin-top:40px;">变体 Δ4：<code>minVal = B</code> → <code>Bomb()</code></h4>
+
+    <p>变异点在 if 分支体内，将 <code>minVal = B</code> 替换为 <code>Bomb()</code>（抛出异常）。</p>
+
+    <table>
+      <thead>
+        <tr><th style="width:140px;">RIPR 条件</th><th>分析过程</th><th style="width:180px;">逻辑表达式</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Reachability</strong></td>
+          <td>必须进入 if 分支体才能执行到 <code>Bomb()</code>。需要条件 <code>B &lt; A</code> 为 true。</td>
+          <td><code>B &lt; A</code></td>
+        </tr>
+        <tr>
+          <td><strong>Infection</strong></td>
+          <td><code>Bomb()</code> 抛出异常，程序状态完全不同于正常执行 <code>minVal = B</code>。进入分支即感染。</td>
+          <td><code>B &lt; A</code>（进入即感染）</td>
+        </tr>
+        <tr>
+          <td><strong>Propagation</strong></td>
+          <td>异常会直接传播到函数外部，程序终止并抛出异常，而非返回正常值。异常自动传播，无需额外条件。</td>
+          <td><code>B &lt; A</code>（异常自动传播）</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p><strong>杀死测试：</strong></p>
+    <table>
+      <thead>
+        <tr><th>A</th><th>B</th><th>原程序输出</th><th>变体输出</th><th>结果</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>5</strong></td><td><strong>3</strong></td><td>3</td><td>异常 (Bomb)</td><td style="color:var(--success);">✅ 杀死</td></tr>
+        <tr><td><strong>10</strong></td><td><strong>1</strong></td><td>1</td><td>异常 (Bomb)</td><td style="color:var(--success);">✅ 杀死</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ========== Δ5 ========== -->
+    <h4 id="task1-d5" style="margin-top:40px;">变体 Δ5：<code>minVal = B</code> → <code>minVal = A</code></h4>
+
+    <p>变异点在 if 分支体内，将 <code>minVal = B</code> 替换为 <code>minVal = A</code>。</p>
+
+    <table>
+      <thead>
+        <tr><th style="width:140px;">RIPR 条件</th><th>分析过程</th><th style="width:180px;">逻辑表达式</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Reachability</strong></td>
+          <td>必须进入 if 分支体。需要条件 <code>B &lt; A</code> 为 true。</td>
+          <td><code>B &lt; A</code></td>
+        </tr>
+        <tr>
+          <td><strong>Infection</strong></td>
+          <td>原程序执行 <code>minVal = B</code>，变体执行 <code>minVal = A</code>。进入分支条件已要求 <code>B &lt; A</code>，因此 <code>B ≠ A</code>，状态不同。</td>
+          <td><code>B &lt; A</code>（蕴含 A ≠ B）</td>
+        </tr>
+        <tr>
+          <td><strong>Propagation</strong></td>
+          <td>return 语句返回 minVal。原程序返回 B，变体返回 A。由于 <code>B &lt; A</code> 即 <code>B ≠ A</code>，输出不同。</td>
+          <td><code>B &lt; A</code>（蕴含输出不同）</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p><strong>杀死测试：</strong></p>
+    <table>
+      <thead>
+        <tr><th>A</th><th>B</th><th>原程序输出</th><th>变体输出</th><th>结果</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>5</strong></td><td><strong>3</strong></td><td>3 (minVal=B)</td><td>5 (minVal=A)</td><td style="color:var(--success);">✅ 杀死</td></tr>
+        <tr><td><strong>10</strong></td><td><strong>1</strong></td><td>1 (minVal=B)</td><td>10 (minVal=A)</td><td style="color:var(--success);">✅ 杀死</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ========== Δ6 ========== -->
+    <h4 id="task1-d6" style="margin-top:40px;">变体 Δ6：<code>minVal = B</code> → <code>minVal = failOnZero(B)</code></h4>
+
+    <p>变异点在 if 分支体内，将 <code>minVal = B</code> 替换为 <code>minVal = failOnZero(B)</code>。</p>
+
+    <div class="tip">
+      <div>
+        <strong>failOnZero(B) 的行为：</strong> 当 <code>B ≠ 0</code> 时返回 B 本身；当 <code>B = 0</code> 时抛出异常（或返回不同于 0 的值）。
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th style="width:140px;">RIPR 条件</th><th>分析过程</th><th style="width:180px;">逻辑表达式</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Reachability</strong></td>
+          <td>必须进入 if 分支体。需要条件 <code>B &lt; A</code> 为 true。</td>
+          <td><code>B &lt; A</code></td>
+        </tr>
+        <tr>
+          <td><strong>Infection</strong></td>
+          <td>
+            <strong>若 B ≠ 0：</strong> <code>failOnZero(B) = B</code>，minVal 值相同，无感染。<br>
+            <strong>若 B = 0：</strong> <code>failOnZero(0)</code> 抛出异常，程序状态完全不同。
+          </td>
+          <td><code>B = 0</code>（且 B &lt; A → A &gt; 0）</td>
+        </tr>
+        <tr>
+          <td><strong>Propagation</strong></td>
+          <td>当 B = 0 时，<code>failOnZero(0)</code> 抛出异常，直接传播到输出。无需额外条件。</td>
+          <td><code>B = 0</code>（异常自动传播）</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p><strong>杀死测试：</strong></p>
+    <table>
+      <thead>
+        <tr><th>A</th><th>B</th><th>原程序输出</th><th>变体输出</th><th>结果</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>1</strong></td><td><strong>0</strong></td><td>0</td><td>异常 (failOnZero)</td><td style="color:var(--success);">✅ 杀死</td></tr>
+        <tr><td><strong>5</strong></td><td><strong>0</strong></td><td>0</td><td>异常 (failOnZero)</td><td style="color:var(--success);">✅ 杀死</td></tr>
+      </tbody>
+    </table>
+
+    <h4>Task 1 总结</h4>
+    <table>
+      <thead>
+        <tr><th>变体</th><th>变异描述</th><th>Reachability</th><th>Infection</th><th>Propagation</th><th>测试用例</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Δ2</strong></td>
+          <td>条件 B&lt;A → B&gt;A</td>
+          <td>无条件</td>
+          <td>A ≠ B</td>
+          <td>A ≠ B</td>
+          <td><code>(5, 3)</code></td>
+        </tr>
+        <tr>
+          <td><strong>Δ4</strong></td>
+          <td>minVal=B → Bomb()</td>
+          <td>B &lt; A</td>
+          <td>B &lt; A</td>
+          <td>B &lt; A</td>
+          <td><code>(5, 3)</code></td>
+        </tr>
+        <tr>
+          <td><strong>Δ5</strong></td>
+          <td>minVal=B → minVal=A</td>
+          <td>B &lt; A</td>
+          <td>B &lt; A</td>
+          <td>B &lt; A</td>
+          <td><code>(5, 3)</code></td>
+        </tr>
+        <tr>
+          <td><strong>Δ6</strong></td>
+          <td>minVal=B → failOnZero(B)</td>
+          <td>B &lt; A</td>
+          <td>B = 0</td>
+          <td>B = 0</td>
+          <td><code>(1, 0)</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr>
+
+    <!-- ==================== TASK 2 ==================== -->
+    <h3 id="task2">Task 2：findVal() 方法变体分析</h3>
+
+    <p><strong>任务：</strong> 对于 findVal() 方法中的变体（<code>i = 0</code> → <code>i = 0+1</code>，即 <code>i = 1</code>），回答以下四个问题。</p>
+
+    <h4>原始程序</h4>
+    <pre><code><span class="cm">// Effects: If numbers null throw NullPointerException</span>
+<span class="cm">//    else return LAST occurrence of val in numbers[]</span>
+<span class="cm">//    If val not in numbers[] return -1</span>
+<span class="kw">public static</span> <span class="tp">int</span> <span class="fn">findVal</span>(<span class="tp">int</span> numbers[], <span class="tp">int</span> val) {
+    <span class="tp">int</span> findVal = <span class="nu">-1</span>;
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nu">0</span>; i &lt; numbers.length; i++)
+        <span class="kw">if</span> (numbers[i] == val)
+            findVal = i;
+    <span class="kw">return</span> (findVal);
+}</code>
+<span class="lang-label">Java</span></pre>
+
+    <h4>变体描述</h4>
+    <div class="code-compare">
+      <div class="code-panel">
+        <span class="code-label original">原始</span>
+        <pre><code><span class="kw">for</span> (<span class="tp">int</span> i <span class="op">=</span> <span class="nu">0</span>; ...</code></pre>
+      </div>
+      <div class="code-panel">
+        <span class="code-label mutant">变体</span>
+        <pre><code><span class="kw">for</span> (<span class="tp">int</span> i <span class="op">=</span> <span class="nu">0</span> <span class="op">+</span> <span class="nu">1</span>; ...  <span class="cm">// 即 i = 1</span></code></pre>
+      </div>
+    </div>
+
+    <p>变体将循环起始值从 <code>i = 0</code> 改为 <code>i = 1</code>，导致 <code>numbers[0]</code> 永远不会被检查。</p>
+
+    <!-- ========== (a) ========== -->
+    <div class="accordion">
+      <div class="accordion-item open">
+        <button class="accordion-header">
+          <span>(a) 是否存在测试输入使得不到达变体？</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="accordion-body" style="max-height:400px;">
+          <div class="accordion-body-inner">
+            <p><strong>分析：</strong></p>
+            <ul>
+              <li>变体位于 for 循环的初始化语句 <code>int i = 0</code> → <code>int i = 1</code></li>
+              <li>在 Java 中，for 循环的初始化部分在进入循环时<strong>无条件执行</strong></li>
+              <li>函数被调用后，执行流必然经过 for 循环头</li>
+              <li>即使 <code>numbers = null</code>，NPE 发生在 <code>numbers.length</code>（条件检查阶段），而初始化 <code>i = 0/1</code> 已经执行完毕</li>
+            </ul>
+
+            <div class="danger-block">
+              <div><strong>结论：不可能。</strong> 无论什么测试输入，for 循环初始化语句始终会被执行，变体始终被到达。不存在使变体不被到达的测试输入。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== (b) ========== -->
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>(b) 是否存在测试输入使得到达但不感染？</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <p><strong>分析：</strong></p>
+            <ul>
+              <li>到达变体后，原程序中 <code>i = 0</code>，变体中 <code>i = 1</code></li>
+              <li>此时变量 <code>i</code> 的值已经不同 — 这就是程序状态的差异</li>
+              <li>根据 Infection 的定义（变异语句执行后程序状态不同），只要执行到该语句，状态就一定不同</li>
+            </ul>
+
+            <div class="danger-block">
+              <div><strong>结论：不可能。</strong> <code>i = 0</code> 和 <code>i = 1</code> 是不同的值，到达即感染。不存在使到达但不感染的测试输入。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== (c) ========== -->
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>(c) 是否存在测试输入使得感染但不传播？</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <p><strong>分析：</strong></p>
+            <ul>
+              <li>感染已满足（i 值不同：0 vs 1）</li>
+              <li>要使差异不传播到输出，需要变体和原程序的<strong>返回值相同</strong></li>
+              <li>变体跳过了 <code>numbers[0]</code> 的检查</li>
+              <li>如果 <code>numbers[0] ≠ val</code>，则即使原程序检查了 <code>numbers[0]</code>，也不会设置 <code>findVal = 0</code></li>
+              <li>此时跳过 <code>numbers[0]</code> 不影响最终结果，差异不传播</li>
+            </ul>
+
+            <p><strong>测试用例：</strong> <code>numbers = [1, 2, 3], val = 2</code></p>
+            <table>
+              <thead>
+                <tr><th>步骤</th><th>原程序 (i=0 起)</th><th>变体 (i=1 起)</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>i=0</td><td>numbers[0]=1 ≠ 2, 跳过</td><td>(不执行)</td></tr>
+                <tr><td>i=1</td><td>numbers[1]=2 == 2, findVal=1</td><td>numbers[1]=2 == 2, findVal=1</td></tr>
+                <tr><td>i=2</td><td>numbers[2]=3 ≠ 2, 跳过</td><td>numbers[2]=3 ≠ 2, 跳过</td></tr>
+                <tr><td><strong>返回</strong></td><td><strong>1</strong></td><td><strong>1</strong></td></tr>
+              </tbody>
+            </table>
+
+            <div class="tip">
+              <div><strong>结论：可以。</strong> <code>numbers = [1, 2, 3], val = 2</code> 满足感染但不传播（输出相同，均为 1）。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== (d) ========== -->
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>(d) 是否存在测试输入能够杀死变体？</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <p><strong>分析：</strong></p>
+            <ul>
+              <li>要杀死变体，需要变体的输出与原程序不同</li>
+              <li>变体跳过了 <code>numbers[0]</code> 的检查</li>
+              <li>需要 <code>numbers[0] == val</code> 且 <code>val</code> 在数组中<strong>最后一次</strong>出现在 index 0</li>
+              <li>即 <code>val</code> 不出现在 index 1 及之后的位置</li>
+            </ul>
+
+            <p><strong>测试用例 1：</strong> <code>numbers = [5], val = 5</code></p>
+            <table>
+              <thead>
+                <tr><th>步骤</th><th>原程序</th><th>变体</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>i=0</td><td>numbers[0]=5 == 5, findVal=0</td><td>(不执行)</td></tr>
+                <tr><td>循环结束</td><td>返回 <strong>0</strong></td><td>返回 <strong>-1</strong></td></tr>
+              </tbody>
+            </table>
+            <p>输出不同（0 vs -1）→ <strong>变体被杀死</strong> ✅</p>
+
+            <p><strong>测试用例 2：</strong> <code>numbers = [5, 3, 7], val = 5</code></p>
+            <table>
+              <thead>
+                <tr><th>步骤</th><th>原程序</th><th>变体</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>i=0</td><td>numbers[0]=5 == 5, findVal=0</td><td>(不执行)</td></tr>
+                <tr><td>i=1</td><td>numbers[1]=3 ≠ 5</td><td>numbers[1]=3 ≠ 5</td></tr>
+                <tr><td>i=2</td><td>numbers[2]=7 ≠ 5</td><td>numbers[2]=7 ≠ 5</td></tr>
+                <tr><td><strong>返回</strong></td><td><strong>0</strong></td><td><strong>-1</strong></td></tr>
+              </tbody>
+            </table>
+            <p>输出不同（0 vs -1）→ <strong>变体被杀死</strong> ✅</p>
+
+            <div class="tip">
+              <div><strong>结论：可以。</strong> <code>numbers = [5], val = 5</code> 或 <code>numbers = [5, 3, 7], val = 5</code> 均可杀死变体。核心条件是 <code>val</code> 仅出现在数组的 index 0 位置。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h4>Task 2 总结</h4>
+    <table>
+      <thead>
+        <tr><th style="width:200px;">问题</th><th style="width:100px;">是否可能</th><th>测试用例</th><th>说明</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>(a) 不到达</strong></td>
+          <td style="color:var(--danger);">❌ 不可能</td>
+          <td>—</td>
+          <td>for 循环初始化无条件执行</td>
+        </tr>
+        <tr>
+          <td><strong>(b) 到达不感染</strong></td>
+          <td style="color:var(--danger);">❌ 不可能</td>
+          <td>—</td>
+          <td>i=0 vs i=1 状态始终不同</td>
+        </tr>
+        <tr>
+          <td><strong>(c) 感染不传播</strong></td>
+          <td style="color:var(--success);">✅ 可能</td>
+          <td><code>[1,2,3], val=2</code></td>
+          <td>numbers[0]≠val，跳过不影响结果</td>
+        </tr>
+        <tr>
+          <td><strong>(d) 杀死变体</strong></td>
+          <td style="color:var(--success);">✅ 可能</td>
+          <td><code>[5], val=5</code></td>
+          <td>val 仅出现在 index 0，变体漏检</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr>
+
+    <div class="tip">
+      <div>
+        <strong>解题关键：</strong> 在分析变体时，按照 R → I → P 的顺序逐步分析。首先确定执行路径是否经过变异点（R），然后分析变异是否导致状态差异（I），最后追踪差异是否传播到输出（P）。对于程序级变异，重点关注变量值的变化和控制流的差异。
+      </div>
+    </div>
+
+    <div class="pagination">
+      <a href="mutation-operators.html" class="page-nav">
+        <span class="label">上一页</span>
+        <span class="title">← 变异运算符</span>
+      </a>
+      <a href="index.html" class="page-nav next">
+        <span class="label">返回首页</span>
+        <span class="title">章节总览 →</span>
+      </a>
+    </div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

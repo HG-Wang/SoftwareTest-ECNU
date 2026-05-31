@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>规约逻辑覆盖 — Ch4 逻辑覆盖</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Toggle menu">☰</button>
+<div class="overlay"></div>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h1>软件测试笔记</h1>
+    <div class="subtitle">Software Testing · Chapter 4</div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section">章节导航</div>
+    <a href="index.html"><span class="icon">📖</span> 章节总览</a>
+    <a href="semantic.html"><span class="icon">🧠</span> 语义覆盖标准</a>
+    <a href="inactive.html"><span class="icon">🚫</span> 非活动子句覆盖</a>
+    <a href="dnf.html"><span class="icon">📝</span> DNF语法覆盖</a>
+    <a href="source.html"><span class="icon">💻</span> 源代码逻辑覆盖</a>
+    <a href="spec.html" class="active"><span class="icon">📋</span> 规约逻辑覆盖</a>
+    <a href="fsm.html"><span class="icon">🔄</span> FSM逻辑覆盖</a>
+    <div class="nav-section">本页目录</div>
+    <a href="#form" class="toc-link"><span class="icon">📄</span> 规约的形式</a>
+    <a href="#precondition" class="toc-link"><span class="icon">📝</span> 前置条件示例</a>
+    <a href="#cnf" class="toc-link"><span class="icon">📊</span> CNF 快捷方法</a>
+    <a href="#dnf" class="toc-link"><span class="icon">📊</span> DNF 快捷方法</a>
+    <a href="#sources" class="toc-link"><span class="icon">📚</span> 规约来源</a>
+  </div>
+  <div class="sidebar-footer">
+    8.4 Logic Coverage for Specifications<br>
+    规约逻辑覆盖
+  </div>
+</nav>
+
+<main class="main">
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="index.html">Ch4</a>
+      <span class="sep">›</span>
+      <span>规约逻辑覆盖</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-header">
+      <h2>规约的逻辑覆盖</h2>
+      <p class="desc">Logic Coverage for Specifications — 将逻辑覆盖标准应用于软件规约，利用 CNF/DNF 结构简化测试生成。</p>
+      <div class="meta">
+        <span class="tag">8.4</span>
+        <span class="tag">CNF</span>
+        <span class="tag">DNF</span>
+        <span class="tag">前置条件</span>
+      </div>
+    </div>
+
+    <!-- ==================== 规约形式 ==================== -->
+    <h3 id="form">规约的形式与分类</h3>
+
+    <p>规约（Specifications）可以是<strong>形式化的</strong>（用数学语言表达）或<strong>非形式化的</strong>（用自然语言表达）。</p>
+
+    <p>逻辑规约可在多个层级描述系统行为：</p>
+    <table>
+      <thead>
+        <tr><th>层级</th><th>说明</th><th>应用场景</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>方法/类级别</strong></td><td>描述单个方法或类的行为</td><td>单元测试、模块测试</td></tr>
+        <tr><td><strong>组件级别</strong></td><td>描述模块或组件间的交互</td><td>集成测试</td></tr>
+        <tr><td><strong>系统级别</strong></td><td>描述整个系统的全局行为</td><td>系统测试</td></tr>
+      </tbody>
+    </table>
+
+    <p>大多数规约语言包含显式的逻辑表达式，因此非常容易应用逻辑覆盖标准。自然语言规约中的隐式逻辑表达式应在测试设计时<strong>改写为显式逻辑表达式</strong> — 你通常会在这一步发现错误。</p>
+
+    <!-- ==================== 前置条件 ==================== -->
+    <h3 id="precondition">前置条件示例</h3>
+
+    <p>程序员经常为方法添加前置条件，通常以注释形式出现在方法头中：</p>
+
+    <pre><code><span class="cm">// name must not be empty</span>
+<span class="cm">// state must be valid</span>
+<span class="cm">// zip must be 5 numeric digits</span>
+<span class="cm">// street must not be empty</span>
+<span class="cm">// city must not be empty</span></code>
+<span class="lang-label">Comments</span></pre>
+
+    <p>将上述前置条件改写为<strong>合取范式（CNF）</strong>的逻辑表达式：</p>
+
+    <pre><code>name <span class="op">!=</span> <span class="st">""</span>
+  <span class="op">∧</span> state <span class="op">∈</span> stateList
+  <span class="op">∧</span> zip <span class="op">≥</span> <span class="nu">00000</span>
+  <span class="op">∧</span> zip <span class="op">≤</span> <span class="nu">99999</span>
+  <span class="op">∧</span> street <span class="op">!=</span> <span class="st">""</span>
+  <span class="op">∧</span> city <span class="op">!=</span> <span class="st">""</span></code>
+<span class="lang-label">CNF</span></pre>
+
+    <p>这是一个典型的 CNF 谓词 — 由多个子句通过 <strong>∧（与）</strong> 连接。</p>
+
+    <!-- ==================== CNF ==================== -->
+    <h3 id="cnf">CNF 快捷方法</h3>
+
+    <blockquote>
+      <p><strong>合取范式 (CNF)：</strong> 谓词由子句或析取子句通过 <strong>∧</strong> 连接，如 <code>A ∧ B ∧ C ∧ ...</code> 或 <code>(A ∨ B) ∧ (C ∨ D)</code>。</p>
+    </blockquote>
+
+    <p>对于 CNF 谓词，<strong>主子句</strong>在所有其他子句为 <strong>true</strong> 时被激活。</p>
+
+    <p><strong>ACC 测试策略：</strong>"全真"行 + 对角线上的假值组合：</p>
+
+    <table>
+      <thead>
+        <tr><th>测试</th><th>A</th><th>B</th><th>C</th><th>…</th><th>说明</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td><code>T</code></td>
+          <td><code>T</code></td>
+          <td><code>T</code></td>
+          <td>…</td>
+          <td>所有子句为 true → 谓词为 true</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><code>F</code></td>
+          <td><code>T</code></td>
+          <td><code>T</code></td>
+          <td>…</td>
+          <td>A 为 false → A 决定谓词（false）</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><code>T</code></td>
+          <td><code>F</code></td>
+          <td><code>T</code></td>
+          <td>…</td>
+          <td>B 为 false → B 决定谓词（false）</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><code>T</code></td>
+          <td><code>T</code></td>
+          <td><code>F</code></td>
+          <td>…</td>
+          <td>C 为 false → C 决定谓词（false）</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="tip">
+      <div>
+        <strong>规律：</strong> 对 N 个子句的 CNF 谓词，只需 <strong>N + 1</strong> 个测试即可满足 ACC — 一个"全真"测试 + N 个"轮流假"测试。
+      </div>
+    </div>
+
+    <!-- ==================== DNF ==================== -->
+    <h3 id="dnf">DNF 快捷方法</h3>
+
+    <blockquote>
+      <p><strong>析取范式 (DNF)：</strong> 谓词由子句或合取子句通过 <strong>∨</strong> 连接，如 <code>A ∨ B ∨ C ∨ ...</code> 或 <code>(A ∧ B) ∨ (C ∧ D)</code>。</p>
+    </blockquote>
+
+    <p>对于 DNF 谓词，<strong>主子句</strong>在所有其他子句为 <strong>false</strong> 时被激活。</p>
+
+    <p><strong>ACC 测试策略：</strong>"全假"行 + 对角线上的真值组合：</p>
+
+    <table>
+      <thead>
+        <tr><th>测试</th><th>A</th><th>B</th><th>C</th><th>…</th><th>说明</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td><code>F</code></td>
+          <td><code>F</code></td>
+          <td><code>F</code></td>
+          <td>…</td>
+          <td>所有子句为 false → 谓词为 false</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><code>T</code></td>
+          <td><code>F</code></td>
+          <td><code>F</code></td>
+          <td>…</td>
+          <td>A 为 true → A 决定谓词（true）</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><code>F</code></td>
+          <td><code>T</code></td>
+          <td><code>F</code></td>
+          <td>…</td>
+          <td>B 为 true → B 决定谓词（true）</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><code>F</code></td>
+          <td><code>F</code></td>
+          <td><code>T</code></td>
+          <td>…</td>
+          <td>C 为 true → C 决定谓词（true）</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="tip">
+      <div>
+        <strong>规律：</strong> 对 N 个子句的 DNF 谓词，同样只需 <strong>N + 1</strong> 个测试即可满足 ACC — 一个"全假"测试 + N 个"轮流真"测试。
+      </div>
+    </div>
+
+    <!-- ==================== CNF vs DNF 对比 ==================== -->
+    <h4>CNF 与 DNF 快捷方法对比</h4>
+
+    <div class="compare-grid">
+      <div class="compare-box">
+        <h4>🔗 CNF（合取范式）</h4>
+        <ul>
+          <li>结构：<code>A ∧ B ∧ C</code></li>
+          <li>激活条件：其他子句全为 <strong>true</strong></li>
+          <li>测试模式：全真 + 轮流假</li>
+          <li>每个测试使一个子句决定谓词</li>
+          <li>适用于：前置条件、约束</li>
+        </ul>
+      </div>
+      <div class="compare-box">
+        <h4>🔀 DNF（析取范式）</h4>
+        <ul>
+          <li>结构：<code>A ∨ B ∨ C</code></li>
+          <li>激活条件：其他子句全为 <strong>false</strong></li>
+          <li>测试模式：全假 + 轮流真</li>
+          <li>每个测试使一个子句决定谓词</li>
+          <li>适用于：触发条件、选项</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ==================== 来源 ==================== -->
+    <h3 id="sources">逻辑规约的来源</h3>
+
+    <p>逻辑规约可以从多种来源获得：</p>
+
+    <table>
+      <thead>
+        <tr><th>来源</th><th>说明</th><th>示例</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>前置条件</strong></td>
+          <td>方法执行前必须满足的条件</td>
+          <td><code>// requires: list != null</code></td>
+        </tr>
+        <tr>
+          <td><strong>Java Assert</strong></td>
+          <td>代码中的断言检查</td>
+          <td><code>assert x > 0 : "x must be positive"</code></td>
+        </tr>
+        <tr>
+          <td><strong>契约</strong></td>
+          <td>Design-by-Contract 中的前置/后置条件和不变量</td>
+          <td><code>@pre: balance >= 0</code></td>
+        </tr>
+        <tr>
+          <td><strong>OCL 条件</strong></td>
+          <td>UML 模型中的对象约束语言</td>
+          <td><code>context Person inv: age >= 0</code></td>
+        </tr>
+        <tr>
+          <td><strong>形式化语言</strong></td>
+          <td>Z、VDM 等数学规约语言</td>
+          <td>数学化的状态机和不变量</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="tip">
+      <div>
+        <strong>实践价值：</strong> 规约中的许多谓词天然处于 DNF 或 CNF 形式，这大大简化了测试计算。由于规约中的谓词通常具有规则结构，可以直接使用 CNF/DNF 快捷方法计算 ACC 测试，无需逐一分析每个子句的活动条件。
+      </div>
+    </div>
+
+    <h4>测试生成流程</h4>
+    <div class="flow-diagram">
+      <div class="flow-step">
+        <div class="step-box" style="background:#dbeafe;">📄</div>
+        <div class="step-label">识别谓词形式</div>
+        <div class="step-sub">CNF 或 DNF</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#fef3c7;">⚙️</div>
+        <div class="step-label">应用快捷方法</div>
+        <div class="step-sub">全真/全假 + 对角线</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#d1fae5;">🧪</div>
+        <div class="step-label">生成测试用例</div>
+        <div class="step-sub">N+1 个测试</div>
+      </div>
+    </div>
+
+    <hr>
+    <div class="pagination">
+      <a href="source.html" class="page-nav">
+        <span class="label">上一页</span>
+        <span class="title">← 源代码逻辑覆盖</span>
+      </a>
+      <a href="fsm.html" class="page-nav next">
+        <span class="label">下一节</span>
+        <span class="title">FSM 逻辑覆盖 →</span>
+      </a>
+    </div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

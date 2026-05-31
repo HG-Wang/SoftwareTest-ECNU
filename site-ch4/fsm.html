@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FSM 逻辑覆盖 — Ch4 逻辑覆盖</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Toggle menu">☰</button>
+<div class="overlay"></div>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h1>软件测试笔记</h1>
+    <div class="subtitle">Software Testing · Chapter 4</div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section">章节导航</div>
+    <a href="index.html"><span class="icon">📖</span> 章节总览</a>
+    <a href="semantic.html"><span class="icon">🧠</span> 语义覆盖标准</a>
+    <a href="inactive.html"><span class="icon">🚫</span> 非活动子句覆盖</a>
+    <a href="dnf.html"><span class="icon">📝</span> DNF语法覆盖</a>
+    <a href="source.html"><span class="icon">💻</span> 源代码逻辑覆盖</a>
+    <a href="spec.html"><span class="icon">📋</span> 规约逻辑覆盖</a>
+    <a href="fsm.html" class="active"><span class="icon">🔄</span> FSM逻辑覆盖</a>
+    <div class="nav-section">本页目录</div>
+    <a href="#concept" class="toc-link"><span class="icon">🔍</span> FSM 基本概念</a>
+    <a href="#subway" class="toc-link"><span class="icon">🚇</span> 地铁列车示例</a>
+    <a href="#determination" class="toc-link"><span class="icon">🧮</span> 判定分析</a>
+    <a href="#cacc" class="toc-link"><span class="icon">📊</span> CACC 测试</a>
+    <a href="#issues" class="toc-link"><span class="icon">⚠️</span> 问题与挑战</a>
+  </div>
+  <div class="sidebar-footer">
+    8.5 Logic Coverage of FSMs<br>
+    有限状态机逻辑覆盖
+  </div>
+</nav>
+
+<main class="main">
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="index.html">Ch4</a>
+      <span class="sep">›</span>
+      <span>FSM 逻辑覆盖</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-header">
+      <h2>有限状态机的逻辑覆盖</h2>
+      <p class="desc">Logic Coverage of FSMs — 将逻辑覆盖标准应用于有限状态机的转换守卫条件，系统地生成测试用例。</p>
+      <div class="meta">
+        <span class="tag">8.5</span>
+        <span class="tag">FSM</span>
+        <span class="tag">守卫条件</span>
+        <span class="tag">CACC</span>
+      </div>
+    </div>
+
+    <!-- ==================== FSM 基本概念 ==================== -->
+    <h3 id="concept">FSM 基本概念</h3>
+
+    <p>有限状态机（Finite State Machine, FSM）本质上是<strong>图</strong>：</p>
+    <ul>
+      <li><strong>节点（Nodes）</strong> = 状态（States）</li>
+      <li><strong>边（Edges）</strong> = 转换（Transitions），带有<strong>逻辑守卫</strong>或<strong>触发条件</strong></li>
+    </ul>
+
+    <p>FSM 广泛用于各层级的抽象建模，表达形式包括 Statecharts、状态表、Z 记法、决策表、Petri 网等。</p>
+
+    <div class="tip">
+      <div>
+        <strong>核心思路：</strong> 找到转换上的逻辑表达式，然后覆盖它 — 这就是 FSM 逻辑覆盖的本质。
+      </div>
+    </div>
+
+    <!-- ==================== 地铁列车示例 ==================== -->
+    <h3 id="subway">示例：地铁列车系统</h3>
+
+    <p>地铁列车系统包含 <strong>4 个状态</strong>：</p>
+
+    <div class="flow-diagram">
+      <div class="flow-step">
+        <div class="step-box" style="background:#dbeafe;">🚪</div>
+        <div class="step-label">All Doors Open</div>
+        <div class="step-sub">所有门开启</div>
+      </div>
+      <div class="flow-arrow">↔</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#d1fae5;">⬅️</div>
+        <div class="step-label">Left Doors Open</div>
+        <div class="step-sub">左侧门开启</div>
+      </div>
+      <div class="flow-arrow">↔</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#fef3c7;">➡️</div>
+        <div class="step-label">Right Doors Open</div>
+        <div class="step-sub">右侧门开启</div>
+      </div>
+      <div class="flow-arrow">↔</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#fee2e2;">🔒</div>
+        <div class="step-label">All Doors Closed</div>
+        <div class="step-sub">所有门关闭</div>
+      </div>
+    </div>
+
+    <h4>转换守卫条件</h4>
+    <p>进入"Left Doors Open"状态的守卫条件：</p>
+
+    <pre><code>trainSpeed <span class="op">=</span> <span class="nu">0</span>
+  <span class="op">∧</span> platform <span class="op">=</span> left
+  <span class="op">∧</span> (location <span class="op">=</span> inStation
+      <span class="op">∨</span> (emergencyStop <span class="op">∧</span> overrideOpen <span class="op">∧</span> location <span class="op">=</span> inTunnel))</code>
+<span class="lang-label">Guard</span></pre>
+
+    <p>简化为子句形式（<strong>6 个子句</strong>）：</p>
+
+    <pre><code><span class="vr">a</span> <span class="op">∧</span> <span class="vr">b</span> <span class="op">∧</span> (<span class="vr">c</span> <span class="op">∨</span> (<span class="vr">d</span> <span class="op">∧</span> <span class="vr">e</span> <span class="op">∧</span> <span class="vr">f</span>))</code>
+<span class="lang-label">Simplified</span></pre>
+
+    <table>
+      <thead>
+        <tr><th>子句</th><th>变量</th><th>含义</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>a</code></td><td>trainSpeed = 0</td><td>列车速度为零</td></tr>
+        <tr><td><code>b</code></td><td>platform = left</td><td>站台在左侧</td></tr>
+        <tr><td><code>c</code></td><td>location = inStation</td><td>位于站内</td></tr>
+        <tr><td><code>d</code></td><td>emergencyStop</td><td>紧急停车</td></tr>
+        <tr><td><code>e</code></td><td>overrideOpen</td><td>覆盖开启</td></tr>
+        <tr><td><code>f</code></td><td>location = inTunnel</td><td>位于隧道内</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ==================== 判定分析 ==================== -->
+    <h3 id="determination">判定分析（Determination）</h3>
+
+    <p>使用 XOR 方法计算每个子句决定谓词的条件：</p>
+    <pre><code><span class="cm">// 定义法：Pc = P_{c=true} ⊕ P_{c=false}</span>
+Pa <span class="op">=</span> b <span class="op">∧</span> (c <span class="op">∨</span> (d <span class="op">∧</span> e <span class="op">∧</span> f))
+Pb <span class="op">=</span> a <span class="op">∧</span> (c <span class="op">∨</span> (d <span class="op">∧</span> e <span class="op">∧</span> f))
+Pc <span class="op">=</span> a <span class="op">∧</span> b <span class="op">∧</span> ¬(d <span class="op">∧</span> e <span class="op">∧</span> f)
+Pd <span class="op">=</span> a <span class="op">∧</span> b <span class="op">∧</span> ¬c <span class="op">∧</span> e <span class="op">∧</span> f
+Pe <span class="op">=</span> a <span class="op">∧</span> b <span class="op">∧</span> ¬c <span class="op">∧</span> d <span class="op">∧</span> f
+Pf <span class="op">=</span> a <span class="op">∧</span> b <span class="op">∧</span> ¬c <span class="op">∧</span> d <span class="op">∧</span> e</code>
+<span class="lang-label">Determination</span></pre>
+
+    <table>
+      <thead>
+        <tr><th>子句</th><th>Pc 条件</th><th>含义</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>a</strong></td><td>b ∧ (c ∨ (d∧e∧f))</td><td>需要 b=true，且 c 或 (d∧e∧f) 为 true</td></tr>
+        <tr><td><strong>b</strong></td><td>a ∧ (c ∨ (d∧e∧f))</td><td>需要 a=true，且 c 或 (d∧e∧f) 为 true</td></tr>
+        <tr><td><strong>c</strong></td><td>a ∧ b ∧ ¬(d∧e∧f)</td><td>需要 a、b 为 true，且 d∧e∧f 为 false</td></tr>
+        <tr><td><strong>d</strong></td><td>a ∧ b ∧ ¬c ∧ e ∧ f</td><td>需要 a、b、e、f 为 true，c 为 false</td></tr>
+        <tr><td><strong>e</strong></td><td>a ∧ b ∧ ¬c ∧ d ∧ f</td><td>需要 a、b、d、f 为 true，c 为 false</td></tr>
+        <tr><td><strong>f</strong></td><td>a ∧ b ∧ ¬c ∧ d ∧ e</td><td>需要 a、b、d、e 为 true，c 为 false</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ==================== CACC 测试 ==================== -->
+    <h3 id="cacc">CACC 测试真值赋值</h3>
+
+    <p>根据上述判定分析，填写完整的 CACC 测试真值赋值表：</p>
+
+    <table>
+      <thead>
+        <tr><th>主子句</th><th>a</th><th>b</th><th>c</th><th>d</th><th>e</th><th>f</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>a=T</td><td><code>T</code></td><td>t</td><td>t</td><td>t</td><td>t</td><td>t</td></tr>
+        <tr><td>a=F</td><td><code>F</code></td><td>t</td><td>t</td><td>t</td><td>t</td><td>t</td></tr>
+        <tr><td>b=T</td><td>t</td><td><code>T</code></td><td>t</td><td>t</td><td>t</td><td>t</td></tr>
+        <tr><td>b=F</td><td>t</td><td><code>F</code></td><td>t</td><td>t</td><td>t</td><td>t</td></tr>
+        <tr><td>c=T</td><td>t</td><td>t</td><td><code>T</code></td><td>f</td><td>f</td><td>f</td></tr>
+        <tr><td>c=F</td><td>t</td><td>t</td><td><code>F</code></td><td>f</td><td>f</td><td>f</td></tr>
+        <tr><td>d=T</td><td>t</td><td>t</td><td>f</td><td><code>T</code></td><td>t</td><td>t</td></tr>
+        <tr><td>d=F</td><td>t</td><td>t</td><td>f</td><td><code>F</code></td><td>t</td><td>t</td></tr>
+        <tr><td>e=T</td><td>t</td><td>t</td><td>f</td><td>t</td><td><code>T</code></td><td>t</td></tr>
+        <tr><td>e=F</td><td>t</td><td>t</td><td>f</td><td>t</td><td><code>F</code></td><td>t</td></tr>
+        <tr><td>f=T</td><td>t</td><td>t</td><td>f</td><td>t</td><td>t</td><td><code>T</code></td></tr>
+        <tr><td>f=F</td><td>t</td><td>t</td><td>f</td><td>t</td><td>t</td><td><code>F</code></td></tr>
+      </tbody>
+    </table>
+
+    <p>其中大写字母表示主子句的值（T/F），小写字母表示次子句的值（t/f）。</p>
+
+    <!-- ==================== 问题与挑战 ==================== -->
+    <h3 id="issues">发现的问题与挑战</h3>
+
+    <h4>不可行测试需求</h4>
+    <div class="danger-block">
+      <div>
+        <strong>问题：</strong> <code>inStation</code> 和 <code>inTunnel</code> 不能同时为假！模型只有 2 个位置，因此 <code>c = F ∧ f = F</code> 是不可能的组合。<br>
+        <strong>解决：</strong> 更改真值赋值（如改为 c=F, f=T），或与开发者确认模型约束。
+      </div>
+    </div>
+
+    <h4>预期结果与意外转换</h4>
+    <p>预期结果从 FSM 中读取：</p>
+    <ul>
+      <li>守卫条件为 <code>true</code> → 转换<strong>被触发</strong></li>
+      <li>守卫条件为 <code>false</code> → 转换<strong>不被触发</strong></li>
+    </ul>
+
+    <div class="warning">
+      <div>
+        <strong>意外转换：</strong> 某个转换的 false 结果可能恰好是另一个转换的 true。例如 <code>platform ≠ left</code> 时守卫为 false，但如果 <code>platform = right</code>，系统将转换到"Right Doors Open"状态，而非停留在原状态。测试自动化时必须识别这些意外转换。
+      </div>
+    </div>
+
+    <h4>测试自动化挑战</h4>
+    <table>
+      <thead>
+        <tr><th>挑战</th><th>说明</th><th>示例</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>映射问题</strong></td>
+          <td>FSM 中的名称与程序中的名称可能不一致</td>
+          <td>FSM 用 <code>platform=left</code>，程序中需要调用 <code>goToStation("West")</code></td>
+        </tr>
+        <tr>
+          <td><strong>可达性</strong></td>
+          <td>测试必须先到达目标状态所在的转换起点</td>
+          <td>需要先执行一系列转换将列车开到站台</td>
+        </tr>
+        <tr>
+          <td><strong>可控性</strong></td>
+          <td>某些条件难以直接控制</td>
+          <td><code>trainSpeed=0</code> 需要多次刹车操作</td>
+        </tr>
+        <tr>
+          <td><strong>同时事件</strong></td>
+          <td>多个事件同时发生时的处理</td>
+          <td>两个按钮同时按下</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h4>早期识别的价值</h4>
+    <div class="flow-diagram">
+      <div class="flow-step">
+        <div class="step-box" style="background:#dbeafe;">📐</div>
+        <div class="step-label">构建 FSM 模型</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#fef3c7;">🔍</div>
+        <div class="step-label">分析转换守卫</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#fee2e2;">🐛</div>
+        <div class="step-label">发现设计缺陷</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#d1fae5;">🧪</div>
+        <div class="step-label">生成测试用例</div>
+      </div>
+    </div>
+    <p>为测试设计而构建 FSM 模型的过程本身就能帮助发现缺陷 — 这是模型驱动测试设计的强大副作用。</p>
+
+    <h4>总结</h4>
+    <ul>
+      <li>FSM 被广泛使用，特别是在<strong>嵌入式软件</strong>中</li>
+      <li>转换上的谓词是 FSM 逻辑覆盖的核心</li>
+      <li>谓词通常以守卫条件、动作、安全约束的形式显式出现在转换上</li>
+      <li>FSM 有多种表达形式：Statecharts、状态表、Z 记法、决策表、Petri 网等</li>
+    </ul>
+
+    <hr>
+    <div class="pagination">
+      <a href="spec.html" class="page-nav">
+        <span class="label">上一页</span>
+        <span class="title">← 规约逻辑覆盖</span>
+      </a>
+      <a href="index.html" class="page-nav next">
+        <span class="label">返回首页</span>
+        <span class="title">章节总览 →</span>
+      </a>
+    </div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

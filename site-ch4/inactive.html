@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>非活动子句覆盖 - 第4章 逻辑覆盖</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <h1>第4章 逻辑覆盖</h1>
+    <div class="subtitle">Chapter 4 · Logic Coverage</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">逻辑覆盖标准</div>
+    <a href="index.html"><span class="icon">📋</span> 章节总览</a>
+    <a href="semantic.html"><span class="icon">🧠</span> 语义覆盖标准</a>
+    <a href="inactive.html" class="active"><span class="icon">🔒</span> 非活动子句覆盖</a>
+    <a href="dnf.html"><span class="icon">📐</span> DNF语法覆盖</a>
+    <a href="source.html"><span class="icon">💻</span> 源代码逻辑覆盖</a>
+    <a href="spec.html"><span class="icon">📄</span> 规约逻辑覆盖</a>
+    <a href="fsm.html"><span class="icon">🔄</span> FSM逻辑覆盖</a>
+  </nav>
+  <div class="sidebar-footer">Software Testing · HW5</div>
+</aside>
+
+<button class="menu-toggle">☰</button>
+<div class="overlay"></div>
+
+<!-- Main -->
+<div class="main">
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="index.html">第4章</a>
+      <span class="sep">/</span>
+      <span>非活动子句覆盖</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-header">
+      <h2>非活动子句覆盖 (Inactive Clause Coverage)</h2>
+      <p class="desc">ICC 系列覆盖标准通过控制非活动子句的取值来保证子句对谓词的独立影响力，是 MC/DC 的理论基础。</p>
+      <div class="meta">
+        <span class="tag">§ 8.1.3</span>
+        <span class="tag">ICC / GICC / RICC</span>
+        <span class="tag">MC/DC</span>
+      </div>
+    </div>
+
+    <!-- ICC Definition -->
+    <h3 id="icc-def">ICC 定义<a href="#icc-def" class="anchor">#</a></h3>
+
+    <p><strong>Inactive Clause Coverage (ICC)</strong> 的核心思想是：对于谓词 <code>p</code> 中的每个子句 <code>c<sub>i</sub></code>，当 <code>c<sub>i</sub></code> 为 <strong>非活动子句</strong>（即不决定谓词值）时，需要满足以下四个要求：</p>
+
+    <table>
+      <thead>
+        <tr><th>#</th><th>要求</th><th>说明</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td><code>c<sub>i</sub> = T</code>, <code>p = T</code></td><td>子句为真，谓词也为真</td></tr>
+        <tr><td>2</td><td><code>c<sub>i</sub> = F</code>, <code>p = T</code></td><td>子句为假，谓词仍为真</td></tr>
+        <tr><td>3</td><td><code>c<sub>i</sub> = T</code>, <code>p = F</code></td><td>子句为真，谓词为假</td></tr>
+        <tr><td>4</td><td><code>c<sub>i</sub> = F</code>, <code>p = F</code></td><td>子句为假，谓词也为假</td></tr>
+      </tbody>
+    </table>
+
+    <div class="tip">ICC 保证了子句在非活动状态下，所有 (c<sub>i</sub>, p) 的组合都被覆盖，从而确保谓词覆盖 (PC) 被隐含满足。</div>
+
+    <!-- GICC vs RICC -->
+    <h3 id="gicc-ricc">GICC 与 RICC<a href="#gicc-ricc" class="anchor">#</a></h3>
+
+    <div class="compare-grid">
+      <div class="compare-box">
+        <h4>GICC (General ICC)</h4>
+        <ul>
+          <li>弱化版本的 ICC</li>
+          <li>对每个子句 <code>c<sub>i</sub></code>，当其为非活动时，需覆盖 <code>p=T</code> 和 <code>p=F</code> 各至少一次</li>
+          <li><strong>不要求</strong>其他子句取值相同</li>
+          <li>测试用例数量更少</li>
+        </ul>
+      </div>
+      <div class="compare-box">
+        <h4>RICC (Restricted ICC)</h4>
+        <ul>
+          <li>严格版本的 ICC</li>
+          <li>对每个子句 <code>c<sub>i</sub></code>，当其为非活动时，需覆盖全部 4 种 (c<sub>i</sub>, p) 组合</li>
+          <li><strong>要求</strong>其他子句（minor clauses）取值相同</li>
+          <li>测试用例数量更多，但覆盖更充分</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ICC guarantees PC -->
+    <h3 id="icc-pc">ICC 隐含谓词覆盖<a href="#icc-pc" class="anchor">#</a></h3>
+
+    <p>ICC <strong>始终保证</strong> Predicate Coverage (PC)。因为在 ICC 的 4 个要求中，已经包含了 <code>p=T</code> 和 <code>p=F</code> 的情况，无论子句是活动还是非活动状态，谓词的真假值都会被覆盖到。</p>
+
+    <blockquote>
+      <p><strong>定理：</strong>ICC ⊇ PC。任何满足 ICC 的测试集必然满足 Predicate Coverage。</p>
+    </blockquote>
+
+    <!-- Infeasibility -->
+    <h3 id="infeasibility">不可行性示例<a href="#infeasibility" class="anchor">#</a></h3>
+
+    <p>考虑谓词：</p>
+    <pre><code>p = (a > b) ∧ (b > c) ∨ c > a</code></pre>
+
+    <p>该谓词有三个子句：</p>
+    <ul>
+      <li><code>c<sub>1</sub></code>: <code>a > b</code></li>
+      <li><code>c<sub>2</sub></code>: <code>b > c</code></li>
+      <li><code>c<sub>3</sub></code>: <code>c > a</code></li>
+    </ul>
+
+    <div class="warning">当三个子句同时为 <strong>True</strong> 时：<code>a > b > c > a</code>，这形成了一个矛盾循环，<strong>不可能存在</strong>满足条件的输入值。这意味着某些 ICC 要求可能是不可行的 (infeasible)。</div>
+
+    <!-- Subsumption Diagram -->
+    <h3 id="subsumption">包含关系图<a href="#subsumption" class="anchor">#</a></h3>
+
+    <p>语义覆盖标准之间的包含关系：</p>
+
+    <div class="flow-diagram">
+      <div class="flow-step">
+        <div class="step-box" style="background:#dbeafe;">CC</div>
+        <div class="step-label">Clause Coverage</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#c7d2fe;">CACC</div>
+        <div class="step-label">Correlated ACC</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#a5b4fc;">RACC</div>
+        <div class="step-label">Restricted ACC</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#818cf8;">CoC</div>
+        <div class="step-label">Combinatorial Cov.</div>
+      </div>
+    </div>
+
+    <p>核心包含关系链：</p>
+    <blockquote>
+      <p><strong>CoC ⊇ RACC ⊇ CACC ⊇ GACC</strong></p>
+      <p><strong>ICC ⊇ PC</strong></p>
+    </blockquote>
+
+    <!-- GACC cannot guarantee PC -->
+    <h3 id="gacc-pc">GACC 不能保证 PC 的示例<a href="#gacc-pc" class="anchor">#</a></h3>
+
+    <p>考虑异或谓词 <code>p = a ⊕ b</code>，其真值表如下：</p>
+
+    <table>
+      <thead>
+        <tr><th>行</th><th>a</th><th>b</th><th>p = a ⊕ b</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>T</td><td>T</td><td>F</td></tr>
+        <tr><td>2</td><td>T</td><td>F</td><td>T</td></tr>
+        <tr><td>3</td><td>F</td><td>T</td><td>T</td></tr>
+        <tr><td>4</td><td>F</td><td>F</td><td>F</td></tr>
+      </tbody>
+    </table>
+
+    <p>GACC 要求：对每个子句，存在使谓词为 T 和 F 的取值。选择 <strong>行 {1, 4}</strong> 或 <strong>行 {2, 3}</strong>：</p>
+    <ul>
+      <li><strong>行 {1, 4}</strong>：<code>a=T→p=F</code>, <code>a=F→p=F</code>, <code>b=T→p=F</code>, <code>b=F→p=F</code> — 满足 GACC 但 <code>p</code> 从未为 T，<strong>不满足 PC</strong></li>
+      <li><strong>行 {2, 3}</strong>：类似地，满足 GACC 但 <code>p</code> 从未为 F，<strong>不满足 PC</strong></li>
+    </ul>
+
+    <div class="danger-block">GACC 在异或 (XOR) 谓词上<strong>不能保证</strong> Predicate Coverage，因为它不要求其他子句取值一致。</div>
+
+    <!-- Making clauses determine -->
+    <h3 id="determine">使子句决定谓词<a href="#determine" class="anchor">#</a></h3>
+
+    <h4>Definitional 方法</h4>
+
+    <p>对于复合谓词，我们可以通过<strong>定义式分解</strong>来确定每个子句是否决定谓词：</p>
+
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>p = a ⊕ b (XOR)</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <p>XOR 的定义：<code>p = (a ∧ ¬b) ∨ (¬a ∧ b)</code></p>
+            <p>子句 <code>a</code> 决定 <code>p</code> 当 <code>b</code> 固定时：<code>p = a ⊕ b</code>，改变 <code>a</code> 一定改变 <code>p</code>，所以 <code>a</code> 总是决定 <code>p</code>。</p>
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>p = a ∨ b</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <p><code>a</code> 决定 <code>p</code> 当 <code>b = F</code> 时（此时 <code>p = a</code>）。</p>
+            <p><code>b</code> 决定 <code>p</code> 当 <code>a = F</code> 时（此时 <code>p = b</code>）。</p>
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>p = a ∧ b</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <p><code>a</code> 决定 <code>p</code> 当 <code>b = T</code> 时（此时 <code>p = a</code>）。</p>
+            <p><code>b</code> 决定 <code>p</code> 当 <code>a = T</code> 时（此时 <code>p = b</code>）。</p>
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>p = a ∨ (b ∧ c)</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <p><code>a</code> 决定 <code>p</code> 当 <code>b ∧ c = F</code> 时。</p>
+            <p><code>b</code> 决定 <code>p</code> 当 <code>a = F</code> 且 <code>c = T</code> 时。</p>
+            <p><code>c</code> 决定 <code>p</code> 当 <code>a = F</code> 且 <code>b = T</code> 时。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h4>Tabular 方法</h4>
+
+    <p>使用真值表的<strong>行对</strong> (row pairs) 来判断子句决定关系：如果仅改变子句 <code>c<sub>i</sub></code> 的值会导致谓词 <code>p</code> 改变，则 <code>c<sub>i</sub></code> 在该行决定 <code>p</code>。</p>
+
+    <table>
+      <thead>
+        <tr><th>a</th><th>b</th><th>p = a ∨ b</th><th>a 决定 p?</th><th>b 决定 p?</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>T</td><td>T</td><td>T</td><td>否 (改 a→仍 T)</td><td>否 (改 b→仍 T)</td></tr>
+        <tr><td>T</td><td>F</td><td>T</td><td>否 (改 a→F, 但需看对)</td><td>是 (改 b→T, 对应行1)</td></tr>
+        <tr><td>F</td><td>T</td><td>T</td><td>是 (改 a→T, 对应行1)</td><td>否 (改 b→F, 对应行4)</td></tr>
+        <tr><td>F</td><td>F</td><td>F</td><td>是 (改 a→T, 对应行2)</td><td>是 (改 b→T, 对应行3)</td></tr>
+      </tbody>
+    </table>
+
+    <!-- Test requirements analysis -->
+    <h3 id="test-reqs">测试需求分析表<a href="#test-reqs" class="anchor">#</a></h3>
+
+    <p>以 <code>p = a ∧ (b ∨ c)</code> 为例，分析各覆盖标准的测试需求：</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>子句</th>
+          <th>GACC</th>
+          <th>CACC</th>
+          <th>RACC</th>
+          <th>GICC</th>
+          <th>RICC</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>a</code></td>
+          <td>a=T,p=T; a=F,p=F</td>
+          <td>a=T,p=T,Pa; a=F,p=F,Pa</td>
+          <td>a=T,p=T,Pa; a=F,p=F,Pa<br>(b∨c 相同)</td>
+          <td>a=T,p=T; a=F,p=T;<br>a=T,p=F; a=F,p=F</td>
+          <td>a=T,p=T; a=F,p=T;<br>a=T,p=F; a=F,p=F<br>(b∨c 相同)</td>
+        </tr>
+        <tr>
+          <td><code>b</code></td>
+          <td>b=T,p=T; b=F,p=F</td>
+          <td>b=T,p=T,Pb; b=F,p=F,Pb</td>
+          <td>b=T,p=T,Pb; b=F,p=F,Pb<br>(a,c 相同)</td>
+          <td>b=T,p=T; b=F,p=T;<br>b=T,p=F; b=F,p=F</td>
+          <td>b=T,p=T; b=F,p=T;<br>b=T,p=F; b=F,p=F<br>(a,c 相同)</td>
+        </tr>
+        <tr>
+          <td><code>c</code></td>
+          <td>c=T,p=T; c=F,p=F</td>
+          <td>c=T,p=T,Pc; c=F,p=F,Pc</td>
+          <td>c=T,p=T,Pc; c=F,p=F,Pc<br>(a,b 相同)</td>
+          <td>c=T,p=T; c=F,p=T;<br>c=T,p=F; c=F,p=F</td>
+          <td>c=T,p=T; c=F,p=T;<br>c=T,p=F; c=F,p=F<br>(a,b 相同)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>其中 <code>Pa</code> 表示除 <code>a</code> 外其他子句取值的约束，使得 <code>a</code> 能决定谓词 <code>p</code>。</p>
+
+    <!-- MCDC -->
+    <h3 id="mcdc">MC/DC 覆盖标准<a href="#mcdc" class="anchor">#</a></h3>
+
+    <p><strong>Modified Condition/Decision Coverage (MC/DC)</strong> 要求：</p>
+    <ul>
+      <li>每个条件（子句）都<strong>独立地</strong>影响判定（谓词）的结果</li>
+      <li>每个条件取 T 和 F 至少各一次</li>
+      <li>每个判定取 T 和 F 至少各一次</li>
+    </ul>
+
+    <blockquote>
+      <p><strong>测试数量：</strong>MC/DC 通常需要约 <code>N + 1</code> 个测试用例（N 为条件数），相比组合覆盖的 <code>2<sup>N</sup></code> 大幅减少。</p>
+    </blockquote>
+
+    <p>MC/DC 是航空电子标准 DO-178B/C Level A 的强制要求，在工业实践中被广泛采用。</p>
+
+    <!-- Terminology mapping -->
+    <h3 id="terminology">术语映射表<a href="#terminology" class="anchor">#</a></h3>
+
+    <table>
+      <thead>
+        <tr><th>本教材术语</th><th>其他常用术语</th><th>说明</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Predicate Coverage (PC)</td><td>Decision Coverage / Branch Coverage</td><td>谓词（判定）取 T 和 F</td></tr>
+        <tr><td>Clause Coverage (CC)</td><td>Condition Coverage</td><td>每个子句取 T 和 F</td></tr>
+        <tr><td>PC + CC</td><td>C/DC (Condition/Decision Coverage)</td><td>同时满足 PC 和 CC</td></tr>
+        <tr><td>RICC</td><td>MC/DC (Modified Condition/Decision Coverage)</td><td>子句独立影响谓词</td></tr>
+        <tr><td>GACC</td><td>—</td><td>弱化的活动子句覆盖</td></tr>
+        <tr><td>CACC</td><td>—</td><td>关联活动子句覆盖</td></tr>
+        <tr><td>RACC</td><td>—</td><td>受限活动子句覆盖</td></tr>
+        <tr><td>CoC</td><td>—</td><td>组合覆盖（全组合）</td></tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="pagination">
+      <a href="semantic.html" class="page-nav prev">
+        <span class="label">← 上一页</span>
+        <span class="title">语义覆盖标准</span>
+      </a>
+      <a href="dnf.html" class="page-nav next">
+        <span class="label">下一页 →</span>
+        <span class="title">DNF语法覆盖标准</span>
+      </a>
+    </div>
+
+  </div><!-- .content -->
+</div><!-- .main -->
+
+<script src="script.js"></script>
+</body>
+</html>

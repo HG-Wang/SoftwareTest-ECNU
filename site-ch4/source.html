@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>源代码逻辑覆盖 - 第4章 逻辑覆盖</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <h1>第4章 逻辑覆盖</h1>
+    <div class="subtitle">Chapter 4 · Logic Coverage</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">逻辑覆盖标准</div>
+    <a href="index.html"><span class="icon">📋</span> 章节总览</a>
+    <a href="semantic.html"><span class="icon">🧠</span> 语义覆盖标准</a>
+    <a href="inactive.html"><span class="icon">🔒</span> 非活动子句覆盖</a>
+    <a href="dnf.html"><span class="icon">📐</span> DNF语法覆盖</a>
+    <a href="source.html" class="active"><span class="icon">💻</span> 源代码逻辑覆盖</a>
+    <a href="spec.html"><span class="icon">📄</span> 规约逻辑覆盖</a>
+    <a href="fsm.html"><span class="icon">🔄</span> FSM逻辑覆盖</a>
+  </nav>
+  <div class="sidebar-footer">Software Testing · HW5</div>
+</aside>
+
+<button class="menu-toggle">☰</button>
+<div class="overlay"></div>
+
+<!-- Main -->
+<div class="main">
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="index.html">第4章</a>
+      <span class="sep">/</span>
+      <span>源代码逻辑覆盖</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-header">
+      <h2>源代码逻辑覆盖 (Logic Coverage for Source Code)</h2>
+      <p class="desc">将逻辑覆盖标准应用于实际源代码时，需要处理可达性、可控性和内部变量等挑战。</p>
+      <div class="meta">
+        <span class="tag">§ 8.3</span>
+        <span class="tag">可达性分析</span>
+        <span class="tag">谓词提取</span>
+      </div>
+    </div>
+
+    <!-- Steps -->
+    <h3 id="steps">基本步骤<a href="#steps" class="anchor">#</a></h3>
+
+    <ol class="step-list">
+      <li>
+        <div>
+          <strong>提取谓词 (Extract Predicates)</strong>
+          <p>从源代码中的条件语句（if、while、for 等）中提取逻辑谓词。</p>
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>分析可达性 (Analyze Reachability)</strong>
+          <p>确定到达包含谓词的代码语句所需的路径条件和前置约束。</p>
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>求解内部变量 (Solve Internal Variables)</strong>
+          <p>处理谓词中出现的非输入变量，建立它们与输入变量的关系。</p>
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>求解约束 (Solve Constraints)</strong>
+          <p>将覆盖标准产生的逻辑约束转化为可求解的输入值约束。</p>
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>推导测试用例 (Derive Tests)</strong>
+          <p>从约束求解结果中生成具体的测试输入值。</p>
+        </div>
+      </li>
+    </ol>
+
+    <!-- Challenges -->
+    <h3 id="challenges">核心挑战<a href="#challenges" class="anchor">#</a></h3>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon orange">🎯</div>
+        <h3>可达性 (Reachability)</h3>
+        <p>如何到达包含目标谓词的代码语句？需要满足所有前置条件和路径约束。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon blue">🎮</div>
+        <h3>可控性 (Controllability)</h3>
+        <p>如何通过外部输入控制谓词中各子句的取值？输入变量与子句之间的映射关系可能很复杂。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon purple">🔗</div>
+        <h3>内部变量 (Internal Variables)</h3>
+        <p>谓词中可能包含非输入的中间变量，需要回溯计算其与输入的关系。</p>
+      </div>
+    </div>
+
+    <!-- Triangle Example -->
+    <h3 id="triangle">三角形分类示例<a href="#triangle" class="anchor">#</a></h3>
+
+    <p>从三角形分类程序中提取谓词的过程：</p>
+
+    <pre><code><span class="kw">int</span> <span class="fn">classify</span>(<span class="tp">int</span> <span class="vr">s1</span>, <span class="tp">int</span> <span class="vr">s2</span>, <span class="tp">int</span> <span class="vr">s3</span>) {
+  <span class="tp">int</span> <span class="vr">triOut</span>;
+  <span class="cm">// 计算三角形类型</span>
+  <span class="kw">if</span> (s1 == s2 && s2 == s3)       <span class="vr">triOut</span> = <span class="nu">2</span>;  <span class="cm">// 等边</span>
+  <span class="kw">else if</span> (s1 != s2 && s2 != s3 && s1 != s3) <span class="vr">triOut</span> = <span class="nu">4</span>;  <span class="cm">// 不等边</span>
+  <span class="kw">else</span>                              <span class="vr">triOut</span> = <span class="nu">3</span>;  <span class="cm">// 等腰</span>
+
+  <span class="kw">if</span> (s1+s2 > s3 && s2+s3 > s1 && s1+s3 > s2) {
+    <span class="kw">return</span> triOut;  <span class="cm">// 有效三角形</span>
+  } <span class="kw">else</span> {
+    <span class="kw">return</span> <span class="nu">0</span>;      <span class="cm">// 无效</span>
+  }
+}</code></pre>
+
+    <p><code>triOut</code> 有 6 种可能取值 (0-5)，映射到不同的三角形类型。谓词提取后需分析每个条件分支的可达性约束。</p>
+
+    <!-- Thermostat Example -->
+    <h3 id="thermostat">恒温器示例<a href="#thermostat" class="anchor">#</a></h3>
+
+    <p>考虑恒温器控制程序中的谓词：</p>
+
+    <pre><code><span class="kw">if</span> ((a || (b && c)) && d) {
+  <span class="fn">turnOnHeater</span>();
+}</code></pre>
+
+    <p>其中各子句的定义：</p>
+    <table>
+      <thead>
+        <tr><th>子句</th><th>含义</th><th>输入变量</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>a</code></td><td><code>curTemp &lt; dTemp - thresholdDiff</code></td><td>当前温度、期望温度、阈值差</td></tr>
+        <tr><td><code>b</code></td><td><code>Override</code></td><td>用户覆盖开关</td></tr>
+        <tr><td><code>c</code></td><td><code>curTemp &lt; overTemp - thresholdDiff</code></td><td>当前温度、覆盖温度、阈值差</td></tr>
+        <tr><td><code>d</code></td><td><code>timeSinceLastRun > minLag</code></td><td>上次运行时间、最小间隔</td></tr>
+      </tbody>
+    </table>
+
+    <h4>可达性分析</h4>
+    <p>要到达该 if 语句，需要确保程序执行路径到达此处。可达性约束可能包括前置状态检查等。</p>
+
+    <h4>CACC 测试推导</h4>
+    <p>对于 CACC 覆盖，该谓词需要 <strong>6 个测试用例</strong>：</p>
+
+    <table>
+      <thead>
+        <tr><th>测试</th><th>目标子句</th><th>子句值</th><th>谓词值</th><th>Pa (其他约束)</th><th>说明</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>T1</td><td>a</td><td>T</td><td>T</td><td><code>!(b&&c) && d</code></td>
+          <td>温度低于阈值，非覆盖模式，时间间隔足够</td>
+        </tr>
+        <tr>
+          <td>T2</td><td>a</td><td>F</td><td>T</td><td><code>(b&&c) && d</code></td>
+          <td>温度正常，但覆盖模式开启且冷却时间足够</td>
+        </tr>
+        <tr>
+          <td>T3</td><td>b</td><td>T</td><td>T</td><td><code>!a && c && d</code></td>
+          <td>覆盖开启，温度低于覆盖温度，间隔足够</td>
+        </tr>
+        <tr>
+          <td>T4</td><td>b</td><td>F</td><td>T</td><td><code>a && d</code></td>
+          <td>覆盖关闭，但温度已低于阈值</td>
+        </tr>
+        <tr>
+          <td>T5</td><td>c</td><td>T</td><td>T</td><td><code>!a && b && d</code></td>
+          <td>温度低于覆盖温度，覆盖开启</td>
+        </tr>
+        <tr>
+          <td>T6</td><td>c</td><td>F</td><td>F</td><td><code>!a && b && d</code></td>
+          <td>温度高于覆盖温度，覆盖开启但谓词为假</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>每个测试用例需要将逻辑约束转化为具体的温度、时间等输入值。</p>
+
+    <!-- Program Transformation Issues -->
+    <h3 id="transform">程序变换问题<a href="#transform" class="anchor">#</a></h3>
+
+    <div class="danger-block">对程序进行变换后再应用逻辑覆盖标准，可能导致覆盖不充分的问题。</div>
+
+    <h4>变换 1：嵌套 if 语句</h4>
+
+    <div class="code-compare">
+      <div class="code-panel">
+        <span class="code-label original">原始</span>
+        <pre><code><span class="kw">if</span> (A && B) {
+  <span class="cm">// ...</span>
+}</code></pre>
+      </div>
+      <div class="code-panel">
+        <span class="code-label mutant">变换后</span>
+        <pre><code><span class="kw">if</span> (A) {
+  <span class="kw">if</span> (B) {
+    <span class="cm">// ...</span>
+  }
+}</code></pre>
+      </div>
+    </div>
+
+    <p>对变换后的代码执行 <strong>PC (Predicate Coverage)</strong>，不能保证对原始代码满足 <strong>CACC</strong>。因为嵌套 if 将一个复合谓词拆分为两个独立判定，丢失了子句间的关联信息。</p>
+
+    <blockquote>
+      <p>在变换后的代码上满足 PC，需要 <strong>更多</strong> 的测试用例才能达到原始代码的 CACC 覆盖。</p>
+    </blockquote>
+
+    <h4>变换 2：引入中间变量</h4>
+
+    <div class="code-compare">
+      <div class="code-panel">
+        <span class="code-label original">原始</span>
+        <pre><code><span class="kw">if</span> (x > 0 && x < 100) {
+  <span class="cm">// ...</span>
+}</code></pre>
+      </div>
+      <div class="code-panel">
+        <span class="code-label mutant">变换后</span>
+        <pre><code><span class="tp">bool</span> <span class="vr">a</span> = (x > 0);
+<span class="tp">bool</span> <span class="vr">b</span> = (x < 100);
+<span class="kw">if</span> (a && b) {
+  <span class="cm">// ...</span>
+}</code></pre>
+      </div>
+    </div>
+
+    <p>这种变换将复杂度从逻辑谓词<strong>转移到</strong>了计算过程中。虽然谓词变得简单（只有布尔变量），但逻辑覆盖标准无法有效覆盖原始的比较运算。</p>
+
+    <blockquote>
+      <p><strong>结论：</strong>程序变换 (transformation) <strong>不可行</strong>，不应在变换后的代码上应用逻辑覆盖标准。</p>
+    </blockquote>
+
+    <!-- Side Effects -->
+    <h3 id="side-effects">谓词中的副作用<a href="#side-effects" class="anchor">#</a></h3>
+
+    <p>当谓词中包含具有<strong>副作用</strong>的函数调用时，逻辑覆盖分析变得更加复杂：</p>
+
+    <pre><code><span class="kw">if</span> (A && (B || <span class="fn">changeVar</span>(A))) {
+  <span class="cm">// ...</span>
+}</code></pre>
+
+    <p>其中 <code>changeVar(A)</code> 不仅返回一个布尔值，还可能修改某些状态。这导致：</p>
+    <ul>
+      <li>子句 <code>B</code> 和 <code>changeVar(A)</code> 的求值顺序会影响结果</li>
+      <li>短路求值 (short-circuit evaluation) 可能跳过副作用</li>
+      <li>同一谓词在不同执行中可能产生不同结果</li>
+    </ul>
+
+    <div class="warning">包含副作用的谓词使得逻辑覆盖标准的假设（谓词是纯布尔函数）不再成立，分析时需要特别小心。</div>
+
+    <!-- Summary -->
+    <h3 id="summary">总结<a href="#summary" class="anchor">#</a></h3>
+
+    <table>
+      <thead>
+        <tr><th>要点</th><th>说明</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>谓词规模</td>
+          <td>大多数实际程序的谓词 <strong>&lt; 4 个子句</strong>，组合覆盖代价可接受</td>
+        </tr>
+        <tr>
+          <td>困难所在</td>
+          <td><strong>内部变量</strong>的求解是最大的挑战，需要回溯数据流</td>
+        </tr>
+        <tr>
+          <td>避免变换</td>
+          <td><strong>不要</strong>对程序进行变换后再应用逻辑覆盖标准</td>
+        </tr>
+        <tr>
+          <td>工具支持</td>
+          <td>使用约束求解器 (SMT solver) 可自动化测试用例生成</td>
+        </tr>
+        <tr>
+          <td>实践建议</td>
+          <td>优先使用 MC/DC，对关键判定使用组合覆盖</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="pagination">
+      <a href="dnf.html" class="page-nav prev">
+        <span class="label">← 上一页</span>
+        <span class="title">DNF语法覆盖标准</span>
+      </a>
+      <a href="spec.html" class="page-nav next">
+        <span class="label">下一页 →</span>
+        <span class="title">规约逻辑覆盖</span>
+      </a>
+    </div>
+
+  </div><!-- .content -->
+</div><!-- .main -->
+
+<script src="script.js"></script>
+</body>
+</html>

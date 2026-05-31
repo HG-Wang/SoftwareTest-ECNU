@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DNF语法覆盖标准 - 第4章 逻辑覆盖</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <h1>第4章 逻辑覆盖</h1>
+    <div class="subtitle">Chapter 4 · Logic Coverage</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">逻辑覆盖标准</div>
+    <a href="index.html"><span class="icon">📋</span> 章节总览</a>
+    <a href="semantic.html"><span class="icon">🧠</span> 语义覆盖标准</a>
+    <a href="inactive.html"><span class="icon">🔒</span> 非活动子句覆盖</a>
+    <a href="dnf.html" class="active"><span class="icon">📐</span> DNF语法覆盖</a>
+    <a href="source.html"><span class="icon">💻</span> 源代码逻辑覆盖</a>
+    <a href="spec.html"><span class="icon">📄</span> 规约逻辑覆盖</a>
+    <a href="fsm.html"><span class="icon">🔄</span> FSM逻辑覆盖</a>
+  </nav>
+  <div class="sidebar-footer">Software Testing · HW5</div>
+</aside>
+
+<button class="menu-toggle">☰</button>
+<div class="overlay"></div>
+
+<!-- Main -->
+<div class="main">
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="index.html">第4章</a>
+      <span class="sep">/</span>
+      <span>DNF语法覆盖</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-header">
+      <h2>DNF 语法覆盖标准 (Syntactic Logic Coverage)</h2>
+      <p class="desc">基于析取范式 (Disjunctive Normal Form) 的语法结构，利用蕴含项和文字的组合定义覆盖标准，具有更强的故障检测能力。</p>
+      <div class="meta">
+        <span class="tag">§ 8.2</span>
+        <span class="tag">DNF</span>
+        <span class="tag">MUMCUT</span>
+      </div>
+    </div>
+
+    <!-- DNF Basics -->
+    <h3 id="dnf-basics">DNF 基本概念<a href="#dnf-basics" class="anchor">#</a></h3>
+
+    <dl class="def-list">
+      <dt>字 (Literal)</dt>
+      <dd>一个布尔变量或其否定。例如：<code>a</code>、<code>¬b</code> 都是字。</dd>
+
+      <dt>项 / 蕴含项 (Implicant / Term)</dt>
+      <dd>若干字的合取（AND）。例如：<code>ab</code> 表示 <code>a ∧ b</code>，<code>a¬bc</code> 表示 <code>a ∧ ¬b ∧ c</code>。</dd>
+
+      <dt>析取范式 (DNF)</dt>
+      <dd>若干蕴含项的析取（OR）。例如：<code>abc + ab + ac</code> 表示 <code>(a∧b∧c) ∨ (a∧b) ∨ (a∧c)</code>。</dd>
+    </dl>
+
+    <div class="tip">DNF 的标准写法中，省略 ∧ 符号，用并列写字母表示合取，用 + 表示析取。例如 <code>ab + cd</code> 表示 <code>(a∧b) ∨ (c∧d)</code>。</div>
+
+    <!-- IC -->
+    <h3 id="ic">蕴含项覆盖 IC (Implicant Coverage)<a href="#ic" class="anchor">#</a></h3>
+
+    <p><strong>IC</strong> 要求对 DNF 中的每个蕴含项（term），选择一个使其为 <strong>True</strong> 的取值，且该蕴含项中的否定字也需被覆盖。</p>
+
+    <p>例如对于 <code>f = ab + cd</code>：</p>
+    <ul>
+      <li>蕴含项 <code>ab</code>：选择 <code>a=T, b=T</code></li>
+      <li>蕴含项 <code>cd</code>：选择 <code>c=T, d=T</code></li>
+    </ul>
+
+    <!-- Key Definitions -->
+    <h3 id="definitions">关键定义<a href="#definitions" class="anchor">#</a></h3>
+
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>Proper Subterm (真子项)</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <p>蕴含项 <code>t<sub>i</sub></code> 的真子项是通过去掉 <code>t<sub>i</sub></code> 中一个或多个字后得到的项。例如 <code>a</code> 是 <code>ab</code> 的真子项。</p>
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>Prime Implicant (素蕴含项)</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <p>一个蕴含项 <code>p</code> 是素蕴含项，当且仅当不存在其他蕴含项 <code>q</code> 使得 <code>q</code> 的真子项包含 <code>p</code> 且 <code>q</code> 也蕴含 <code>f</code>。简而言之，素蕴含项不能再被扩大而仍然蕴含函数。</p>
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>Redundant Implicant (冗余蕴含项)</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <p>如果去掉 DNF 表达式中的某个蕴含项后，函数值不变，则该蕴含项是冗余的。例如 <code>f = a + ab</code> 中，<code>ab</code> 是冗余的，因为 <code>a</code> 已经覆盖了所有使 <code>ab</code> 为真的情况。</p>
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>Minimal DNF (最小DNF)</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <p>不含冗余蕴含项的 DNF 表达式。所有蕴含项都是素蕴含项，且无冗余。这是最简洁的等价 DNF 表示。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- UTP & MUTP -->
+    <h3 id="utp-mutp">UTP 与 MUTP<a href="#utp-mutp" class="anchor">#</a></h3>
+
+    <h4>UTP (Unique True Point)</h4>
+    <p>给定蕴含项 <code>t<sub>i</sub></code>，一个 <strong>UTP</strong> 是一组赋值，使得：</p>
+    <ul>
+      <li><code>t<sub>i</sub></code> 为 <strong>True</strong></li>
+      <li>所有其他蕴含项 <code>t<sub>j</sub></code>（j ≠ i）均为 <strong>False</strong></li>
+    </ul>
+
+    <h4>MUTP (Multiple Unique True Points)</h4>
+    <p>对每个蕴含项 <code>t<sub>i</sub></code>，选择 UTP，其中 <strong>不在</strong> <code>t<sub>i</sub></code> 中的字（non-in-clause literals）需在不同 UTP 中分别取 <strong>T</strong> 和 <strong>F</strong>。</p>
+
+    <p>例如 <code>f = ab + cd</code>：</p>
+    <table>
+      <thead>
+        <tr><th>蕴含项</th><th>UTP</th><th>非蕴含项中的字取值</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>ab</code></td>
+          <td>{TTFF, TTFT, TTTF}</td>
+          <td>c, d 各取 T/F</td>
+        </tr>
+        <tr>
+          <td><code>cd</code></td>
+          <td>{FFTT, FTTT, TFTT}</td>
+          <td>a, b 各取 T/F</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- NFP & CUTPNFP -->
+    <h3 id="nfp-cutpnfp">NFP 与 CUTPNFP<a href="#nfp-cutpnfp" class="anchor">#</a></h3>
+
+    <h4>NFP (Near False Point)</h4>
+    <p>给定蕴含项 <code>t<sub>i</sub></code> 和其中的字 <code>c</code>，一个 <strong>NFP</strong> 是一组赋值，使得：</p>
+    <ul>
+      <li><code>f</code> 为 <strong>False</strong></li>
+      <li>将 <code>c</code> 取反后，<code>f</code> 变为 <strong>True</strong></li>
+    </ul>
+    <p>这意味着 <code>c</code> 在该点<strong>决定</strong> (determines) <code>f</code>。</p>
+
+    <h4>CUTPNFP (Coupled UTP-NFP)</h4>
+    <p>对每个蕴含项 <code>t<sub>i</sub></code> 中的每个字 <code>c</code>，选择一个 UTP 和一个 NFP <strong>配对</strong>，使得两者仅在字 <code>c</code> 的取值上不同。</p>
+
+    <!-- MNFP -->
+    <h3 id="mnfp">MNFP (Multiple Near False Points)<a href="#mnfp" class="anchor">#</a></h3>
+
+    <p>对每个蕴含项 <code>t<sub>i</sub></code>，选择 NFP，其中<strong>不在</strong> <code>t<sub>i</sub></code> 项中的字需在不同 NFP 中分别取 <strong>T</strong> 和 <strong>F</strong>。</p>
+
+    <!-- MUMCUT -->
+    <h3 id="mumcut">MUMCUT 覆盖标准<a href="#mumcut" class="anchor">#</a></h3>
+
+    <blockquote>
+      <p><strong>MUMCUT = MUTP + CUTPNFP + MNFP</strong></p>
+    </blockquote>
+
+    <p>MUMCUT 是 DNF 最全面的语法覆盖标准，结合了三种测试选择策略，能够检测所有 9 类 DNF 故障。</p>
+
+    <div class="flow-diagram">
+      <div class="flow-step">
+        <div class="step-box" style="background:#dbeafe;">MUTP</div>
+        <div class="step-label">唯一真点</div>
+      </div>
+      <div class="flow-arrow">+</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#ede9fe;">CUTPNFP</div>
+        <div class="step-label">耦合UTP-NFP</div>
+      </div>
+      <div class="flow-arrow">+</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#d1fae5;">MNFP</div>
+        <div class="step-label">多重近假点</div>
+      </div>
+      <div class="flow-arrow">=</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#fef3c7;">MUMCUT</div>
+        <div class="step-label">完整DNF覆盖</div>
+      </div>
+    </div>
+
+    <!-- Fault Classes -->
+    <h3 id="fault-classes">DNF 故障类<a href="#fault-classes" class="anchor">#</a></h3>
+
+    <table>
+      <thead>
+        <tr><th>故障类型</th><th>缩写</th><th>描述</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Expression Negation Fault</td><td>ENF</td><td>整个表达式被取反</td></tr>
+        <tr><td>Term Negation Fault</td><td>TNF</td><td>某个蕴含项被取反</td></tr>
+        <tr><td>Term Omission Fault</td><td>TOF</td><td>某个蕴含项被遗漏</td></tr>
+        <tr><td>Literal Negation Fault</td><td>LNF</td><td>某个字被取反</td></tr>
+        <tr><td>Literal Reference Fault</td><td>LRF</td><td>某个字被替换为另一个变量</td></tr>
+        <tr><td>Literal Omission Fault</td><td>LOF</td><td>某个字被遗漏</td></tr>
+        <tr><td>Literal Insertion Fault</td><td>LIF</td><td>某个字被错误插入</td></tr>
+        <tr><td>Operator Reference Fault (OR→AND)</td><td>ORF+</td><td>OR 运算符被替换为 AND</td></tr>
+        <tr><td>Operator Reference Fault (AND→OR)</td><td>ORF*</td><td>AND 运算符被替换为 OR</td></tr>
+      </tbody>
+    </table>
+
+    <!-- Fault Detection -->
+    <h3 id="fault-detection">故障检测能力<a href="#fault-detection" class="anchor">#</a></h3>
+
+    <table>
+      <thead>
+        <tr><th>覆盖标准</th><th>可检测的故障</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>MUTP</td><td>检测所有 <strong>LIF</strong> (Literal Insertion Fault)</td></tr>
+        <tr><td>CUTPNFP</td><td>检测所有 <strong>LOF</strong> (Literal Omission Fault)</td></tr>
+        <tr><td>MNFP</td><td>增强对 ORF+, ORF* 的检测</td></tr>
+        <tr><td><strong>MUMCUT</strong></td><td>检测<strong>全部 9 类</strong> DNF 故障</td></tr>
+      </tbody>
+    </table>
+
+    <h4>与其他标准的对比</h4>
+
+    <div class="compare-grid">
+      <div class="compare-box">
+        <h4>MUMCUT</h4>
+        <ul>
+          <li>测试用例数量较多（高于 RACC）</li>
+          <li>检测 <strong>全部 9 类</strong> DNF 故障</li>
+          <li>故障检测率约为 RACC 的 <strong>3 倍</strong></li>
+          <li>适用于已知 DNF 结构的规约</li>
+        </ul>
+      </div>
+      <div class="compare-box">
+        <h4>RACC</h4>
+        <ul>
+          <li>测试用例数量较少</li>
+          <li>检测部分 DNF 故障</li>
+          <li>不依赖 DNF 语法结构</li>
+          <li>更通用的语义覆盖标准</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Karnaugh Map -->
+    <h3 id="kmap">Karnaugh Map 应用<a href="#kmap" class="anchor">#</a></h3>
+
+    <p>Karnaugh Map (卡诺图) 在 DNF 逻辑覆盖中有多种应用：</p>
+
+    <ul>
+      <li><strong>子句决定关系判定</strong>：通过卡诺图中相邻格的变化判断子句是否决定谓词</li>
+      <li><strong>取反分析</strong>：在卡诺图上标注取反后的函数值变化</li>
+      <li><strong>素蕴含项识别</strong>：卡诺图中最大的矩形区域即为素蕴含项</li>
+      <li><strong>UTP 定位</strong>：只被一个蕴含项覆盖的格即为 UTP</li>
+      <li><strong>UTP/NFP 配对</strong>：相邻的 UTP 和非覆盖格构成 CUTPNFP 对</li>
+    </ul>
+
+    <h4>示例：<code>f = ab + cd</code></h4>
+
+    <table>
+      <thead>
+        <tr><th>ab╲cd</th><th>00</th><th>01</th><th>11</th><th>10</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>00</strong></td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td><strong>01</strong></td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td><strong>11</strong></td><td>0</td><td>1</td><td>1</td><td>1</td></tr>
+        <tr><td><strong>10</strong></td><td>0</td><td>1</td><td>1</td><td>1</td></tr>
+      </tbody>
+    </table>
+
+    <p>蕴含项 <code>ab</code> 覆盖的 UTP：<code>{TTFF, TTFT, TTTF}</code>（行 11，列 00/01/10）</p>
+    <p>蕴含项 <code>cd</code> 覆盖的 UTP：<code>{FFTT, FTTT, TFTT}</code>（列 11，行 00/01/10）</p>
+
+    <!-- Pagination -->
+    <div class="pagination">
+      <a href="inactive.html" class="page-nav prev">
+        <span class="label">← 上一页</span>
+        <span class="title">非活动子句覆盖</span>
+      </a>
+      <a href="source.html" class="page-nav next">
+        <span class="label">下一页 →</span>
+        <span class="title">源代码逻辑覆盖</span>
+      </a>
+    </div>
+
+  </div><!-- .content -->
+</div><!-- .main -->
+
+<script src="script.js"></script>
+</body>
+</html>
