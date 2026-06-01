@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>组合覆盖标准 — Ch2 输入空间划分</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Toggle menu">☰</button>
+<div class="overlay"></div>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h1>软件测试笔记</h1>
+    <div class="subtitle">Software Testing · Chapter 2</div>
+  </div>
+  <div class="sidebar-nav">
+    <a href="../index.html" class="back-home"><span class="icon">🏠</span> 返回主页</a>
+    <div class="nav-section">章节导航</div>
+    <a href="index.html"><span class="icon">📖</span> 章节总览</a>
+    <a href="isp-basics.html"><span class="icon">📐</span> ISP基础</a>
+    <a href="combination-criteria.html" class="active"><span class="icon">🔗</span> 组合覆盖标准</a>
+    <a href="bva.html"><span class="icon">📏</span> 边界值分析</a>
+    <a href="istqb-sdlc.html"><span class="icon">📋</span> ISTQB SDLC测试</a>
+    <a href="istqb-static.html"><span class="icon">🔍</span> ISTQB静态测试</a>
+    <a href="exercises.html"><span class="icon">✏️</span> 实战练习</a>
+    <div class="nav-section">本页目录</div>
+    <a href="#acoc" class="toc-link"><span class="icon">📋</span> 全组合覆盖</a>
+    <a href="#ecc" class="toc-link"><span class="icon">📊</span> 每选择覆盖</a>
+    <a href="#pwc" class="toc-link"><span class="icon">🔀</span> 成对覆盖</a>
+    <a href="#twc" class="toc-link"><span class="icon">📐</span> T维覆盖</a>
+    <a href="#bcc" class="toc-link"><span class="icon">⭐</span> 基本选择覆盖</a>
+    <a href="#mbcc" class="toc-link"><span class="icon">🌟</span> 多基本选择覆盖</a>
+    <a href="#subsumption" class="toc-link"><span class="icon">➡️</span> 包含关系</a>
+    <a href="#constraints" class="toc-link"><span class="icon">⚠️</span> 约束处理</a>
+  </div>
+  <div class="sidebar-footer">
+    2.4 Combination Criteria
+  </div>
+</nav>
+
+<main class="main">
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="index.html">Ch2</a>
+      <span class="sep">›</span>
+      <span>组合覆盖标准</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-header">
+      <h2>组合覆盖标准</h2>
+      <p class="desc">Combination Coverage Criteria — ACoC、ECC、PWC、TWC、BCC、MBCC六种组合标准的定义、计算和应用。</p>
+      <div class="meta">
+        <span class="tag">ACoC</span>
+        <span class="tag">ECC</span>
+        <span class="tag">PWC</span>
+        <span class="tag">BCC</span>
+        <span class="tag">组合测试</span>
+      </div>
+    </div>
+
+    <!-- ==================== ACoC ==================== -->
+    <h3 id="acoc">全组合覆盖 (ACoC)</h3>
+
+    <blockquote>
+      <p><strong>定义：</strong> 测试需求集包含所有特征的所有块的所有组合。</p>
+    </blockquote>
+    <p>ACoC 是最强的组合覆盖标准，要求覆盖每个特征的每个块与其他特征的每个块的全部组合。</p>
+
+    <h4>测试数量计算</h4>
+    <p>测试数 = 各特征块数的乘积</p>
+
+    <h4>示例1：triang()</h4>
+    <p>三角形分类方法，基于接口建模，每个参数分4块：{>1}, {=1}, {=0}, {<0}</p>
+    <p>ACoC 测试数 = 4 × 4 × 4 = <strong>64</strong> 个测试</p>
+
+    <h4>示例2：学生系统</h4>
+    <p>4个特征，块数分别为2, 2, 3, 2：</p>
+    <p>ACoC 测试数 = 2 × 2 × 3 × 2 = <strong>24</strong> 个测试</p>
+
+    <div class="warning">
+      <div><strong>注意：</strong> ACoC 的测试数量随特征数和块数指数增长，实际项目中往往不可行。通常使用较弱但更实用的标准。</div>
+    </div>
+
+    <!-- ==================== ECC ==================== -->
+    <h3 id="ecc">每选择覆盖 (ECC)</h3>
+
+    <blockquote>
+      <p><strong>定义：</strong> 每个特征的每个块至少在一个测试中使用。</p>
+    </blockquote>
+    <p>ECC 是最弱的组合覆盖标准，只要求每个块至少被选中一次。</p>
+
+    <h4>测试数量计算</h4>
+    <p>测试数 = 最大特征的块数</p>
+
+    <h4>示例</h4>
+    <p>4个特征，块数分别为2, 2, 3, 2：</p>
+    <p>ECC 测试数 = max(2, 2, 3, 2) = <strong>3</strong> 个测试</p>
+
+    <div class="tip">
+      <div><strong>特点：</strong> ECC 测试数量最少，但覆盖强度最低。它只保证每个块出现一次，不保证块之间的组合被覆盖。</div>
+    </div>
+
+    <!-- ==================== PWC ==================== -->
+    <h3 id="pwc">成对覆盖 (PWC)</h3>
+
+    <blockquote>
+      <p><strong>定义：</strong> 每个特征的每个块与其他特征的每个块至少配对一次。</p>
+    </blockquote>
+    <p>PWC 要求所有两两特征之间的块组合都被覆盖。</p>
+
+    <h4>测试数量计算</h4>
+    <p>测试数 ≥ 两个最大特征的块数之积</p>
+
+    <h4>示例</h4>
+    <p>4个特征，块数分别为2, 2, 3, 2：</p>
+    <p>PWC 测试数 ≥ 3 × 2 = <strong>6</strong> 个测试</p>
+
+    <div class="tip">
+      <div><strong>实践价值：</strong> PWC 在实践中被广泛使用，因为它在测试数量和覆盖强度之间取得了良好的平衡。研究表明，大多数缺陷由单个参数或两个参数的交互引起。</div>
+    </div>
+
+    <!-- ==================== TWC ==================== -->
+    <h3 id="twc">T维覆盖 (TWC)</h3>
+
+    <blockquote>
+      <p><strong>定义：</strong> 每 t 个特征的组合中的每个块组合至少出现一次。</p>
+    </blockquote>
+    <p>TWC 是 PWC 的推广：当 t=2 时即为 PWC；当 t=Q（特征总数）时即为 ACoC。</p>
+
+    <h4>测试数量计算</h4>
+    <p>测试数 ≥ t 个最大特征的块数之积</p>
+
+    <h4>TWC 的层次</h4>
+    <table>
+      <thead>
+        <tr><th>t值</th><th>名称</th><th>说明</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>t=1</td><td>ECC</td><td>每选择覆盖</td></tr>
+        <tr><td>t=2</td><td>PWC</td><td>成对覆盖</td></tr>
+        <tr><td>t=3</td><td>3WC</td><td>三元覆盖</td></tr>
+        <tr><td>t=Q</td><td>ACoC</td><td>全组合覆盖</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ==================== BCC ==================== -->
+    <h3 id="bcc">基本选择覆盖 (BCC)</h3>
+
+    <blockquote>
+      <p><strong>定义：</strong> 每个特征选一个基本块（Base Choice），形成基本测试。依次改变每个特征的非基本块，保持其他特征为基本块。</p>
+    </blockquote>
+
+    <h4>构建步骤</h4>
+    <ol>
+      <li>为每个特征选择一个基本块</li>
+      <li>用所有基本块组成基本测试</li>
+      <li>对每个特征的每个非基本块，保持其他特征为基本块，创建新测试</li>
+    </ol>
+
+    <h4>测试数量计算</h4>
+    <p>测试数 = 1（基本测试）+ Σ（每特征非基本块数）</p>
+
+    <h4>示例</h4>
+    <p>4个特征，块数分别为2, 2, 3, 2，基本块为每特征的第一个块：</p>
+    <ul>
+      <li>基本测试：1个</li>
+      <li>特征1非基本块：2-1=1个</li>
+      <li>特征2非基本块：2-1=1个</li>
+      <li>特征3非基本块：3-1=2个</li>
+      <li>特征4非基本块：2-1=1个</li>
+    </ul>
+    <p>BCC 测试数 = 1 + 1 + 1 + 2 + 1 = <strong>6</strong> 个测试</p>
+
+    <!-- ==================== MBCC ==================== -->
+    <h3 id="mbcc">多基本选择覆盖 (MBCC)</h3>
+
+    <blockquote>
+      <p><strong>定义：</strong> 每个特征可选多个基本块，形成多个基本测试。对每个基本测试，依次改变每个特征的非基本块。</p>
+    </blockquote>
+
+    <h4>示例</h4>
+    <p>假设特征3选了2个基本块：</p>
+    <ul>
+      <li>基本测试：2个（特征3的两个基本块各一个）</li>
+      <li>额外测试：对每个基本测试，改变其他特征的非基本块</li>
+    </ul>
+    <p>MBCC 测试数 = 2个基本测试 + 额外测试 = <strong>4</strong> 个测试</p>
+
+    <div class="tip">
+      <div><strong>MBCC vs BCC：</strong> MBCC 通过允许多个基本块，可以覆盖更多的块组合。MBCC ⊇ BCC。</div>
+    </div>
+
+    <!-- ==================== 包含关系 ==================== -->
+    <h3 id="subsumption">包含关系</h3>
+
+    <div class="flow-diagram">
+      <div class="flow-step">
+        <div class="step-box" style="background:#dbeafe;">ACoC</div>
+        <div class="step-label">全组合覆盖</div>
+        <div class="step-sub">所有组合</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#ede9fe;">PWC</div>
+        <div class="step-label">成对覆盖</div>
+        <div class="step-sub">所有对</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#d1fae5;">ECC</div>
+        <div class="step-label">每选择覆盖</div>
+        <div class="step-sub">每个块</div>
+      </div>
+    </div>
+    <p style="text-align:center; color:var(--text-light); font-size:.88rem;">ACoC ⊇ PWC ⊇ ECC</p>
+
+    <div class="flow-diagram">
+      <div class="flow-step">
+        <div class="step-box" style="background:#fee2e2;">ACoC</div>
+        <div class="step-label">全组合覆盖</div>
+        <div class="step-sub">所有组合</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#ffedd5;">TWC</div>
+        <div class="step-label">T维覆盖</div>
+        <div class="step-sub">t特征组合</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#fef3c7;">ECC</div>
+        <div class="step-label">每选择覆盖</div>
+        <div class="step-sub">每个块</div>
+      </div>
+    </div>
+    <p style="text-align:center; color:var(--text-light); font-size:.88rem;">ACoC ⊇ TWC ⊇ ECC</p>
+
+    <div class="flow-diagram">
+      <div class="flow-step">
+        <div class="step-box" style="background:#e0e7ff;">MBCC</div>
+        <div class="step-label">多基本选择覆盖</div>
+        <div class="step-sub">多个基本块</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#f3e8ff;">BCC</div>
+        <div class="step-label">基本选择覆盖</div>
+        <div class="step-sub">单个基本块</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#d1fae5;">ECC</div>
+        <div class="step-label">每选择覆盖</div>
+        <div class="step-sub">每个块</div>
+      </div>
+    </div>
+    <p style="text-align:center; color:var(--text-light); font-size:.88rem;">MBCC ⊇ BCC ⊇ ECC</p>
+
+    <h4>综合对比</h4>
+    <table>
+      <thead>
+        <tr><th>标准</th><th>测试数</th><th>包含关系</th><th>适用场景</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>ACoC</strong></td><td>∏(块数)</td><td>最强</td><td>关键系统，特征和块数少</td></tr>
+        <tr><td><strong>TWC</strong></td><td>≥ t个最大之积</td><td>⊇ ECC</td><td>需要t维交互覆盖</td></tr>
+        <tr><td><strong>PWC</strong></td><td>≥ 2个最大之积</td><td>⊇ ECC</td><td>大多数实际项目</td></tr>
+        <tr><td><strong>MBCC</strong></td><td>基本+额外</td><td>⊇ BCC</td><td>需要多个基本路径</td></tr>
+        <tr><td><strong>BCC</strong></td><td>1+Σ(非基本)</td><td>⊇ ECC</td><td>有明确基本路径</td></tr>
+        <tr><td><strong>ECC</strong></td><td>max(块数)</td><td>最弱</td><td>快速冒烟测试</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ==================== 约束处理 ==================== -->
+    <h3 id="constraints">约束处理</h3>
+
+    <h4>不可行组合</h4>
+    <p>有些块组合在现实中不可行。例如对于 triang()：</p>
+    <ul>
+      <li>{a<0} + {scalene} — 负数边长不能构成三角形</li>
+      <li>{a=0} + {equilateral} — 零边长不能构成等边三角形</li>
+    </ul>
+
+    <h4>各标准的约束处理方法</h4>
+    <table>
+      <thead>
+        <tr><th>标准</th><th>处理方法</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>ACoC/PWC/TWC</strong></td><td>删除不可行的组合</td></tr>
+        <tr><td><strong>BCC/MBCC</strong></td><td>将不可行的基本测试改为其他非基本选择</td></tr>
+        <tr><td><strong>ECC</strong></td><td>通常不受影响（除非某块完全不可行）</td></tr>
+      </tbody>
+    </table>
+
+    <div class="tip">
+      <div><strong>实践建议：</strong> 在建模阶段就考虑约束，尽量避免产生不可行组合。选择合理的特征和块定义可以减少约束问题。</div>
+    </div>
+
+    <hr>
+    <div class="pagination">
+      <a href="isp-basics.html" class="page-nav">
+        <span class="label">上一页</span>
+        <span class="title">← ISP基础</span>
+      </a>
+      <a href="bva.html" class="page-nav next">
+        <span class="label">下一节</span>
+        <span class="title">边界值分析 →</span>
+      </a>
+    </div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

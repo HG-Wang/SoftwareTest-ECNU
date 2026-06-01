@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ch1 软件测试导论 — 软件测试笔记</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Toggle menu">☰</button>
+<div class="overlay"></div>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h1>软件测试笔记</h1>
+    <div class="subtitle">Software Testing · Chapter 1</div>
+  </div>
+  <div class="sidebar-nav">
+    <a href="../index.html" class="back-home"><span class="icon">🏠</span> 返回主页</a>
+    <div class="nav-section">章节导航</div>
+    <a href="index.html" class="active"><span class="icon">📖</span> 章节总览</a>
+    <a href="why-test.html"><span class="icon">❓</span> 为什么要测试</a>
+    <a href="test-activities.html"><span class="icon">⚙️</span> 测试活动与模型驱动设计</a>
+    <a href="coverage-intro.html"><span class="icon">📊</span> 覆盖标准导论</a>
+    <a href="istqb-basics.html"><span class="icon">📋</span> ISTQB测试基础</a>
+    <a href="exercises.html"><span class="icon">✏️</span> 实战练习</a>
+    <div class="nav-section">附录</div>
+    <a href="#summary"><span class="icon">📊</span> 本章总结</a>
+  </div>
+  <div class="sidebar-footer">
+    Chapter 1 · Introduction<br>
+    软件测试导论 · 软件工程课程
+  </div>
+</nav>
+
+<main class="main">
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="#">Ch1 软件测试导论</a>
+      <span class="sep">›</span>
+      <span>章节总览</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="hero">
+      <h2>Chapter 1<br>软件测试导论</h2>
+      <p>Introduction to Software Testing — 从风险控制视角理解软件测试的意义，掌握测试活动、模型驱动测试设计和覆盖标准的基本概念。</p>
+      <div class="hero-stats">
+        <div class="stat"><div class="stat-num">7</div><div class="stat-label">测试原则</div></div>
+        <div class="stat"><div class="stat-num">4</div><div class="stat-label">测试活动</div></div>
+        <div class="stat"><div class="stat-num">5</div><div class="stat-label">测试层级</div></div>
+      </div>
+    </div>
+
+    <h3 id="overview">章节概述</h3>
+    <p>软件测试是软件工程中最重要的质量保障手段。本章从"为什么要测试"出发，介绍软件故障、错误和失败的概念，以及RIPR故障模型。然后介绍测试活动的分类（测试设计、测试自动化、测试执行、测试评估）和模型驱动测试设计(MDTD)方法。最后引入覆盖标准的概念，为后续章节的图覆盖、逻辑覆盖等具体覆盖标准奠定基础。本章还包含ISTQB基础级的测试原则、测试技能和良好实践。</p>
+
+    <h3 id="cards">章节内容</h3>
+    <div class="card-grid">
+      <a href="why-test.html" class="card">
+        <div class="card-icon blue">❓</div>
+        <h3>为什么要测试</h3>
+        <p>软件故障的危害、故障/错误/失败的概念与区别、RIPR故障模型、软件可测试性、验证与确认。</p>
+        <div class="card-arrow">查看详情 →</div>
+      </a>
+      <a href="test-activities.html" class="card">
+        <div class="card-icon purple">⚙️</div>
+        <h3>测试活动与模型驱动设计</h3>
+        <p>四大测试活动分类、模型驱动测试设计(MDTD)方法、测试自动化框架、团队组织与最佳实践。</p>
+        <div class="card-arrow">查看详情 →</div>
+      </a>
+      <a href="coverage-intro.html" class="card">
+        <div class="card-icon green">📊</div>
+        <h3>覆盖标准导论</h3>
+        <p>测试需求、覆盖标准的定义、包含关系以及生成器与识别器的概念。</p>
+        <div class="card-arrow">查看详情 →</div>
+      </a>
+      <a href="istqb-basics.html" class="card">
+        <div class="card-icon orange">📋</div>
+        <h3>ISTQB测试基础</h3>
+        <p>测试的定义与目标、七项测试原则、测试活动与测试件、测试技能与良好实践。</p>
+        <div class="card-arrow">查看详情 →</div>
+      </a>
+      <a href="exercises.html" class="card">
+        <div class="card-icon red">✏️</div>
+        <h3>实战练习</h3>
+        <p>通过案例分析和概念辨析，巩固第一章的核心知识点。</p>
+        <div class="card-arrow">查看详情 →</div>
+      </a>
+    </div>
+
+    <h3 id="roadmap">学习路线</h3>
+    <p>本章内容按照以下路线展开，建议按顺序学习：</p>
+
+    <ol class="step-list">
+      <li>
+        <div>
+          <strong><a href="why-test.html">为什么要测试</a></strong> — 理解软件故障的危害；掌握故障(Fault)、错误(Error)、失败(Failure)的概念与区别；学习RIPR故障模型的四个条件。
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong><a href="test-activities.html">测试活动与模型驱动设计</a></strong> — 掌握四大测试活动（设计、自动化、执行、评估）；理解模型驱动测试设计(MDTD)的流程和四种建模结构；了解测试自动化框架。
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong><a href="coverage-intro.html">覆盖标准导论</a></strong> — 理解测试需求和覆盖标准的定义；掌握覆盖标准之间的包含关系；了解生成器与识别器的概念。
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong><a href="istqb-basics.html">ISTQB测试基础</a></strong> — 学习ISTQB对测试的定义和七项测试原则；掌握测试活动与测试件的关系；了解测试角色和技能要求。
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong><a href="exercises.html">实战练习</a></strong> — 通过故障/错误/失败分析、RIPR模型应用、覆盖标准包含关系判断等练习，巩固本章核心知识点。
+        </div>
+      </li>
+    </ol>
+
+    <h3 id="summary">本章核心概念一览</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>缩写</th>
+          <th>全称</th>
+          <th>中文</th>
+          <th>类型</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>RIPR</strong></td><td>Reachability, Infection, Propagation, Reveal</td><td>可达性、感染、传播、可观察性</td><td>故障模型</td></tr>
+        <tr><td><strong>MDTD</strong></td><td>Model-Driven Test Design</td><td>模型驱动测试设计</td><td>设计方法</td></tr>
+        <tr><td><strong>V&V</strong></td><td>Verification & Validation</td><td>验证与确认</td><td>质量活动</td></tr>
+        <tr><td><strong>SEI</strong></td><td>Software Engineering Institute</td><td>软件工程研究所</td><td>机构</td></tr>
+        <tr><td><strong>ISTQB</strong></td><td>International Software Testing Qualifications Board</td><td>国际软件测试资质认证委员会</td><td>标准组织</td></tr>
+        <tr><td><strong>QA</strong></td><td>Quality Assurance</td><td>质量保证</td><td>质量活动</td></tr>
+        <tr><td><strong>QC</strong></td><td>Quality Control</td><td>质量控制</td><td>质量活动</td></tr>
+      </tbody>
+    </table>
+
+    <h3 id="key-terms">关键术语速查</h3>
+    <dl class="def-list">
+      <dt>Fault / Failure / Error</dt>
+      <dd>故障(Fault)是静态缺陷；错误(Error)是故障导致的不正确内部状态；失败(Failure)是可观察到的外部错误行为。故障→错误→失败的因果链。</dd>
+      <dt>RIPR 模型</dt>
+      <dd>故障触发失败需要四个条件：Reachability(可达性)、Infection(感染性)、Propagation(传播性)、Reveal(可观察性)。</dd>
+      <dt>MDTD (模型驱动测试设计)</dt>
+      <dd>通过将软件制品抽象为模型，从模型中提取测试需求，再生成测试用例的系统化测试设计方法。</dd>
+      <dt>Coverage Criterion (覆盖标准)</dt>
+      <dd>定义测试需求的规则和过程的集合。覆盖级别 = 已满足的测试需求 / 总测试需求。</dd>
+      <dt>V&V (验证与确认)</dt>
+      <dd>验证(Verification)检查开发产物是否满足前一阶段需求；确认(Validation)评估软件是否符合预期用途。</dd>
+      <dt>Test Case (测试用例)</dt>
+      <dd>由测试值、前缀值、后缀值、期望结果等组成的可执行测试规格。</dd>
+      <dt>Test Oracle (测试预言)</dt>
+      <dd>判断测试执行结果是否正确的机制或标准。</dd>
+    </dl>
+
+    <div class="pagination">
+      <div></div>
+      <a href="why-test.html" class="page-nav next">
+        <span class="label">下一节</span>
+        <span class="title">为什么要测试 →</span>
+      </a>
+    </div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

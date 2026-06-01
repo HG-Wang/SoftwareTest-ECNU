@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>为什么要测试 — Ch1 软件测试导论</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Toggle menu">☰</button>
+<div class="overlay"></div>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h1>软件测试笔记</h1>
+    <div class="subtitle">Software Testing · Chapter 1</div>
+  </div>
+  <div class="sidebar-nav">
+    <a href="../index.html" class="back-home"><span class="icon">🏠</span> 返回主页</a>
+    <div class="nav-section">章节导航</div>
+    <a href="index.html"><span class="icon">📖</span> 章节总览</a>
+    <a href="why-test.html" class="active"><span class="icon">❓</span> 为什么要测试</a>
+    <a href="test-activities.html"><span class="icon">⚙️</span> 测试活动与模型驱动设计</a>
+    <a href="coverage-intro.html"><span class="icon">📊</span> 覆盖标准导论</a>
+    <a href="istqb-basics.html"><span class="icon">📋</span> ISTQB测试基础</a>
+    <a href="exercises.html"><span class="icon">✏️</span> 实战练习</a>
+    <div class="nav-section">本页目录</div>
+    <a href="#failures" class="toc-link"><span class="icon">💥</span> 软件故障案例</a>
+    <a href="#fault-failure-error" class="toc-link"><span class="icon">🔗</span> 故障、错误与失败</a>
+    <a href="#ripr" class="toc-link"><span class="icon">🔄</span> RIPR故障模型</a>
+    <a href="#testability" class="toc-link"><span class="icon">🔍</span> 软件可测试性</a>
+    <a href="#v-v" class="toc-link"><span class="icon">✅</span> 验证与确认</a>
+    <a href="#levels" class="toc-link"><span class="icon">📈</span> 测试成熟度等级</a>
+  </div>
+  <div class="sidebar-footer">
+    1.1 Why Test<br>
+    为什么要测试
+  </div>
+</nav>
+
+<main class="main">
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="index.html">Ch1</a>
+      <span class="sep">›</span>
+      <span>为什么要测试</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-header">
+      <h2>为什么要测试</h2>
+      <p class="desc">Why Do We Test Software — 软件故障的危害、故障/错误/失败的概念与区别、RIPR故障模型。</p>
+      <div class="meta">
+        <span class="tag">软件故障</span>
+        <span class="tag">RIPR</span>
+        <span class="tag">测试目标</span>
+      </div>
+    </div>
+
+    <!-- ==================== 软件故障案例 ==================== -->
+    <h3 id="failures">软件故障案例</h3>
+    <p>软件故障可能造成巨大的经济损失甚至人员伤亡。以下是一些著名的软件故障案例：</p>
+    <table>
+      <thead>
+        <tr>
+          <th>年份</th>
+          <th>事件描述</th>
+          <th>影响</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>2019</strong></td>
+          <td>Boeing 737 Max MCAS软件缺陷</td>
+          <td>两架飞机坠毁，346人遇难</td>
+        </tr>
+        <tr>
+          <td><strong>2018</strong></td>
+          <td>Uber自动驾驶汽车致死事故</td>
+          <td>行人死亡，自动驾驶测试暂停</td>
+        </tr>
+        <tr>
+          <td><strong>2017</strong></td>
+          <td>全球606起软件故障事件</td>
+          <td>影响约37亿人，造成数万亿美元损失</td>
+        </tr>
+        <tr>
+          <td><strong>1997</strong></td>
+          <td>Ariane 5火箭爆炸 — 整数溢出故障</td>
+          <td>火箭自毁，损失$3.7亿</td>
+        </tr>
+        <tr>
+          <td><strong>1986</strong></td>
+          <td>Therac-25放射治疗仪 — 竞态条件故障</td>
+          <td>患者遭受致命剂量辐射，3人死亡</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ==================== 故障、错误与失败 ==================== -->
+    <h3 id="fault-failure-error">故障、错误与失败</h3>
+
+    <p>在软件测试领域，Fault、Error和Failure是三个密切相关但含义不同的概念：</p>
+
+    <div class="compare-grid">
+      <div class="compare-box">
+        <h4>🐛 Software Fault（软件故障）</h4>
+        <p><strong>静态缺陷</strong> — 软件中的一个静态存在的缺陷，如代码中的一个错误语句。在不执行程序的情况下就存在。</p>
+        <ul>
+          <li>也称为 Bug 或 Defect</li>
+          <li>是代码中的一个"坏点"</li>
+          <li>不执行就不会被触发</li>
+        </ul>
+      </div>
+      <div class="compare-box">
+        <h4>⚠️ Software Error（软件错误）</h4>
+        <p><strong>不正确的内部状态</strong> — 故障被触发后，在程序内部产生的错误中间状态。是故障在执行中的表现。</p>
+        <ul>
+          <li>程序内部变量值不正确</li>
+          <li>是故障和失败之间的桥梁</li>
+          <li>外部通常不可直接观察</li>
+        </ul>
+      </div>
+      <div class="compare-box">
+        <h4>💥 Software Failure（软件失败）</h4>
+        <p><strong>外部错误行为</strong> — 程序相对于需求规约的不正确的外部行为。是最终可观察到的错误输出。</p>
+        <ul>
+          <li>可被用户或测试人员观察到</li>
+          <li>是错误传播到输出的结果</li>
+          <li>可能影响系统可用性</li>
+        </ul>
+      </div>
+    </div>
+
+    <h4>医生诊断类比</h4>
+    <div class="tip">
+      <div><strong>类比理解：</strong> 将软件比作病人，<strong>Failure（失败）</strong>= 症状（如发烧），<strong>Fault（故障）</strong>= 病因（如细菌感染），<strong>Error（错误）</strong>= 异常内部状态（如白细胞升高）。医生需要通过症状(Failure)追溯病因(Fault)。</div>
+    </div>
+
+    <h4>numZero 示例</h4>
+    <p>以下代码段的目标是计算数组中值为0的元素个数，但存在一个故障：</p>
+    <pre><code><span class="cm">// 有故障的代码</span>
+<span class="kw">public static int</span> <span class="fn">numZero</span>(<span class="tp">int</span>[] arr) {
+    <span class="tp">int</span> <span class="vr">count</span> <span class="op">=</span> <span class="nu">0</span>;
+    <span class="kw">for</span> (<span class="tp">int</span> <span class="vr">i</span> <span class="op">=</span> <span class="nu">1</span>; <span class="vr">i</span> <span class="op">&lt;</span> <span class="vr">arr</span>.length; <span class="vr">i</span><span class="op">++</span>) {  <span class="cm">// ⚠️ Fault: 应该是 i = 0</span>
+        <span class="kw">if</span> (<span class="vr">arr</span>[<span class="vr">i</span>] <span class="op">==</span> <span class="nu">0</span>) {
+            <span class="vr">count</span><span class="op">++</span>;
+        }
+    }
+    <span class="kw">return</span> <span class="vr">count</span>;
+}</code><span class="lang-label">Java</span></pre>
+
+    <h4>Fault → Error → Failure 因果链</h4>
+    <table>
+      <thead>
+        <tr>
+          <th>层次</th>
+          <th>描述</th>
+          <th>示例</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Fault</strong></td>
+          <td>循环起始条件 <code>i=1</code> 应为 <code>i=0</code></td>
+          <td>代码第3行的 <code>i=1</code></td>
+        </tr>
+        <tr>
+          <td><strong>Error</strong></td>
+          <td>数组第一个元素 <code>arr[0]</code> 没有被检查</td>
+          <td>count 可能比实际值少1</td>
+        </tr>
+        <tr>
+          <td><strong>Failure</strong></td>
+          <td>当 <code>arr[0]=0</code> 时，返回值比正确值少1</td>
+          <td><code>numZero({0,1,0})</code> 返回 1 而非 2</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="warning">
+      <div><strong>注意：</strong> Fault 不一定导致 Failure。如果 <code>arr[0] ≠ 0</code>，即使存在 <code>i=1</code> 的故障，也不会产生错误和失败。这体现了测试的困难性——故障可能隐藏在未被覆盖的代码路径中。</div>
+    </div>
+
+    <!-- ==================== RIPR故障模型 ==================== -->
+    <h3 id="ripr">RIPR故障模型</h3>
+
+    <p>一个软件故障要导致可观察的失败，需要满足四个条件：</p>
+
+    <div class="flow-diagram">
+      <div class="flow-step">
+        <div class="step-box" style="background:#dbeafe;">R</div>
+        <div class="step-label">Reachability</div>
+        <div class="step-sub">可达性</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#ede9fe;">I</div>
+        <div class="step-label">Infection</div>
+        <div class="step-sub">感染性</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#d1fae5;">P</div>
+        <div class="step-label">Propagation</div>
+        <div class="step-sub">传播性</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#fee2e2;">R</div>
+        <div class="step-label">Reveal</div>
+        <div class="step-sub">可观察性</div>
+      </div>
+    </div>
+
+    <dl class="def-list">
+      <dt>R — Reachability（可达性）</dt>
+      <dd>包含故障的代码必须被执行到。如果程序的执行路径不经过故障位置，故障永远不会被触发。</dd>
+      <dt>I — Infection（感染性）</dt>
+      <dd>执行故障代码后，程序的内部状态必须被改变为不正确的状态。即故障必须产生一个错误(Error)。</dd>
+      <dt>P — Propagation（传播性）</dt>
+      <dd>不正确的内部状态必须传播到程序的输出，使得外部可观察到错误的行为。即错误必须导致失败(Failure)。</dd>
+      <dt>R — Reveal（可观察性）</dt>
+      <dd>测试人员或用户必须能够观察到错误的输出。即失败必须是可被检测到的。</dd>
+    </dl>
+
+    <div class="tip">
+      <div><strong>关键洞察：</strong> RIPR模型解释了为什么测试是困难的——即使存在故障，也需要构造合适的输入使得四个条件同时满足，才能观察到失败。这也解释了为什么"测试显示缺陷存在，而非不存在"。</div>
+    </div>
+
+    <!-- ==================== 软件可测试性 ==================== -->
+    <h3 id="testability">软件可测试性</h3>
+
+    <p>软件可测试性(Testability)衡量发现软件故障的难易程度，由两个因素决定：</p>
+
+    <div class="compare-grid">
+      <div class="compare-box">
+        <h4>👁️ Observability（可观察性）</h4>
+        <p>观察程序行为的容易程度。</p>
+        <ul>
+          <li>输出是否易于理解和验证</li>
+          <li>中间状态是否可以被监控</li>
+          <li>错误是否容易被发现</li>
+        </ul>
+      </div>
+      <div class="compare-box">
+        <h4>🎮 Controllability（可控制性）</h4>
+        <p>提供所需输入的容易程度。</p>
+        <ul>
+          <li>是否容易构造特定的输入</li>
+          <li>程序状态是否容易设置</li>
+          <li>故障路径是否容易被触发</li>
+        </ul>
+      </div>
+    </div>
+
+    <h4>测试用例的组成</h4>
+    <p>一个完整的测试用例包含以下组成部分：</p>
+    <table>
+      <thead>
+        <tr>
+          <th>组成部分</th>
+          <th>说明</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Test Case Values（测试用例值）</strong></td>
+          <td>直接驱动被测软件的输入值</td>
+        </tr>
+        <tr>
+          <td><strong>Prefix Values（前缀值）</strong></td>
+          <td>将软件置于正确初始状态所需的输入</td>
+        </tr>
+        <tr>
+          <td><strong>Postfix Values（后缀值）</strong></td>
+          <td>测试后清理或恢复状态所需的输入</td>
+        </tr>
+        <tr>
+          <td><strong>Expected Results（期望结果）</strong></td>
+          <td>测试执行后期望的输出或行为</td>
+        </tr>
+        <tr>
+          <td><strong>Verification Values（验证值）</strong></td>
+          <td>用于检查中间状态的值</td>
+        </tr>
+        <tr>
+          <td><strong>Exit Values（退出值）</strong></td>
+          <td>测试结束时系统的期望状态</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ==================== 验证与确认 ==================== -->
+    <h3 id="v-v">验证与确认</h3>
+
+    <p>Verification（验证）和Validation（确认）是软件质量保证中的两个重要概念：</p>
+
+    <div class="compare-grid">
+      <div class="compare-box">
+        <h4>🔍 Verification（验证）</h4>
+        <p><strong>"Are we building the product right?"</strong> — 检查开发过程产物是否满足前一阶段的需求。</p>
+        <ul>
+          <li>关注过程和中间产物</li>
+          <li>通常是静态的（如评审、检查）</li>
+          <li>在开发过程中持续进行</li>
+        </ul>
+      </div>
+      <div class="compare-box">
+        <h4>✅ Validation（确认）</h4>
+        <p><strong>"Are we building the right product?"</strong> — 评估软件是否符合用户的预期用途。</p>
+        <ul>
+          <li>关注最终产品和用户需求</li>
+          <li>通常是动态的（如运行测试）</li>
+          <li>主要在开发后期进行</li>
+        </ul>
+      </div>
+    </div>
+
+    <h4>案例：哈勃望远镜</h4>
+    <div class="warning">
+      <div><strong>哈勃望远镜案例：</strong> 哈勃太空望远镜的主镜片按照规格书精确制造（<strong>Verification 成功</strong>），但规格书本身存在错误——镜片的曲率设计有误（<strong>Validation 失败</strong>）。结果望远镜发射后图像模糊，需要花费数亿美元进行修复。这说明即使验证通过，也不能保证产品是正确的。</div>
+    </div>
+
+    <!-- ==================== 测试成熟度等级 ==================== -->
+    <h3 id="levels">测试成熟度等级</h3>
+
+    <p>软件测试的成熟度可以分为五个等级：</p>
+
+    <div class="tabs">
+      <div class="tab-buttons">
+        <button class="tab-btn active" data-tab="level0">Level 0</button>
+        <button class="tab-btn" data-tab="level1">Level 1</button>
+        <button class="tab-btn" data-tab="level2">Level 2</button>
+        <button class="tab-btn" data-tab="level3">Level 3</button>
+        <button class="tab-btn" data-tab="level4">Level 4</button>
+      </div>
+
+      <div class="tab-panel active" data-panel="level0">
+        <h4>Level 0 — 测试 = 调试</h4>
+        <p>没有区分测试和调试。测试的目的仅仅是证明软件能工作。没有正式的测试过程，开发者随意测试自己的代码。</p>
+      </div>
+
+      <div class="tab-panel" data-panel="level1">
+        <h4>Level 1 — 目的是证明正确性</h4>
+        <p>测试的目的是证明软件是正确的。测试被视为开发的最后阶段，用于"显示软件工作正常"。这种观点的问题在于它暗示测试可以证明没有缺陷，而这是不可能的。</p>
+      </div>
+
+      <div class="tab-panel" data-panel="level2">
+        <h4>Level 2 — 目的是证明软件不工作</h4>
+        <p>测试的目的是发现缺陷，证明软件不工作。这是一个重要的思维转变——从"证明正确"到"发现错误"。测试人员开始有意识地寻找软件中的问题。</p>
+      </div>
+
+      <div class="tab-panel" data-panel="level3">
+        <h4>Level 3 — 目的是降低使用风险</h4>
+        <p>测试的目的是降低软件在使用中出现故障的风险。测试不再是简单的"通过/不通过"，而是为决策提供信息。测试成为一种风险评估活动。</p>
+      </div>
+
+      <div class="tab-panel" data-panel="level4">
+        <h4>Level 4 — 测试是提升质量的思维纪律</h4>
+        <p>测试是一种预防性活动，是提升软件质量的思维纪律。测试活动贯穿整个开发生命周期，从需求阶段就开始参与。测试与开发深度融合。</p>
+      </div>
+    </div>
+
+    <h4>测试成本</h4>
+    <p>根据SEI（软件工程研究所）的数据，越晚发现缺陷，修复成本越高：</p>
+    <div class="flow-diagram">
+      <div class="flow-step">
+        <div class="step-box" style="background:#d1fae5;">需求</div>
+        <div class="step-label">1×</div>
+        <div class="step-sub">发现成本最低</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#dbeafe;">设计</div>
+        <div class="step-label">~5×</div>
+        <div class="step-sub">中等成本</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#fef3c7;">编码</div>
+        <div class="step-label">~10×</div>
+        <div class="step-sub">较高成本</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#fee2e2;">发布后</div>
+        <div class="step-label">~20-100×</div>
+        <div class="step-sub">极高成本</div>
+      </div>
+    </div>
+    <p style="text-align:center; color:var(--text-light); font-size:.88rem;">越早发现缺陷，修复成本越低 — 这也是"早期测试节省时间和金钱"这一测试原则的依据。</p>
+
+    <hr>
+    <div class="pagination">
+      <a href="index.html" class="page-nav">
+        <span class="label">上一页</span>
+        <span class="title">← 章节总览</span>
+      </a>
+      <a href="test-activities.html" class="page-nav next">
+        <span class="label">下一节</span>
+        <span class="title">测试活动与模型驱动设计 →</span>
+      </a>
+    </div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

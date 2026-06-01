@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>测试活动与模型驱动设计 — Ch1 软件测试导论</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Toggle menu">☰</button>
+<div class="overlay"></div>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h1>软件测试笔记</h1>
+    <div class="subtitle">Software Testing · Chapter 1</div>
+  </div>
+  <div class="sidebar-nav">
+    <a href="../index.html" class="back-home"><span class="icon">🏠</span> 返回主页</a>
+    <div class="nav-section">章节导航</div>
+    <a href="index.html"><span class="icon">📖</span> 章节总览</a>
+    <a href="why-test.html"><span class="icon">❓</span> 为什么要测试</a>
+    <a href="test-activities.html" class="active"><span class="icon">⚙️</span> 测试活动与模型驱动设计</a>
+    <a href="coverage-intro.html"><span class="icon">📊</span> 覆盖标准导论</a>
+    <a href="istqb-basics.html"><span class="icon">📋</span> ISTQB测试基础</a>
+    <a href="exercises.html"><span class="icon">✏️</span> 实战练习</a>
+    <div class="nav-section">本页目录</div>
+    <a href="#complexity" class="toc-link"><span class="icon">🧩</span> 软件测试的复杂性</a>
+    <a href="#four-activities" class="toc-link"><span class="icon">📋</span> 四大测试活动</a>
+    <a href="#mdtm" class="toc-link"><span class="icon">🔄</span> 模型驱动测试设计</a>
+    <a href="#automation" class="toc-link"><span class="icon">🤖</span> 测试自动化框架</a>
+    <a href="#team" class="toc-link"><span class="icon">👥</span> 团队组织</a>
+  </div>
+  <div class="sidebar-footer">
+    1.2 Test Activities<br>
+    测试活动与模型驱动设计
+  </div>
+</nav>
+
+<main class="main">
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="index.html">Ch1</a>
+      <span class="sep">›</span>
+      <span>测试活动与模型驱动设计</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-header">
+      <h2>测试活动与模型驱动设计</h2>
+      <p class="desc">Test Activities & Model-Driven Test Design — 软件测试的四大活动分类、模型驱动测试设计方法、测试自动化框架。</p>
+      <div class="meta">
+        <span class="tag">测试活动</span>
+        <span class="tag">MDTD</span>
+        <span class="tag">测试自动化</span>
+      </div>
+    </div>
+
+    <!-- ==================== 软件测试的复杂性 ==================== -->
+    <h3 id="complexity">软件测试的复杂性</h3>
+
+    <p>没有其他工程领域构建的产品像软件这样复杂。软件的复杂性体现在多个方面：</p>
+    <ul>
+      <li>输入空间巨大，穷举测试不可行</li>
+      <li>软件行为依赖于上下文和环境</li>
+      <li>"正确性"对软件来说没有严格的数学定义——只能相对于需求规约来判断</li>
+      <li>需求本身可能是不完整、不一致或错误的</li>
+    </ul>
+
+    <div class="tip">
+      <div><strong>核心思想：</strong> 需要使用<strong>抽象（Abstraction）</strong>来管理复杂性。通过将软件制品抽象为<strong>模型（Model）</strong>，可以从模型中系统地推导出测试需求和测试用例——这就是<strong>模型驱动测试设计（MDTD）</strong>的核心思想。</div>
+    </div>
+
+    <!-- ==================== 四大测试活动 ==================== -->
+    <h3 id="four-activities">四大测试活动</h3>
+
+    <p>软件测试可以分解为四个主要活动，每个活动有不同的目标和技能要求：</p>
+
+    <div class="tabs">
+      <div class="tab-buttons">
+        <button class="tab-btn active" data-tab="design">测试设计</button>
+        <button class="tab-btn" data-tab="automation">测试自动化</button>
+        <button class="tab-btn" data-tab="execution">测试执行</button>
+        <button class="tab-btn" data-tab="evaluation">测试评估</button>
+      </div>
+
+      <div class="tab-panel active" data-panel="design">
+        <h4>Test Design（测试设计）</h4>
+        <p>测试设计是四个活动中<strong>技术性最强</strong>的工作。测试设计师需要具备离散数学、编程和测试理论方面的深厚知识。</p>
+        <p>测试设计分为两种方法：</p>
+        <ul>
+          <li><strong>Criteria-based（基于标准的）：</strong> 使用覆盖标准来系统地生成测试用例，如本课程介绍的各种图覆盖标准和逻辑覆盖标准</li>
+          <li><strong>Human-based（基于人工的）：</strong> 依靠测试人员的经验和直觉来设计测试用例，如探索性测试和基于经验的测试</li>
+        </ul>
+      </div>
+
+      <div class="tab-panel" data-panel="automation">
+        <h4>Test Automation（测试自动化）</h4>
+        <p>将测试设计阶段产出的测试值嵌入可执行的测试脚本中。自动化可以：</p>
+        <ul>
+          <li><strong>减少成本：</strong> 回归测试可以反复自动执行</li>
+          <li><strong>减少人为错误：</strong> 避免手动执行中的疏忽</li>
+          <li><strong>提高效率：</strong> 可以在夜间或CI/CD流水线中自动运行</li>
+        </ul>
+        <p>需要编写代码的能力和对测试框架的了解。</p>
+      </div>
+
+      <div class="tab-panel" data-panel="execution">
+        <h4>Test Execution（测试执行）</h4>
+        <p>运行测试并记录结果。这是最直接的测试活动：</p>
+        <ul>
+          <li>执行自动化测试脚本或手动测试步骤</li>
+          <li>记录测试结果（通过/失败/阻塞）</li>
+          <li>记录实际输出和环境信息</li>
+          <li>报告发现的问题</li>
+        </ul>
+      </div>
+
+      <div class="tab-panel" data-panel="evaluation">
+        <h4>Test Evaluation（测试评估）</h4>
+        <p>评估测试结果，向开发者报告发现的问题：</p>
+        <ul>
+          <li>分析测试结果，确定是否为真正的缺陷</li>
+          <li>评估测试覆盖率和测试有效性</li>
+          <li>编写缺陷报告，与开发者沟通</li>
+          <li>需要对应用领域的深入理解</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ==================== 模型驱动测试设计 ==================== -->
+    <h3 id="mdtm">模型驱动测试设计 (MDTD)</h3>
+
+    <h4>MDTD 流程</h4>
+    <div class="flow-diagram">
+      <div class="flow-step">
+        <div class="step-box" style="background:#dbeafe;">软件制品</div>
+        <div class="step-label">Artifact</div>
+        <div class="step-sub">源代码/需求/设计</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#ede9fe;">模型</div>
+        <div class="step-label">Model</div>
+        <div class="step-sub">抽象表示</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#d1fae5;">测试需求</div>
+        <div class="step-label">Requirements</div>
+        <div class="step-sub">覆盖标准定义</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#fef3c7;">测试值</div>
+        <div class="step-label">Values</div>
+        <div class="step-sub">具体输入</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#fee2e2;">测试用例</div>
+        <div class="step-label">Test Cases</div>
+        <div class="step-sub">可执行规格</div>
+      </div>
+    </div>
+
+    <h4>四种建模结构</h4>
+    <table>
+      <thead>
+        <tr>
+          <th>建模结构</th>
+          <th>描述</th>
+          <th>典型来源</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Input Domains（输入域/集合）</strong></td>
+          <td>将输入空间划分为等价类或子集</td>
+          <td>输入参数的取值范围</td>
+        </tr>
+        <tr>
+          <td><strong>Graphs（图）</strong></td>
+          <td>用节点和边表示程序结构或行为</td>
+          <td>控制流图、状态机、调用图</td>
+        </tr>
+        <tr>
+          <td><strong>Logical Expressions（逻辑表达式）</strong></td>
+          <td>用逻辑公式表示条件和约束</td>
+          <td>谓词、条件分支、规约</td>
+        </tr>
+        <tr>
+          <td><strong>Syntax Descriptions（语法描述/文法）</strong></td>
+          <td>用文法规则描述输入的语法结构</td>
+          <td>协议格式、输入文件格式</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h4>果冻豆示例</h4>
+    <p>假设一个果冻豆有<strong>6种口味</strong>（樱桃、柠檬、橙子、蓝莓、薄荷、巧克力）和<strong>4种颜色</strong>（红、黄、蓝、绿），共24种组合。</p>
+
+    <div class="compare-grid">
+      <div class="compare-box">
+        <h4>🍬 按口味覆盖</h4>
+        <p>测试需求：每种口味至少尝一次。</p>
+        <p>最少需要 <strong>6个</strong> 测试用例。</p>
+        <p>满足口味覆盖不一定满足颜色覆盖（可能遗漏某些颜色）。</p>
+      </div>
+      <div class="compare-box">
+        <h4>🎨 按颜色覆盖</h4>
+        <p>测试需求：每种颜色至少尝一次。</p>
+        <p>最少需要 <strong>4个</strong> 测试用例。</p>
+        <p>满足颜色覆盖不一定满足口味覆盖（可能遗漏某些口味）。</p>
+      </div>
+    </div>
+
+    <div class="tip">
+      <div><strong>包含关系：</strong> 口味覆盖<strong>不包含</strong>颜色覆盖，颜色覆盖<strong>不包含</strong>口味覆盖。这是两种独立的覆盖标准。但如果定义一个更强的标准"口味×颜色覆盖"（每种组合至少一次），则它同时包含口味覆盖和颜色覆盖。</div>
+    </div>
+
+    <!-- ==================== 测试自动化框架 ==================== -->
+    <h3 id="automation">测试自动化框架</h3>
+
+    <p>现代测试自动化框架提供以下核心功能：</p>
+    <table>
+      <thead>
+        <tr>
+          <th>功能</th>
+          <th>说明</th>
+          <th>示例</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>断言（Assertions）</strong></td>
+          <td>验证实际结果是否等于期望结果</td>
+          <td>JUnit的assertEquals, assert</td>
+        </tr>
+        <tr>
+          <td><strong>共享测试数据</strong></td>
+          <td>在多个测试之间共享设置和清理操作</td>
+          <td>setUp/tearDown, fixtures</td>
+        </tr>
+        <tr>
+          <td><strong>测试集组织</strong></td>
+          <td>将测试用例组织成套件和类别</td>
+          <td>TestSuite, test tags</td>
+        </tr>
+        <tr>
+          <td><strong>命令行/GUI运行</strong></td>
+          <td>支持多种方式运行测试</td>
+          <td>命令行、IDE插件、CI/CD集成</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h4>常用测试框架</h4>
+    <ul>
+      <li><strong>JUnit</strong> — Java语言的单元测试框架</li>
+      <li><strong>unittest</strong> — Python标准库的测试框架</li>
+      <li><strong>Selenium</strong> — Web应用的UI自动化测试框架</li>
+      <li><strong>pytest</strong> — Python的高级测试框架</li>
+      <li><strong>Jest</strong> — JavaScript的测试框架</li>
+    </ul>
+
+    <!-- ==================== 团队组织 ==================== -->
+    <h3 id="team">团队组织</h3>
+
+    <p>测试团队通常按照以下角色进行组织：</p>
+    <table>
+      <thead>
+        <tr>
+          <th>角色</th>
+          <th>人数</th>
+          <th>技能要求</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>测试设计师</strong></td>
+          <td>1人</td>
+          <td>需要CS背景，掌握离散数学和测试理论</td>
+        </tr>
+        <tr>
+          <td><strong>测试自动化工程师</strong></td>
+          <td>若干人</td>
+          <td>需要编程能力，熟悉测试框架和工具</td>
+        </tr>
+        <tr>
+          <td><strong>测试执行人员</strong></td>
+          <td>若干人</td>
+          <td>基本计算机技能，细心负责</td>
+        </tr>
+        <tr>
+          <td><strong>测试评估人员</strong></td>
+          <td>若干人</td>
+          <td>需要领域知识，能分析测试结果</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h4>Do and Don't — 测试最佳实践</h4>
+    <div class="compare-grid">
+      <div class="compare-box">
+        <h4>✅ Do（应该做的）</h4>
+        <ul>
+          <li>尽早开始测试</li>
+          <li>使用模型驱动的系统化方法</li>
+          <li>编写可重复执行的自动化测试</li>
+          <li>记录和追踪缺陷</li>
+          <li>关注高风险区域</li>
+        </ul>
+      </div>
+      <div class="compare-box">
+        <h4>❌ Don't（不应该做的）</h4>
+        <ul>
+          <li>不要测试自己的代码（缺乏独立性）</li>
+          <li>不要追求穷尽测试</li>
+          <li>不要忽略回归测试</li>
+          <li>不要在没有标准的情况下随意测试</li>
+          <li>不要将测试推迟到开发结束后</li>
+        </ul>
+      </div>
+    </div>
+
+    <hr>
+    <div class="pagination">
+      <a href="why-test.html" class="page-nav">
+        <span class="label">上一页</span>
+        <span class="title">← 为什么要测试</span>
+      </a>
+      <a href="coverage-intro.html" class="page-nav next">
+        <span class="label">下一节</span>
+        <span class="title">覆盖标准导论 →</span>
+      </a>
+    </div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

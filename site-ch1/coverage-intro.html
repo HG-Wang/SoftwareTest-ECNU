@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>覆盖标准导论 — Ch1 软件测试导论</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Toggle menu">☰</button>
+<div class="overlay"></div>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h1>软件测试笔记</h1>
+    <div class="subtitle">Software Testing · Chapter 1</div>
+  </div>
+  <div class="sidebar-nav">
+    <a href="../index.html" class="back-home"><span class="icon">🏠</span> 返回主页</a>
+    <div class="nav-section">章节导航</div>
+    <a href="index.html"><span class="icon">📖</span> 章节总览</a>
+    <a href="why-test.html"><span class="icon">❓</span> 为什么要测试</a>
+    <a href="test-activities.html"><span class="icon">⚙️</span> 测试活动与模型驱动设计</a>
+    <a href="coverage-intro.html" class="active"><span class="icon">📊</span> 覆盖标准导论</a>
+    <a href="istqb-basics.html"><span class="icon">📋</span> ISTQB测试基础</a>
+    <a href="exercises.html"><span class="icon">✏️</span> 实战练习</a>
+    <div class="nav-section">本页目录</div>
+    <a href="#input-space" class="toc-link"><span class="icon">🌐</span> 输入空间与测试选择</a>
+    <a href="#criteria" class="toc-link"><span class="icon">📐</span> 测试需求与覆盖标准</a>
+    <a href="#subsumption" class="toc-link"><span class="icon">🔗</span> 包含关系</a>
+    <a href="#generators" class="toc-link"><span class="icon">⚙️</span> 生成器与识别器</a>
+  </div>
+  <div class="sidebar-footer">
+    1.2 Coverage Criteria<br>
+    覆盖标准导论
+  </div>
+</nav>
+
+<main class="main">
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="index.html">Ch1</a>
+      <span class="sep">›</span>
+      <span>覆盖标准导论</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-header">
+      <h2>覆盖标准导论</h2>
+      <p class="desc">Coverage Criteria — 测试需求、覆盖标准、包含关系以及生成器与识别器的概念。</p>
+      <div class="meta">
+        <span class="tag">覆盖标准</span>
+        <span class="tag">测试需求</span>
+        <span class="tag">包含关系</span>
+      </div>
+    </div>
+
+    <!-- ==================== 输入空间与测试选择 ==================== -->
+    <h3 id="input-space">输入空间与测试选择</h3>
+
+    <p>即使是小程序也有巨大的输入空间。考虑一个在32位机器上接受3个int参数的程序：</p>
+
+    <div class="warning">
+      <div><strong>输入空间大小：</strong> 2<sup>32</sup> × 2<sup>32</sup> × 2<sup>32</sup> = 2<sup>96</sup> ≈ 7.9 × 10<sup>28</sup> 种输入组合。如果每秒测试10亿种组合，需要约 <strong>25亿年</strong> 才能穷举测试完毕。穷尽测试对于任何非平凡的软件来说都是不可能的。</div>
+    </div>
+
+    <p>因此，我们需要一种<strong>结构化的方式</strong>来搜索输入空间，选择最有价值的测试用例。这就是<strong>覆盖标准（Coverage Criteria）</strong>的作用——它们帮助我们在有限的测试预算内最大化缺陷发现能力。</p>
+
+    <!-- ==================== 测试需求与覆盖标准 ==================== -->
+    <h3 id="criteria">测试需求与覆盖标准</h3>
+
+    <dl class="def-list">
+      <dt>Test Criterion（测试标准）</dt>
+      <dd>定义测试需求的<strong>规则和过程的集合</strong>。每个覆盖标准都规定了测试应该覆盖哪些元素（节点、边、路径、变量定义等）。</dd>
+      <dt>Test Requirements（测试需求）</dt>
+      <dd>测试中必须满足或覆盖的<strong>具体事物</strong>。例如，"覆盖每个节点"是一个测试需求，"覆盖每个定义到使用的路径"也是一个测试需求。</dd>
+      <dt>Coverage Level（覆盖级别）</dt>
+      <dd>已满足的测试需求占总测试需求的<strong>比率</strong>。Coverage Level = |已满足的TR| / |总TR|。覆盖级别为1.0（100%）表示所有测试需求都已满足。</dd>
+    </dl>
+
+    <h4>四种建模结构对应的覆盖标准</h4>
+    <table>
+      <thead>
+        <tr>
+          <th>建模结构</th>
+          <th>测试需求类型</th>
+          <th>覆盖标准示例</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Input Domains（输入域）</strong></td>
+          <td>输入值的分区或等价类</td>
+          <td>等价类覆盖、边界值覆盖</td>
+        </tr>
+        <tr>
+          <td><strong>Graphs（图）</strong></td>
+          <td>图中的节点、边、路径</td>
+          <td>节点覆盖、边覆盖、主路径覆盖</td>
+        </tr>
+        <tr>
+          <td><strong>Logical Expressions（逻辑表达式）</strong></td>
+          <td>谓词中的子表达式和条件</td>
+          <td>谓词覆盖、子句覆盖、CACC</td>
+        </tr>
+        <tr>
+          <td><strong>Syntax Descriptions（语法描述）</strong></td>
+          <td>语法规则的产生式</td>
+          <td>产生式覆盖、变异覆盖</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ==================== 包含关系 ==================== -->
+    <h3 id="subsumption">包含关系</h3>
+
+    <p>覆盖标准之间可以存在<strong>包含关系（Subsumption）</strong>，这是衡量覆盖标准强弱的重要指标：</p>
+
+    <blockquote>
+      <p><strong>定义：</strong> 覆盖标准 C₁ <strong>包含（subsume）</strong> C₂，当且仅当满足 C₁ 的<strong>每一个</strong>测试集也满足 C₂。记作 C₁ ⊇ C₂。</p>
+    </blockquote>
+
+    <h4>包含关系的含义</h4>
+    <p>如果 C₁ ⊇ C₂，则：</p>
+    <ul>
+      <li>C₁ 是比 C₂ <strong>更强</strong>的标准</li>
+      <li>满足 C₁ 自动保证满足 C₂</li>
+      <li>C₁ 的测试需求是 C₂ 的测试需求的<strong>超集</strong></li>
+      <li>C₁ 通常需要更多的测试用例</li>
+    </ul>
+
+    <h4>示例</h4>
+    <div class="compare-grid">
+      <div class="compare-box">
+        <h4>🍬 果冻豆示例</h4>
+        <p>6种口味 × 4种颜色 = 24种果冻豆。</p>
+        <ul>
+          <li><strong>口味覆盖：</strong> 每种口味至少尝1次（6个测试需求）</li>
+          <li><strong>颜色覆盖：</strong> 每种颜色至少尝1次（4个测试需求）</li>
+          <li><strong>口味×颜色覆盖：</strong> 每种组合至少尝1次（24个测试需求）</li>
+        </ul>
+        <p>口味×颜色覆盖 ⊇ 口味覆盖，口味×颜色覆盖 ⊇ 颜色覆盖。但口味覆盖不包含颜色覆盖，反之亦然。</p>
+      </div>
+      <div class="compare-box">
+        <h4>📐 图覆盖示例</h4>
+        <p>对于图结构的覆盖标准：</p>
+        <ul>
+          <li><strong>边覆盖 ⊇ 节点覆盖</strong></li>
+          <li><strong>主路径覆盖 ⊇ 边覆盖</strong></li>
+          <li><strong>主路径覆盖 ⊇ 节点覆盖</strong></li>
+        </ul>
+        <p>覆盖了所有边必然覆盖了所有涉及的节点，因此边覆盖包含节点覆盖。</p>
+      </div>
+    </div>
+
+    <div class="flow-diagram">
+      <div class="flow-step">
+        <div class="step-box" style="background:#fee2e2;">口味×颜色</div>
+        <div class="step-label">最强</div>
+        <div class="step-sub">所有组合</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#dbeafe;">口味覆盖</div>
+        <div class="step-label">中等</div>
+        <div class="step-sub">每种口味</div>
+      </div>
+      <div class="flow-arrow"></div>
+    </div>
+    <div class="flow-diagram">
+      <div class="flow-step">
+        <div class="step-box" style="background:#fee2e2;">口味×颜色</div>
+        <div class="step-label">最强</div>
+        <div class="step-sub">所有组合</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#d1fae5;">颜色覆盖</div>
+        <div class="step-label">中等</div>
+        <div class="step-sub">每种颜色</div>
+      </div>
+      <div class="flow-arrow"></div>
+    </div>
+    <p style="text-align:center; color:var(--text-light); font-size:.88rem;">口味覆盖与颜色覆盖互相不包含 — 它们是独立的覆盖维度</p>
+
+    <!-- ==================== 生成器与识别器 ==================== -->
+    <h3 id="generators">生成器与识别器</h3>
+
+    <p>对于覆盖标准，存在两个关键问题：</p>
+
+    <div class="compare-grid">
+      <div class="compare-box">
+        <h4>🔧 Generator（生成器）</h4>
+        <p><strong>自动生成满足准则的值的程序。</strong></p>
+        <ul>
+          <li>输入：一个覆盖标准和被测软件</li>
+          <li>输出：一组满足该标准的测试用例</li>
+          <li>对于大多数准则，完全自动化的生成是<strong>不可判定的</strong></li>
+        </ul>
+      </div>
+      <div class="compare-box">
+        <h4>🔍 Recognizer（识别器）</h4>
+        <p><strong>判断给定测试集是否满足准则的程序。</strong></p>
+        <ul>
+          <li>输入：一个测试集和一个覆盖标准</li>
+          <li>输出：是/否（是否满足该标准）</li>
+          <li>对于大多数准则，识别比生成<strong>容易得多</strong></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tip">
+      <div><strong>关键洞察：</strong> 对于大多数覆盖标准，生成和识别两个问题在理论上都是<strong>不可判定的（undecidable）</strong>——即不存在通用算法能够对所有程序给出确定的答案。但在实践中，<strong>识别比生成容易得多</strong>。这就是为什么<strong>覆盖分析工具</strong>（识别器）相当丰富，而自动化测试生成工具（生成器）仍在不断发展中。</div>
+    </div>
+
+    <h4>小示例：indexOf 方法的图覆盖</h4>
+    <pre><code><span class="kw">public int</span> <span class="fn">indexOf</span>(<span class="tp">Node</span> <span class="vr">n</span>) {
+    <span class="tp">int</span> <span class="vr">index</span> <span class="op">=</span> <span class="nu">0</span>;
+    <span class="tp">Node</span> <span class="vr">current</span> <span class="op">=</span> <span class="vr">head</span>;
+    <span class="kw">while</span> (<span class="vr">current</span> <span class="op">!=</span> <span class="kw">null</span>) {
+        <span class="kw">if</span> (<span class="vr">current</span>.<span class="fn">equals</span>(<span class="vr">n</span>)) {
+            <span class="kw">return</span> <span class="vr">index</span>;
+        }
+        <span class="vr">index</span><span class="op">++</span>;
+        <span class="vr">current</span> <span class="op">=</span> <span class="vr">current</span>.next;
+    }
+    <span class="kw">return</span> <span class="op">-</span><span class="nu">1</span>;
+}</code><span class="lang-label">Java</span></pre>
+    <p>对于这个方法：</p>
+    <ul>
+      <li><strong>节点覆盖</strong>要求每个语句至少被执行一次</li>
+      <li><strong>边覆盖</strong>要求每个控制流分支至少被执行一次</li>
+      <li>识别器可以检查测试路径是否遍历了所有节点/边</li>
+      <li>生成器需要自动构造遍历所有节点/边的输入</li>
+    </ul>
+
+    <hr>
+    <div class="pagination">
+      <a href="test-activities.html" class="page-nav">
+        <span class="label">上一页</span>
+        <span class="title">← 测试活动与模型驱动设计</span>
+      </a>
+      <a href="istqb-basics.html" class="page-nav next">
+        <span class="label">下一节</span>
+        <span class="title">ISTQB测试基础 →</span>
+      </a>
+    </div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

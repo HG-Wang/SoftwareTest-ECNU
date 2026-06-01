@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ISP基础 — Ch2 输入空间划分</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Toggle menu">☰</button>
+<div class="overlay"></div>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h1>软件测试笔记</h1>
+    <div class="subtitle">Software Testing · Chapter 2</div>
+  </div>
+  <div class="sidebar-nav">
+    <a href="../index.html" class="back-home"><span class="icon">🏠</span> 返回主页</a>
+    <div class="nav-section">章节导航</div>
+    <a href="index.html"><span class="icon">📖</span> 章节总览</a>
+    <a href="isp-basics.html" class="active"><span class="icon">📐</span> ISP基础</a>
+    <a href="combination-criteria.html"><span class="icon">🔗</span> 组合覆盖标准</a>
+    <a href="bva.html"><span class="icon">📏</span> 边界值分析</a>
+    <a href="istqb-sdlc.html"><span class="icon">📋</span> ISTQB SDLC测试</a>
+    <a href="istqb-static.html"><span class="icon">🔍</span> ISTQB静态测试</a>
+    <a href="exercises.html"><span class="icon">✏️</span> 实战练习</a>
+    <div class="nav-section">本页目录</div>
+    <a href="#input-domains" class="toc-link"><span class="icon">📋</span> 输入域</a>
+    <a href="#partitioning" class="toc-link"><span class="icon">📊</span> 划分的性质</a>
+    <a href="#idm" class="toc-link"><span class="icon">🔀</span> 输入域建模五步法</a>
+    <a href="#interface-based" class="toc-link"><span class="icon">🔌</span> 基于接口的方法</a>
+    <a href="#functionality-based" class="toc-link"><span class="icon">⚙️</span> 基于功能的方法</a>
+  </div>
+  <div class="sidebar-footer">
+    2.1-2.3 ISP Basics
+  </div>
+</nav>
+
+<main class="main">
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="index.html">Ch2</a>
+      <span class="sep">›</span>
+      <span>ISP基础</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-header">
+      <h2>输入空间划分基础</h2>
+      <p class="desc">ISP Basics — 输入域、划分的性质、输入域建模的五步方法、基于接口和基于功能的建模方法。</p>
+      <div class="meta">
+        <span class="tag">ISP</span>
+        <span class="tag">输入域建模</span>
+        <span class="tag">特征</span>
+        <span class="tag">块</span>
+      </div>
+    </div>
+
+    <!-- ==================== 输入域 ==================== -->
+    <h3 id="input-domains">输入域</h3>
+
+    <h4>什么是输入域？</h4>
+    <p>输入域包含程序所有可能的输入。即使是一个小程序，其输入域也大到几乎无限。测试人员不可能穷举所有输入，因此需要系统的方法来选择有限的测试用例。</p>
+
+    <h4>输入参数的来源</h4>
+    <p>输入参数定义了输入域的范围，来源包括：</p>
+    <table>
+      <thead>
+        <tr><th>来源</th><th>说明</th><th>示例</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>方法参数</strong></td>
+          <td>函数或方法的形参</td>
+          <td><code>triang(int a, int b, int c)</code></td>
+        </tr>
+        <tr>
+          <td><strong>文件数据</strong></td>
+          <td>从文件读取的输入</td>
+          <td>配置文件、数据文件</td>
+        </tr>
+        <tr>
+          <td><strong>全局变量</strong></td>
+          <td>程序中可访问的全局状态</td>
+          <td>环境变量、全局标志</td>
+        </tr>
+        <tr>
+          <td><strong>用户输入</strong></td>
+          <td>用户通过界面输入的数据</td>
+          <td>表单输入、命令行参数</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="tip">
+      <div><strong>核心思想：</strong> 域被划分为区域，从每个区域中选取至少一个值进行测试。这就是"输入空间划分"的含义。</div>
+    </div>
+
+    <!-- ==================== 划分的性质 ==================== -->
+    <h3 id="partitioning">划分的性质</h3>
+
+    <h4>形式化定义</h4>
+    <p>一个划分 q 定义块集合 B<sub>q</sub> = {b<sub>1</sub>, b<sub>2</sub>, ..., b<sub>Q</sub>}，必须满足两个性质：</p>
+
+    <div class="compare-grid">
+      <div class="compare-box">
+        <h4>🔒 互斥性 (Pairwise Disjoint)</h4>
+        <p>b<sub>i</sub> ∩ b<sub>j</sub> = ∅, ∀i≠j</p>
+        <p>任意两个不同的块之间没有交集。每个输入值只能属于一个块。</p>
+      </div>
+      <div class="compare-box">
+        <h4>✅ 完备性 (Complete)</h4>
+        <p>∪b = D</p>
+        <p>所有块的并集等于整个输入域D。每个输入值都必须属于某个块。</p>
+      </div>
+    </div>
+
+    <h4>选择值的假设</h4>
+    <p>ISP假设：从每个块中选择的值是同等有用的——即块内的值在发现缺陷方面是等价的。这个假设并不总是成立，但它是ISP方法的基础。</p>
+
+    <h4>示例：文件排序的问题</h4>
+    <p>考虑一个文件排序程序，我们定义以下特征：</p>
+    <ul>
+      <li>特征1：文件长度 — 块：{长度=0}, {长度=1}, {长度>1}</li>
+      <li>特征2：文件顺序 — 块：{已排序}, {逆序}, {随机}</li>
+      <li>特征3：元素唯一性 — 块：{无重复}, {有重复}</li>
+    </ul>
+    <p>问题：长度为1的文件同时属于"已排序"、"逆序"和"无重复"三个块——这违反了互斥性。</p>
+
+    <div class="warning">
+      <div><strong>解决方案：</strong> 每个特征只关注一个属性。例如"长度"特征只关注文件有多少行，"顺序"特征只关注元素的排列方式。避免让一个特征隐含多个属性。</div>
+    </div>
+
+    <!-- ==================== 输入域建模五步法 ==================== -->
+    <h3 id="idm">输入域建模五步法</h3>
+
+    <p>输入域建模（Input Domain Modeling, IDM）是ISP的核心，包含以下五个步骤：</p>
+
+    <ol class="step-list">
+      <li>
+        <div>
+          <strong>识别可测试功能</strong>
+          <p>确定要测试的程序功能或方法。例如对于三角形分类程序，可测试功能是 <code>triang(int a, int b, int c)</code> 方法。</p>
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>找出所有参数</strong>
+          <p>列出功能的所有输入参数及其类型。例如 triang 有三个 int 类型参数 a、b、c。</p>
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>建模输入域</strong> <span class="tag" style="background:#dbeafe;color:#1e40af;">最具创造性</span>
+          <p>为每个参数定义特征，再将每个特征划分为块。这是整个过程中最具创造性的步骤，需要结合领域知识和测试经验。</p>
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>应用测试准则选择组合</strong>
+          <p>使用组合覆盖标准（ACoC、ECC、PWC、BCC等）从各块中选择组合。</p>
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>精化组合为测试输入</strong>
+          <p>将选中的块组合转化为具体的测试输入值。</p>
+        </div>
+      </li>
+    </ol>
+
+    <!-- ==================== 基于接口的方法 ==================== -->
+    <h3 id="interface-based">基于接口的方法</h3>
+
+    <h4>基本思路</h4>
+    <p>基于接口的方法机械地考虑每个参数，为每个参数定义特征和块。不考虑参数之间的关系。</p>
+
+    <h4>示例：triang() 的基于接口建模</h4>
+    <p>三角形分类方法 <code>triang(int a, int b, int c)</code>：</p>
+
+    <h4>第一轮建模</h4>
+    <p>每个参数与0的关系：</p>
+    <table>
+      <thead>
+        <tr><th>参数</th><th>特征</th><th>块</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>a</td><td>与0的关系</td><td>{a>0}, {a=0}, {a<0}</td></tr>
+        <tr><td>b</td><td>与0的关系</td><td>{b>0}, {b=0}, {b<0}</td></tr>
+        <tr><td>c</td><td>与0的关系</td><td>{c>0}, {c=0}, {c<0}</td></tr>
+      </tbody>
+    </table>
+    <p>全组合：3 × 3 × 3 = <strong>27</strong> 种测试</p>
+
+    <h4>精化建模</h4>
+    <p>加入=1的特殊情况：</p>
+    <table>
+      <thead>
+        <tr><th>参数</th><th>特征</th><th>块</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>a</td><td>与0和1的关系</td><td>{a>1}, {a=1}, {a=0}, {a<0}</td></tr>
+        <tr><td>b</td><td>与0和1的关系</td><td>{b>1}, {b=1}, {b=0}, {b<0}</td></tr>
+        <tr><td>c</td><td>与0和1的关系</td><td>{c>1}, {c=1}, {c=0}, {c<0}</td></tr>
+      </tbody>
+    </table>
+    <p>全组合：4 × 4 × 4 = <strong>64</strong> 种测试</p>
+
+    <div class="compare-grid">
+      <div class="compare-box">
+        <h4>✅ 优点</h4>
+        <ul>
+          <li>简单、机械，可部分自动化</li>
+          <li>不需要深入理解程序行为</li>
+          <li>适合参数独立的情况</li>
+        </ul>
+      </div>
+      <div class="compare-box">
+        <h4>❌ 缺点</h4>
+        <ul>
+          <li>忽略参数间关系</li>
+          <li>可能不完整（遗漏重要特征）</li>
+          <li>可能产生不可行的测试组合</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ==================== 基于功能的方法 ==================== -->
+    <h3 id="functionality-based">基于功能的方法</h3>
+
+    <h4>基本思路</h4>
+    <p>基于功能的方法从程序的行为视图出发，考虑程序应该如何响应不同类型的输入。需要理解程序的功能和领域知识。</p>
+
+    <h4>示例：triang() 的基于功能建模</h4>
+    <p>从几何分类的角度，三角形可以分为：</p>
+    <table>
+      <thead>
+        <tr><th>特征</th><th>块</th><th>说明</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>三角形类型</td><td>{scalene}</td><td>三边不等</td></tr>
+        <tr><td></td><td>{isosceles}</td><td>两边相等</td></tr>
+        <tr><td></td><td>{equilateral}</td><td>三边相等</td></tr>
+        <tr><td></td><td>{invalid}</td><td>不能构成三角形</td></tr>
+      </tbody>
+    </table>
+
+    <div class="warning">
+      <div><strong>注意互斥性：</strong> equilateral（等边三角形）同时也是 isosceles（等腰三角形）。需要精化使块互斥——例如将 isosceles 定义为"恰好两边相等"。</div>
+    </div>
+
+    <div class="compare-grid">
+      <div class="compare-box">
+        <h4>✅ 优点</h4>
+        <ul>
+          <li>可融入领域和语义知识</li>
+          <li>能发现更有意义的测试分区</li>
+          <li>测试用例更贴近实际使用场景</li>
+        </ul>
+      </div>
+      <div class="compare-box">
+        <h4>❌ 缺点</h4>
+        <ul>
+          <li>需要更多设计努力</li>
+          <li>依赖测试人员的领域知识</li>
+          <li>难以自动化</li>
+        </ul>
+      </div>
+    </div>
+
+    <hr>
+    <div class="pagination">
+      <a href="index.html" class="page-nav">
+        <span class="label">上一页</span>
+        <span class="title">← 章节总览</span>
+      </a>
+      <a href="combination-criteria.html" class="page-nav next">
+        <span class="label">下一节</span>
+        <span class="title">组合覆盖标准 →</span>
+      </a>
+    </div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

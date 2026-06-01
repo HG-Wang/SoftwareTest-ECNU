@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ISTQB SDLC测试 — Ch2 输入空间划分</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Toggle menu">☰</button>
+<div class="overlay"></div>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h1>软件测试笔记</h1>
+    <div class="subtitle">Software Testing · Chapter 2</div>
+  </div>
+  <div class="sidebar-nav">
+    <a href="../index.html" class="back-home"><span class="icon">🏠</span> 返回主页</a>
+    <div class="nav-section">章节导航</div>
+    <a href="index.html"><span class="icon">📖</span> 章节总览</a>
+    <a href="isp-basics.html"><span class="icon">📐</span> ISP基础</a>
+    <a href="combination-criteria.html"><span class="icon">🔗</span> 组合覆盖标准</a>
+    <a href="bva.html"><span class="icon">📏</span> 边界值分析</a>
+    <a href="istqb-sdlc.html" class="active"><span class="icon">📋</span> ISTQB SDLC测试</a>
+    <a href="istqb-static.html"><span class="icon">🔍</span> ISTQB静态测试</a>
+    <a href="exercises.html"><span class="icon">✏️</span> 实战练习</a>
+    <div class="nav-section">本页目录</div>
+    <a href="#sdlc-models" class="toc-link"><span class="icon">📋</span> SDLC模型与测试</a>
+    <a href="#test-levels" class="toc-link"><span class="icon">📊</span> 测试级别</a>
+    <a href="#test-types" class="toc-link"><span class="icon">🔀</span> 测试类型</a>
+    <a href="#devops" class="toc-link"><span class="icon">⚙️</span> DevOps与测试</a>
+    <a href="#shift-left" class="toc-link"><span class="icon">⬅️</span> 左移</a>
+  </div>
+  <div class="sidebar-footer">
+    ISTQB CTFL Ch2-3 · SDLC
+  </div>
+</nav>
+
+<main class="main">
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="index.html">Ch2</a>
+      <span class="sep">›</span>
+      <span>ISTQB SDLC测试</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-header">
+      <h2>ISTQB SDLC中的测试</h2>
+      <p class="desc">Testing in the SDLC — SDLC模型对测试的影响、测试级别、测试类型、DevOps与左移。</p>
+      <div class="meta">
+        <span class="tag">ISTQB</span>
+        <span class="tag">SDLC</span>
+        <span class="tag">测试级别</span>
+        <span class="tag">DevOps</span>
+      </div>
+    </div>
+
+    <!-- ==================== SDLC模型与测试 ==================== -->
+    <h3 id="sdlc-models">SDLC模型与测试</h3>
+
+    <p>不同的软件开发生命周期（SDLC）模型对测试活动有不同的影响：</p>
+
+    <div class="tabs">
+      <div class="tab-buttons">
+        <button class="tab-btn active" data-tab="vmodel">顺序模型（V模型）</button>
+        <button class="tab-btn" data-tab="iterative">迭代/增量模型</button>
+        <button class="tab-btn" data-tab="agile">敏捷模型</button>
+      </div>
+
+      <div class="tab-panel active" data-panel="vmodel">
+        <h4>顺序模型（V模型）</h4>
+        <p>V模型是瀑布模型的扩展，将测试活动与开发阶段一一对应：</p>
+        <table>
+          <thead>
+            <tr><th>开发阶段</th><th>对应测试级别</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>需求分析</td><td>验收测试</td></tr>
+            <tr><td>系统设计</td><td>系统测试</td></tr>
+            <tr><td>详细设计</td><td>集成测试</td></tr>
+            <tr><td>编码</td><td>单元测试</td></tr>
+          </tbody>
+        </table>
+        <ul>
+          <li>测试人员应尽早参与审查活动</li>
+          <li>动态测试只能在后期阶段执行</li>
+          <li>测试计划和设计可以在开发早期开始</li>
+        </ul>
+      </div>
+
+      <div class="tab-panel" data-panel="iterative">
+        <h4>迭代/增量模型</h4>
+        <p>在迭代和增量开发中：</p>
+        <ul>
+          <li>每次迭代都可执行静态和动态测试</li>
+          <li>回归测试在每次迭代中都很重要</li>
+          <li>测试与开发更加紧密地交织在一起</li>
+          <li>每个增量都需要验证与之前增量的兼容性</li>
+        </ul>
+      </div>
+
+      <div class="tab-panel" data-panel="agile">
+        <h4>敏捷模型</h4>
+        <p>敏捷开发中的测试特点：</p>
+        <ul>
+          <li>轻量级文档，注重可工作的软件</li>
+          <li>广泛使用测试自动化</li>
+          <li>测试驱动开发（TDD）和行为驱动开发（BDD）</li>
+          <li>持续集成和持续交付</li>
+          <li>测试人员与开发人员紧密协作</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ==================== 测试级别 ==================== -->
+    <h3 id="test-levels">测试级别</h3>
+
+    <p>测试级别是测试组织的方式，每个级别关注不同的测试目标：</p>
+
+    <div class="tabs">
+      <div class="tab-buttons">
+        <button class="tab-btn active" data-tab="component">组件测试</button>
+        <button class="tab-btn" data-tab="integration">组件集成测试</button>
+        <button class="tab-btn" data-tab="system">系统测试</button>
+        <button class="tab-btn" data-tab="sys-integration">系统集成测试</button>
+        <button class="tab-btn" data-tab="acceptance">验收测试</button>
+      </div>
+
+      <div class="tab-panel active" data-panel="component">
+        <h4>组件测试（Component Testing）</h4>
+        <p>也称为单元测试。测试单个软件组件（如函数、类、模块）。</p>
+        <ul>
+          <li>通常由开发人员执行</li>
+          <li>可能需要驱动器（Driver）和桩（Stub）</li>
+          <li>可以使用白盒测试技术</li>
+          <li>关注组件的功能和内部逻辑</li>
+        </ul>
+      </div>
+
+      <div class="tab-panel" data-panel="integration">
+        <h4>组件集成测试（Component Integration Testing）</h4>
+        <p>测试组件之间的接口和交互。</p>
+        <ul>
+          <li>关注组件间的接口</li>
+          <li>通常由开发人员执行</li>
+          <li>可以使用自顶向下、自底向上或大爆炸等策略</li>
+          <li>发现接口缺陷和数据传递问题</li>
+        </ul>
+      </div>
+
+      <div class="tab-panel" data-panel="system">
+        <h4>系统测试（System Testing）</h4>
+        <p>测试完整的集成系统。</p>
+        <ul>
+          <li>关注系统的需求和规格</li>
+          <li>通常由独立的测试团队执行</li>
+          <li>包括功能测试和非功能测试</li>
+          <li>在接近生产环境的测试环境中进行</li>
+        </ul>
+      </div>
+
+      <div class="tab-panel" data-panel="sys-integration">
+        <h4>系统集成测试（System Integration Testing）</h4>
+        <p>测试系统与外部系统的接口和交互。</p>
+        <ul>
+          <li>关注系统间的接口</li>
+          <li>可能涉及第三方系统</li>
+          <li>需要协调多个系统的测试环境</li>
+          <li>发现系统间的数据交换和协议问题</li>
+        </ul>
+      </div>
+
+      <div class="tab-panel" data-panel="acceptance">
+        <h4>验收测试（Acceptance Testing）</h4>
+        <p>验证系统是否满足用户需求和业务目标。</p>
+        <ul>
+          <li>通常由用户或客户执行</li>
+          <li>关注业务需求和用户场景</li>
+          <li>包括Alpha测试和Beta测试</li>
+          <li>决定系统是否可以发布</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ==================== 测试类型 ==================== -->
+    <h3 id="test-types">测试类型</h3>
+
+    <div class="compare-grid">
+      <div class="compare-box">
+        <h4>功能测试 vs 非功能测试</h4>
+        <p><strong>功能测试：</strong> 验证系统"做什么"，检查功能是否符合需求。例如：登录功能、搜索功能。</p>
+        <p><strong>非功能测试：</strong> 验证系统"做得怎么样"，检查质量属性。例如：性能、安全性、可用性、可靠性。</p>
+      </div>
+      <div class="compare-box">
+        <h4>黑盒测试 vs 白盒测试</h4>
+        <p><strong>黑盒测试：</strong> 不考虑内部结构，仅基于输入和输出设计测试。也称为基于规约的测试。</p>
+        <p><strong>白盒测试：</strong> 基于内部结构（如代码、控制流）设计测试。也称为基于结构的测试。</p>
+      </div>
+    </div>
+
+    <h4>确认测试 vs 回归测试</h4>
+    <table>
+      <thead>
+        <tr><th>类型</th><th>目的</th><th>时机</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>确认测试</strong></td>
+          <td>验证缺陷是否被正确修复</td>
+          <td>缺陷修复后</td>
+        </tr>
+        <tr>
+          <td><strong>回归测试</strong></td>
+          <td>验证修改是否引入了新的缺陷</td>
+          <td>代码修改后</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ==================== DevOps ==================== -->
+    <h3 id="devops">DevOps与测试</h3>
+
+    <h4>DevOps的核心理念</h4>
+    <p>DevOps是开发（Development）和运维（Operations）的结合，强调：</p>
+    <ul>
+      <li><strong>CI/CD：</strong> 持续集成和持续交付，自动化构建、测试和部署</li>
+      <li><strong>快速反馈：</strong> 通过自动化测试快速发现和修复问题</li>
+      <li><strong>自动化回归测试：</strong> 每次代码变更都自动执行回归测试</li>
+      <li><strong>基础设施即代码：</strong> 测试环境的自动化管理</li>
+    </ul>
+
+    <h4>DevOps中的测试活动</h4>
+    <table>
+      <thead>
+        <tr><th>阶段</th><th>测试活动</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Plan</td><td>测试计划、需求审查</td></tr>
+        <tr><td>Code</td><td>静态分析、代码审查、单元测试</td></tr>
+        <tr><td>Build</td><td>自动化构建测试、集成测试</td></tr>
+        <tr><td>Test</td><td>系统测试、性能测试</td></tr>
+        <tr><td>Release</td><td>验收测试、冒烟测试</td></tr>
+        <tr><td>Deploy</td><td>部署验证测试</td></tr>
+        <tr><td>Operate</td><td>监控、A/B测试</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ==================== 左移 ==================== -->
+    <h3 id="shift-left">左移（Shift Left）</h3>
+
+    <blockquote>
+      <p><strong>左移原则：</strong> 测试活动应尽早开始，在软件开发生命周期的左侧（早期阶段）进行更多的测试。</p>
+    </blockquote>
+
+    <h4>左移的实践方法</h4>
+    <ol>
+      <li><strong>审查规范：</strong> 在需求和设计阶段就开始审查，发现缺陷</li>
+      <li><strong>编写测试在代码之前：</strong> 测试驱动开发（TDD），先写测试再写代码</li>
+      <li><strong>CI/CD：</strong> 持续集成，每次提交都自动构建和测试</li>
+      <li><strong>静态分析：</strong> 使用工具在编码阶段发现潜在问题</li>
+    </ol>
+
+    <div class="tip">
+      <div><strong>成本效益：</strong> 研究表明，在需求阶段发现并修复缺陷的成本远低于在生产环境中修复。左移可以显著降低软件开发的总成本。</div>
+    </div>
+
+    <hr>
+    <div class="pagination">
+      <a href="bva.html" class="page-nav">
+        <span class="label">上一页</span>
+        <span class="title">← 边界值分析</span>
+      </a>
+      <a href="istqb-static.html" class="page-nav next">
+        <span class="label">下一节</span>
+        <span class="title">ISTQB静态测试 →</span>
+      </a>
+    </div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

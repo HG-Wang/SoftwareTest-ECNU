@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ch2 输入空间划分 — 软件测试笔记</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Toggle menu">☰</button>
+<div class="overlay"></div>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h1>软件测试笔记</h1>
+    <div class="subtitle">Software Testing · Chapter 2</div>
+  </div>
+  <div class="sidebar-nav">
+    <a href="../index.html" class="back-home"><span class="icon">🏠</span> 返回主页</a>
+    <div class="nav-section">章节导航</div>
+    <a href="index.html" class="active"><span class="icon">📖</span> 章节总览</a>
+    <a href="isp-basics.html"><span class="icon">📐</span> ISP基础</a>
+    <a href="combination-criteria.html"><span class="icon">🔗</span> 组合覆盖标准</a>
+    <a href="bva.html"><span class="icon">📏</span> 边界值分析</a>
+    <a href="istqb-sdlc.html"><span class="icon">📋</span> ISTQB SDLC测试</a>
+    <a href="istqb-static.html"><span class="icon">🔍</span> ISTQB静态测试</a>
+    <a href="exercises.html"><span class="icon">✏️</span> 实战练习</a>
+    <div class="nav-section">附录</div>
+    <a href="#summary"><span class="icon">📊</span> 本章总结</a>
+  </div>
+  <div class="sidebar-footer">
+    Chapter 2 · Input Space Partition<br>
+    输入空间划分 · 软件工程课程
+  </div>
+</nav>
+
+<main class="main">
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="#">Ch2 输入空间划分</a>
+      <span class="sep">›</span>
+      <span>章节总览</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="hero">
+      <h2>Chapter 2<br>输入空间划分</h2>
+      <p>Input Space Partitioning — 将程序的输入域划分为有限个区域，从每个区域中选取测试值，系统地覆盖输入空间。</p>
+      <div class="hero-stats">
+        <div class="stat"><div class="stat-num">6</div><div class="stat-label">组合标准</div></div>
+        <div class="stat"><div class="stat-num">2</div><div class="stat-label">建模方法</div></div>
+        <div class="stat"><div class="stat-num">5</div><div class="stat-label">建模步骤</div></div>
+      </div>
+    </div>
+
+    <h3 id="overview">章节概述</h3>
+    <p>输入空间划分（ISP）是一种基于输入域的测试方法。它将程序的输入参数划分为不同的特征（Characteristic），每个特征再划分为若干块（Block），然后通过组合标准选择测试用例。ISP适用于单元测试、集成测试和系统测试等各个层级。本章还介绍边界值分析（BVA）技术，以及ISTQB中关于SDLC测试和静态测试的内容。</p>
+
+    <h3 id="cards">章节内容</h3>
+    <div class="card-grid">
+      <a href="isp-basics.html" class="card">
+        <div class="card-icon blue">📐</div>
+        <h3>ISP基础</h3>
+        <p>输入域、划分的性质、输入域建模的五步方法、基于接口和基于功能的建模方法。</p>
+        <div class="card-arrow">查看详情 →</div>
+      </a>
+      <a href="combination-criteria.html" class="card">
+        <div class="card-icon purple">🔗</div>
+        <h3>组合覆盖标准</h3>
+        <p>ACoC、ECC、PWC、TWC、BCC、MBCC六种组合标准的定义、计算和应用。</p>
+        <div class="card-arrow">查看详情 →</div>
+      </a>
+      <a href="bva.html" class="card">
+        <div class="card-icon green">📏</div>
+        <h3>边界值分析</h3>
+        <p>等价类划分与边界值分析的2-value和3-value方法。</p>
+        <div class="card-arrow">查看详情 →</div>
+      </a>
+      <a href="istqb-sdlc.html" class="card">
+        <div class="card-icon orange">📋</div>
+        <h3>ISTQB SDLC测试</h3>
+        <p>SDLC模型对测试的影响、测试级别、测试类型、DevOps与左移。</p>
+        <div class="card-arrow">查看详情 →</div>
+      </a>
+      <a href="istqb-static.html" class="card">
+        <div class="card-icon red">🔍</div>
+        <h3>ISTQB静态测试</h3>
+        <p>静态测试基础、审查流程、审查类型和成功因素。</p>
+        <div class="card-arrow">查看详情 →</div>
+      </a>
+      <a href="exercises.html" class="card">
+        <div class="card-icon teal">✏️</div>
+        <h3>实战练习</h3>
+        <p>通过ISP建模、组合标准计算和边界值分析案例，综合运用输入空间划分技术。</p>
+        <div class="card-arrow">查看详情 →</div>
+      </a>
+    </div>
+
+    <h3 id="roadmap">学习路线</h3>
+    <p>本章内容按照以下路线展开，建议按顺序学习：</p>
+
+    <ol class="step-list">
+      <li>
+        <div>
+          <strong><a href="isp-basics.html">ISP基础</a></strong> — 理解输入域和划分的概念；掌握五步建模方法；区分基于接口和基于功能的建模方式。
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong><a href="combination-criteria.html">组合覆盖标准</a></strong> — 掌握ACoC、ECC、PWC、TWC、BCC、MBCC六种标准的定义和计算方法；理解包含关系。
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong><a href="bva.html">边界值分析</a></strong> — 学习等价类划分与边界值分析的2-value和3-value方法；理解连续域处理。
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong><a href="istqb-sdlc.html">ISTQB SDLC测试</a></strong> — 了解SDLC模型对测试的影响；掌握测试级别和测试类型；理解DevOps和左移概念。
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong><a href="istqb-static.html">ISTQB静态测试</a></strong> — 掌握静态测试基础；了解审查流程和审查类型；理解成功因素。
+        </div>
+      </li>
+    </ol>
+
+    <h3 id="summary">本章核心覆盖标准一览</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>缩写</th>
+          <th>全称</th>
+          <th>中文</th>
+          <th>测试数计算</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>ACoC</strong></td><td>All Combinations Coverage</td><td>全组合覆盖</td><td>各特征块数的乘积</td></tr>
+        <tr><td><strong>ECC</strong></td><td>Each Choice Coverage</td><td>每选择覆盖</td><td>最大特征的块数</td></tr>
+        <tr><td><strong>PWC</strong></td><td>Pair-Wise Coverage</td><td>成对覆盖</td><td>≥ 两个最大特征块数之积</td></tr>
+        <tr><td><strong>TWC</strong></td><td>T-Wise Coverage</td><td>T维覆盖</td><td>≥ t个最大特征块数之积</td></tr>
+        <tr><td><strong>BCC</strong></td><td>Base Choice Coverage</td><td>基本选择覆盖</td><td>1 + Σ(每特征非基本块数)</td></tr>
+        <tr><td><strong>MBCC</strong></td><td>Multiple Base Choice Coverage</td><td>多基本选择覆盖</td><td>基本测试数 + 额外测试</td></tr>
+      </tbody>
+    </table>
+
+    <h3 id="subsumption">包含关系</h3>
+    <div class="flow-diagram">
+      <div class="flow-step">
+        <div class="step-box" style="background:#dbeafe;">ACoC</div>
+        <div class="step-label">全组合覆盖</div>
+        <div class="step-sub">所有组合</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#ede9fe;">PWC</div>
+        <div class="step-label">成对覆盖</div>
+        <div class="step-sub">所有对</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#d1fae5;">ECC</div>
+        <div class="step-label">每选择覆盖</div>
+        <div class="step-sub">每个块</div>
+      </div>
+    </div>
+    <p style="text-align:center; color:var(--text-light); font-size:.88rem;">ACoC ⊇ PWC ⊇ ECC — 全组合覆盖包含成对覆盖，成对覆盖包含每选择覆盖</p>
+
+    <div class="flow-diagram">
+      <div class="flow-step">
+        <div class="step-box" style="background:#fee2e2;">ACoC</div>
+        <div class="step-label">全组合覆盖</div>
+        <div class="step-sub">所有组合</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#ffedd5;">TWC</div>
+        <div class="step-label">T维覆盖</div>
+        <div class="step-sub">t特征组合</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#fef3c7;">ECC</div>
+        <div class="step-label">每选择覆盖</div>
+        <div class="step-sub">每个块</div>
+      </div>
+    </div>
+    <p style="text-align:center; color:var(--text-light); font-size:.88rem;">ACoC ⊇ TWC ⊇ ECC; BCC ⊇ ECC; MBCC ⊇ BCC</p>
+
+    <hr>
+
+    <h3 id="key-terms">关键术语速查</h3>
+    <dl class="def-list">
+      <dt>输入域 (Input Domain)</dt>
+      <dd>程序所有可能输入的集合。即使小程序，输入域也大到几乎无限。</dd>
+      <dt>特征 (Characteristic)</dt>
+      <dd>输入参数的一个属性或方面，用于对输入域进行划分。</dd>
+      <dt>块 (Block)</dt>
+      <dd>特征的一个分区，代表一组等价的输入值。划分要求块之间互斥且完备。</dd>
+      <dt>等价类 (Equivalence Class)</dt>
+      <dd>在相同条件下应产生相似结果的输入值集合。ISP中的块即为等价类。</dd>
+      <dt>边界值 (Boundary Value)</dt>
+      <dd>等价类边界上的值，缺陷往往集中在边界处。BVA专门针对边界值设计测试。</dd>
+      <dt>包含关系 (Subsumption)</dt>
+      <dd>标准A包含标准B，当满足A的测试集一定满足B。ACoC ⊇ PWC ⊇ ECC。</dd>
+    </dl>
+
+    <div class="pagination">
+      <div></div>
+      <a href="isp-basics.html" class="page-nav next">
+        <span class="label">下一节</span>
+        <span class="title">ISP基础 →</span>
+      </a>
+    </div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

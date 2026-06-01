@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>实战练习 — Ch1 软件测试导论</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Toggle menu">☰</button>
+<div class="overlay"></div>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h1>软件测试笔记</h1>
+    <div class="subtitle">Software Testing · Chapter 1</div>
+  </div>
+  <div class="sidebar-nav">
+    <a href="../index.html" class="back-home"><span class="icon">🏠</span> 返回主页</a>
+    <div class="nav-section">章节导航</div>
+    <a href="index.html"><span class="icon">📖</span> 章节总览</a>
+    <a href="why-test.html"><span class="icon">❓</span> 为什么要测试</a>
+    <a href="test-activities.html"><span class="icon">⚙️</span> 测试活动与模型驱动设计</a>
+    <a href="coverage-intro.html"><span class="icon">📊</span> 覆盖标准导论</a>
+    <a href="istqb-basics.html"><span class="icon">📋</span> ISTQB测试基础</a>
+    <a href="exercises.html" class="active"><span class="icon">✏️</span> 实战练习</a>
+  </div>
+  <div class="sidebar-footer">
+    Chapter 1 · Exercises
+  </div>
+</nav>
+
+<main class="main">
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="index.html">Ch1</a>
+      <span class="sep">›</span>
+      <span>实战练习</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-header">
+      <h2>实战练习</h2>
+      <p class="desc">通过案例分析和概念辨析，巩固第一章的核心知识点。</p>
+      <div class="meta">
+        <span class="tag">练习</span>
+        <span class="tag">案例分析</span>
+        <span class="tag">概念辨析</span>
+      </div>
+    </div>
+
+    <!-- ==================== 练习1 ==================== -->
+    <h3 id="exercise1">练习1：故障/错误/失败分析</h3>
+
+    <h4>题目描述</h4>
+    <p>考虑以下计算数组中零值个数的方法：</p>
+    <pre><code><span class="kw">public static int</span> <span class="fn">numZero</span>(<span class="tp">int</span>[] arr) {
+    <span class="tp">int</span> <span class="vr">count</span> <span class="op">=</span> <span class="nu">0</span>;
+    <span class="kw">for</span> (<span class="tp">int</span> <span class="vr">i</span> <span class="op">=</span> <span class="nu">1</span>; <span class="vr">i</span> <span class="op">&lt;</span> <span class="vr">arr</span>.length; <span class="vr">i</span><span class="op">++</span>) {
+        <span class="kw">if</span> (<span class="vr">arr</span>[<span class="vr">i</span>] <span class="op">==</span> <span class="nu">0</span>) {
+            <span class="vr">count</span><span class="op">++</span>;
+        }
+    }
+    <span class="kw">return</span> <span class="vr">count</span>;
+}</code><span class="lang-label">Java</span></pre>
+
+    <p>请回答以下问题：</p>
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>(a) 描述代码中的故障 (Fault)</span>
+          <span class="accordion-icon">▼</span>
+        </button>
+        <div class="accordion-content">
+          <div class="accordion-body-inner">
+            <p><strong>故障：</strong> 循环的起始条件为 <code>i = 1</code>，应该是 <code>i = 0</code>。这导致数组的第一个元素 <code>arr[0]</code> 被跳过，不会被检查是否为零。</p>
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>(b) 不执行故障的测试</span>
+          <span class="accordion-icon">▼</span>
+        </button>
+        <div class="accordion-content">
+          <div class="accordion-body-inner">
+            <p><strong>不执行故障意味着循环不被执行。</strong></p>
+            <p>测试用例：<code>arr = {}</code>（空数组）</p>
+            <p>此时 <code>arr.length = 0</code>，条件 <code>i &lt; arr.length</code> 即 <code>1 &lt; 0</code> 为 false，循环体不执行。故障代码（<code>i = 1</code>）虽然存在，但不会产生影响。</p>
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>(c) 执行故障但不产生错误(Error)的测试</span>
+          <span class="accordion-icon">▼</span>
+        </button>
+        <div class="accordion-content">
+          <div class="accordion-body-inner">
+            <p><strong>执行了故障但内部状态没有错误。</strong></p>
+            <p>测试用例：<code>arr = {1, 2, 3}</code></p>
+            <p>循环执行时从 <code>i=1</code> 开始，跳过了 <code>arr[0]=1</code>。但因为 <code>arr[0] ≠ 0</code>，即使检查了它，count 也不会增加。所以跳过 <code>arr[0]</code> 不会导致 count 的值不正确——内部状态仍然是正确的。</p>
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>(d) 产生错误但不导致失败的测试</span>
+          <span class="accordion-icon">▼</span>
+        </button>
+        <div class="accordion-content">
+          <div class="accordion-body-inner">
+            <p><strong>产生错误（内部状态不正确）但输出正确。</strong></p>
+            <p>这个情况比较微妙。实际上，一旦内部 count 值错误，返回值就会错误（因为 count 直接被返回）。所以对于 numZero 方法，error 一定会导致 failure。</p>
+            <p>但如果代码有更多后续处理（如结果经过验证或修正），理论上可能存在 error 但不 failure 的情况。对于本题，由于 count 直接返回，<strong>不存在</strong>这样的测试用例。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 练习2 ==================== -->
+    <h3 id="exercise2">练习2：RIPR模型应用</h3>
+
+    <h4>题目描述</h4>
+    <p>给定以下代码段，分析当输入 <code>x = -5</code> 时的RIPR四条件：</p>
+    <pre><code><span class="kw">public static double</span> <span class="fn">squareRoot</span>(<span class="tp">double</span> <span class="vr">x</span>) {
+    <span class="kw">if</span> (<span class="vr">x</span> <span class="op">&lt;</span> <span class="nu">0</span>) {
+        <span class="kw">return</span> <span class="op">-</span><span class="fn">Math.sqrt</span>(<span class="op">-</span><span class="vr">x</span>);  <span class="cm">// 故障：应抛出异常或返回NaN</span>
+    }
+    <span class="kw">return</span> <span class="fn">Math.sqrt</span>(<span class="vr">x</span>);
+}</code><span class="lang-label">Java</span></pre>
+
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>分析RIPR四条件</span>
+          <span class="accordion-icon">▼</span>
+        </button>
+        <div class="accordion-content">
+          <div class="accordion-body-inner">
+            <p><strong>Reachability（可达性）：</strong> ✅ 满足。输入 <code>x = -5</code> 使得条件 <code>x &lt; 0</code> 为 true，执行包含故障的代码行 <code>return -Math.sqrt(-x)</code>。</p>
+            <p><strong>Infection（感染性）：</strong> ✅ 满足。程序的内部状态变为不正确——返回了一个负数 <code>-2.236...</code> 作为 -5 的"平方根"，而数学上负数没有实数平方根。</p>
+            <p><strong>Propagation（传播性）：</strong> ✅ 满足。不正确的内部状态传播到了输出——调用者会收到一个负数 <code>-2.236...</code>，这个值被传播给调用方。</p>
+            <p><strong>Reveal（可观察性）：</strong> ✅ 满足。测试人员可以通过检查返回值 <code>-2.236...</code> 发现错误行为（负数不应作为平方根返回）。</p>
+            <p><strong>结论：</strong> 四个RIPR条件全部满足，输入 <code>x = -5</code> 可以触发该故障导致的失败。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 练习3 ==================== -->
+    <h3 id="exercise3">练习3：覆盖标准包含关系</h3>
+
+    <h4>题目描述</h4>
+    <p>对于以下覆盖标准，判断它们之间的包含关系（哪些包含哪些）：</p>
+    <table>
+      <thead>
+        <tr>
+          <th>编号</th>
+          <th>覆盖标准</th>
+          <th>描述</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>C1</td>
+          <td>节点覆盖 (NC)</td>
+          <td>覆盖图中每个可达节点</td>
+        </tr>
+        <tr>
+          <td>C2</td>
+          <td>边覆盖 (EC)</td>
+          <td>覆盖图中每条可达边</td>
+        </tr>
+        <tr>
+          <td>C3</td>
+          <td>主路径覆盖 (PPC)</td>
+          <td>覆盖图中每条主路径</td>
+        </tr>
+        <tr>
+          <td>C4</td>
+          <td>口味覆盖</td>
+          <td>覆盖每种口味至少一次</td>
+        </tr>
+        <tr>
+          <td>C5</td>
+          <td>颜色覆盖</td>
+          <td>覆盖每种颜色至少一次</td>
+        </tr>
+        <tr>
+          <td>C6</td>
+          <td>口味×颜色覆盖</td>
+          <td>覆盖每种口味-颜色组合</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>查看答案</span>
+          <span class="accordion-icon">▼</span>
+        </button>
+        <div class="accordion-content">
+          <div class="accordion-body-inner">
+            <p><strong>包含关系：</strong></p>
+            <ul>
+              <li><strong>C3 ⊇ C2 ⊇ C1</strong>：主路径覆盖 ⊇ 边覆盖 ⊇ 节点覆盖。覆盖所有主路径必然覆盖所有边，覆盖所有边必然覆盖所有节点。</li>
+              <li><strong>C6 ⊇ C4</strong>：口味×颜色覆盖 ⊇ 口味覆盖。覆盖所有组合必然覆盖所有口味。</li>
+              <li><strong>C6 ⊇ C5</strong>：口味×颜色覆盖 ⊇ 颜色覆盖。覆盖所有组合必然覆盖所有颜色。</li>
+              <li><strong>C4 与 C5 互不包含</strong>：口味覆盖不包含颜色覆盖，颜色覆盖也不包含口味覆盖。它们是独立的覆盖维度。</li>
+              <li><strong>C3 与 C4/C5/C6 无包含关系</strong>：图覆盖标准与输入域覆盖标准属于不同的建模结构，不能直接比较。</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 练习4 ==================== -->
+    <h3 id="exercise4">练习4：ISTQB测试原则辨析</h3>
+
+    <h4>题目1</h4>
+    <p>以下哪项最准确地描述了"测试显示缺陷存在，而非不存在"这一原则的含义？</p>
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>查看选项与答案</span>
+          <span class="accordion-icon">▼</span>
+        </button>
+        <div class="accordion-content">
+          <div class="accordion-body-inner">
+            <p>A. 测试只能找到所有缺陷的一部分<br>
+            B. 通过测试可以证明软件没有缺陷<br>
+            C. 测试可以证明存在缺陷，但不能证明没有缺陷<br>
+            D. 测试人员应该尽量多地发现缺陷</p>
+            <p><strong>答案：C</strong> — 测试可以证明缺陷存在（发现了缺陷），但不能证明缺陷不存在（测试未发现缺陷不代表没有缺陷）。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h4>题目2</h4>
+    <p>"杀虫剂悖论"对应的是ISTQB七项测试原则中的哪一项？</p>
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>查看选项与答案</span>
+          <span class="accordion-icon">▼</span>
+        </button>
+        <div class="accordion-content">
+          <div class="accordion-body-inner">
+            <p>A. 穷尽测试不可能<br>
+            B. 缺陷聚集在一起<br>
+            C. 测试会磨损<br>
+            D. 测试取决于上下文</p>
+            <p><strong>答案：C</strong> — "测试会磨损"（Testing wears out）即杀虫剂悖论：反复使用相同的测试用例，最终将不再发现新的缺陷。需要定期修改和更新测试用例。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h4>题目3</h4>
+    <p>在一个安全关键的医疗设备软件项目中，以下哪种测试独立性级别最为合适？</p>
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>查看选项与答案</span>
+          <span class="accordion-icon">▼</span>
+        </button>
+        <div class="accordion-content">
+          <div class="accordion-body-inner">
+            <p>A. 开发人员测试自己的代码<br>
+            B. 同一团队的其他开发人员测试<br>
+            C. 组织内独立的测试团队测试<br>
+            D. 外部认证机构进行独立测试</p>
+            <p><strong>答案：D</strong> — 对于安全关键系统（如医疗设备），通常需要最高级别的测试独立性。外部认证机构的测试可以提供最客观的评估，符合监管要求。实践中可能选择C并辅以D。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h4>题目4</h4>
+    <p>Verification（验证）和Validation（确认）的区别是什么？以下哪个描述最准确？</p>
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>查看选项与答案</span>
+          <span class="accordion-icon">▼</span>
+        </button>
+        <div class="accordion-content">
+          <div class="accordion-body-inner">
+            <p>A. 验证是动态测试，确认是静态测试<br>
+            B. 验证检查是否正确构建产品，确认检查是否构建了正确的产品<br>
+            C. 验证在开发阶段进行，确认在测试阶段进行<br>
+            D. 验证由开发者执行，确认由用户执行</p>
+            <p><strong>答案：B</strong> — Verification = "Are we building the product right?"（是否正确地构建产品），Validation = "Are we building the right product?"（是否构建了正确的产品）。哈勃望远镜案例完美说明了二者的区别。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr>
+    <div class="pagination">
+      <a href="istqb-basics.html" class="page-nav">
+        <span class="label">上一页</span>
+        <span class="title">← ISTQB测试基础</span>
+      </a>
+      <div></div>
+    </div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

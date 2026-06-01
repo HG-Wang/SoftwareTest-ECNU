@@ -4,10 +4,11 @@ from pptx import Presentation
 from pptx.util import Pt
 
 PPTX_FILES = [
-    "Material/Ch3-01-02-overviewGraphCoverag (1).pptx",
-    "Material/Ch3-03-sourceCode(1).pptx",
-    "Material/Ch3-04-design(1).pptx",
-    "Material/Ch3-05-06-spec&amp.pptx",
+    "Material/Ch1-01-whyTest.pptx",
+    "Material/Ch1-02.pptx",
+    "Material/ISTQB CTFL Ch1.pptx",
+    "Material/Ch2-ISP (1).pptx",
+    "Material/ISTQB CTFL Ch2-3 (1).pptx",
 ]
 
 OUTPUT_DIR = "Material"

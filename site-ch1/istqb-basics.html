@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ISTQB测试基础 — Ch1 软件测试导论</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Toggle menu">☰</button>
+<div class="overlay"></div>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h1>软件测试笔记</h1>
+    <div class="subtitle">Software Testing · Chapter 1</div>
+  </div>
+  <div class="sidebar-nav">
+    <a href="../index.html" class="back-home"><span class="icon">🏠</span> 返回主页</a>
+    <div class="nav-section">章节导航</div>
+    <a href="index.html"><span class="icon">📖</span> 章节总览</a>
+    <a href="why-test.html"><span class="icon">❓</span> 为什么要测试</a>
+    <a href="test-activities.html"><span class="icon">⚙️</span> 测试活动与模型驱动设计</a>
+    <a href="coverage-intro.html"><span class="icon">📊</span> 覆盖标准导论</a>
+    <a href="istqb-basics.html" class="active"><span class="icon">📋</span> ISTQB测试基础</a>
+    <a href="exercises.html"><span class="icon">✏️</span> 实战练习</a>
+    <div class="nav-section">本页目录</div>
+    <a href="#what-is-testing" class="toc-link"><span class="icon">🔍</span> 什么是测试</a>
+    <a href="#why-testing" class="toc-link"><span class="icon">❓</span> 为什么需要测试</a>
+    <a href="#principles" class="toc-link"><span class="icon">📜</span> 七项测试原则</a>
+    <a href="#test-activities-istqb" class="toc-link"><span class="icon">⚙️</span> 测试活动与测试件</a>
+    <a href="#skills" class="toc-link"><span class="icon">🎯</span> 测试技能与良好实践</a>
+  </div>
+  <div class="sidebar-footer">
+    ISTQB CTFL Ch1<br>
+    测试基础
+  </div>
+</nav>
+
+<main class="main">
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="index.html">Ch1</a>
+      <span class="sep">›</span>
+      <span>ISTQB测试基础</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-header">
+      <h2>ISTQB测试基础</h2>
+      <p class="desc">ISTQB Foundation Level — 测试的定义、测试目标、七项测试原则、测试活动与测试件、测试技能与良好实践。</p>
+      <div class="meta">
+        <span class="tag">ISTQB</span>
+        <span class="tag">测试原则</span>
+        <span class="tag">测试角色</span>
+      </div>
+    </div>
+
+    <!-- ==================== 什么是测试 ==================== -->
+    <h3 id="what-is-testing">什么是测试</h3>
+
+    <p>根据ISTQB的定义，软件测试是一个包含多种活动的过程，旨在评估工作产品质量并改进它。</p>
+
+    <ul>
+      <li>测试<strong>评估</strong>软件质量，降低软件在运行中出现失败的风险</li>
+      <li>测试不仅包括<strong>动态测试</strong>（运行程序），还包括<strong>静态测试</strong>（不运行程序，如评审和静态分析）</li>
+      <li>测试不仅<strong>验证（Verification）</strong>——检查产品是否满足规格，也<strong>确认（Validation）</strong>——评估产品是否满足用户需求</li>
+    </ul>
+
+    <h4>典型测试目标</h4>
+    <table>
+      <thead>
+        <tr>
+          <th>测试目标</th>
+          <th>说明</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>评估工作产品</strong></td>
+          <td>评估软件需求、设计、代码等中间和最终工作产品的质量</td>
+        </tr>
+        <tr>
+          <td><strong>发现缺陷</strong></td>
+          <td>尽可能早地发现软件中的缺陷，降低修复成本</td>
+        </tr>
+        <tr>
+          <td><strong>确保覆盖率</strong></td>
+          <td>确保测试覆盖了指定的需求和代码</td>
+        </tr>
+        <tr>
+          <td><strong>降低风险</strong></td>
+          <td>降低软件在生产环境中出现故障的风险</td>
+        </tr>
+        <tr>
+          <td><strong>验证需求</strong></td>
+          <td>验证软件是否满足功能和非功能需求</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ==================== 为什么需要测试 ==================== -->
+    <h3 id="why-testing">为什么需要测试</h3>
+
+    <h4>测试作为质量控制形式</h4>
+    <p>测试是软件质量控制的核心手段，通过系统化的检查和验证来确保软件产品质量。</p>
+
+    <h4>测试与QA的区别</h4>
+    <div class="compare-grid">
+      <div class="compare-box">
+        <h4>🧪 Testing（测试）</h4>
+        <p><strong>以产品为导向的纠正方法</strong></p>
+        <ul>
+          <li>关注产品本身的质量</li>
+          <li>发现并报告已存在的缺陷</li>
+          <li>通过执行软件来评估质量</li>
+          <li>是纠正性的（发现后修复）</li>
+        </ul>
+      </div>
+      <div class="compare-box">
+        <h4>🛡️ QA（质量保证）</h4>
+        <p><strong>以流程为导向的预防方法</strong></p>
+        <ul>
+          <li>关注开发过程的质量</li>
+          <li>预防缺陷的产生</li>
+          <li>通过改进流程来提高质量</li>
+          <li>是预防性的（从源头避免）</li>
+        </ul>
+      </div>
+    </div>
+
+    <h4>Errors → Defects → Failures 根因分析</h4>
+    <div class="flow-diagram">
+      <div class="flow-step">
+        <div class="step-box" style="background:#dbeafe;">Error</div>
+        <div class="step-label">人为错误</div>
+        <div class="step-sub">需求理解错误、编码疏忽</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#fef3c7;">Defect</div>
+        <div class="step-label">软件缺陷</div>
+        <div class="step-sub">代码中的bug、需求中的歧义</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#fee2e2;">Failure</div>
+        <div class="step-label">软件失败</div>
+        <div class="step-sub">可观察到的错误行为</div>
+      </div>
+    </div>
+    <p style="text-align:center; color:var(--text-light); font-size:.88rem;">人为错误导致软件缺陷，软件缺陷在执行时导致软件失败 — 根因分析帮助我们从源头预防缺陷</p>
+
+    <!-- ==================== 七项测试原则 ==================== -->
+    <h3 id="principles">七项测试原则</h3>
+
+    <p>ISTQB总结了七项被广泛接受的测试原则，这些原则指导着测试实践：</p>
+
+    <ol>
+      <li>
+        <strong>测试显示缺陷存在，而非不存在</strong>
+        <p>测试可以证明存在缺陷，但不能证明没有缺陷。即使测试没有发现缺陷，也不能证明软件是正确的。测试只能降低未发现缺陷存在的可能性。</p>
+      </li>
+      <li>
+        <strong>穷尽测试不可能</strong>
+        <p>除了最简单的系统，对所有可能的输入和输入组合进行测试是不可行的。基于风险和优先级的测试是必须的——我们需要使用覆盖标准等技术来选择最有价值的测试子集。</p>
+      </li>
+      <li>
+        <strong>早期测试节省时间和金钱</strong>
+        <p>测试活动应该尽早开始。在软件开发生命周期中，越早发现缺陷，修复成本越低。需求阶段就开始测试可以防止缺陷传播到后续阶段。</p>
+      </li>
+      <li>
+        <strong>缺陷聚集在一起</strong>
+        <p>少量的模块通常包含大部分被发现的缺陷。这就是著名的Pareto原则（80/20法则）在软件测试中的体现。识别这些高风险模块可以提高测试效率。</p>
+      </li>
+      <li>
+        <strong>测试会磨损</strong>
+        <p>如果反复运行相同的测试，最终这些测试将不再发现新的缺陷。测试用例需要定期更新和修改。重复执行相同测试的价值会递减——这就是"杀虫剂悖论"。</p>
+      </li>
+      <li>
+        <strong>测试取决于上下文</strong>
+        <p>不同的软件系统需要不同的测试方法。安全关键系统的测试方式与电商网站的测试方式截然不同。测试策略必须根据项目上下文来定制。</p>
+      </li>
+      <li>
+        <strong>"缺陷不存在"的谬误</strong>
+        <p>仅仅因为软件没有发现缺陷，并不意味着软件是可用的或满足用户需求。如果软件构建了错误的功能，即使没有缺陷也是无用的。</p>
+      </li>
+    </ol>
+
+    <!-- ==================== 测试活动与测试件 ==================== -->
+    <h3 id="test-activities-istqb">测试活动与测试件</h3>
+
+    <h4>测试活动</h4>
+    <p>ISTQB定义了以下测试活动，它们可以在任何开发生命周期中进行：</p>
+    <table>
+      <thead>
+        <tr>
+          <th>活动</th>
+          <th>说明</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>测试计划</strong></td>
+          <td>定义测试目标、范围、方法、资源和进度</td>
+        </tr>
+        <tr>
+          <td><strong>测试监控与控制</strong></td>
+          <td>持续监控测试进度，必要时采取纠正措施</td>
+        </tr>
+        <tr>
+          <td><strong>测试分析</strong></td>
+          <td>分析测试基础（需求、设计等），识别测试条件</td>
+        </tr>
+        <tr>
+          <td><strong>测试设计</strong></td>
+          <td>将测试条件细化为测试用例和测试数据</td>
+        </tr>
+        <tr>
+          <td><strong>测试实现</strong></td>
+          <td>准备测试环境、创建测试脚本、组织测试套件</td>
+        </tr>
+        <tr>
+          <td><strong>测试执行</strong></td>
+          <td>运行测试、记录结果、报告缺陷</td>
+        </tr>
+        <tr>
+          <td><strong>测试完成</strong></td>
+          <td>总结经验教训、归档测试件、释放资源</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h4>测试件 (Testware)</h4>
+    <p>测试件是测试活动过程中产生的所有输出工作产品，包括：</p>
+    <ul>
+      <li><strong>测试计划</strong> — 测试范围、策略、资源和进度的文档</li>
+      <li><strong>测试用例</strong> — 测试输入、执行条件和期望结果的规格</li>
+      <li><strong>测试脚本</strong> — 自动化测试的可执行代码</li>
+      <li><strong>测试数据</strong> — 测试执行所需的输入数据</li>
+      <li><strong>测试报告</strong> — 测试执行结果和覆盖率的报告</li>
+      <li><strong>缺陷报告</strong> — 发现的缺陷及其详细信息</li>
+    </ul>
+
+    <h4>可追溯性 (Traceability)</h4>
+    <p>测试基础（需求）与测试件之间需要建立可追溯性关系：</p>
+    <div class="flow-diagram">
+      <div class="flow-step">
+        <div class="step-box" style="background:#dbeafe;">测试基础</div>
+        <div class="step-label">Requirements</div>
+        <div class="step-sub">需求文档</div>
+      </div>
+      <div class="flow-arrow">↔</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#ede9fe;">测试件</div>
+        <div class="step-label">Testware</div>
+        <div class="step-sub">测试用例/脚本</div>
+      </div>
+      <div class="flow-arrow">↔</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#d1fae5;">测试结果</div>
+        <div class="step-label">Results</div>
+        <div class="step-sub">通过/失败</div>
+      </div>
+      <div class="flow-arrow">↔</div>
+      <div class="flow-step">
+        <div class="step-box" style="background:#fee2e2;">缺陷</div>
+        <div class="step-label">Defects</div>
+        <div class="step-sub">缺陷报告</div>
+      </div>
+    </div>
+
+    <h4>测试角色</h4>
+    <div class="compare-grid">
+      <div class="compare-box">
+        <h4>📊 测试管理角色</h4>
+        <ul>
+          <li>负责测试计划、监控和控制</li>
+          <li>协调测试活动和资源</li>
+          <li>报告测试进度和质量状态</li>
+          <li>风险管理</li>
+        </ul>
+      </div>
+      <div class="compare-box">
+        <h4>🧪 测试角色</h4>
+        <ul>
+          <li>负责测试分析、设计、实现和执行</li>
+          <li>创建和维护测试用例</li>
+          <li>执行测试并记录结果</li>
+          <li>报告和验证缺陷</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ==================== 测试技能与良好实践 ==================== -->
+    <h3 id="skills">测试技能与良好实践</h3>
+
+    <h4>测试人员所需的技能</h4>
+    <table>
+      <thead>
+        <tr>
+          <th>技能领域</th>
+          <th>说明</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>测试知识</strong></td>
+          <td>理解测试方法、技术和工具</td>
+        </tr>
+        <tr>
+          <td><strong>细心好奇</strong></td>
+          <td>对细节的关注和对"如果...会怎样"的好奇心</td>
+        </tr>
+        <tr>
+          <td><strong>沟通能力</strong></td>
+          <td>能够清晰地报告缺陷和与团队沟通</td>
+        </tr>
+        <tr>
+          <td><strong>分析思维</strong></td>
+          <td>能够分析需求和代码，识别测试条件和风险</td>
+        </tr>
+        <tr>
+          <td><strong>技术知识</strong></td>
+          <td>理解软件架构、编程语言和开发工具</td>
+        </tr>
+        <tr>
+          <td><strong>领域知识</strong></td>
+          <td>了解被测软件的应用领域和业务逻辑</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h4>完整团队方法 (Whole Team Approach)</h4>
+    <p>完整团队方法强调团队中每个成员都对质量负责：</p>
+    <ul>
+      <li>开发人员也参与测试（如编写单元测试）</li>
+      <li>测试人员参与需求讨论和设计评审</li>
+      <li>整个团队对产品质量共同负责</li>
+      <li>促进知识共享和技能互补</li>
+    </ul>
+
+    <h4>测试独立性</h4>
+    <p>测试的独立性水平影响测试的有效性：</p>
+    <table>
+      <thead>
+        <tr>
+          <th>独立性级别</th>
+          <th>描述</th>
+          <th>优缺点</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>无独立性</strong></td>
+          <td>开发者测试自己的代码</td>
+          <td>快速反馈，但可能有确认偏见</td>
+        </tr>
+        <tr>
+          <td><strong>有一定独立性</strong></td>
+          <td>同一团队中的其他开发者测试</td>
+          <td>共享上下文，略有不同视角</td>
+        </tr>
+        <tr>
+          <td><strong>高独立性</strong></td>
+          <td>组织内独立的测试团队</td>
+          <td>更客观，但可能缺乏上下文</td>
+        </tr>
+        <tr>
+          <td><strong>非常高独立性</strong></td>
+          <td>外部组织或认证机构的测试</td>
+          <td>最客观，但成本最高且不了解内部细节</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="tip">
+      <div><strong>平衡点：</strong> 实践中通常在"高独立性"级别运作——由组织内独立的测试团队进行测试，同时通过参与需求评审和技术讨论来获取足够的上下文信息。</div>
+    </div>
+
+    <hr>
+    <div class="pagination">
+      <a href="coverage-intro.html" class="page-nav">
+        <span class="label">上一页</span>
+        <span class="title">← 覆盖标准导论</span>
+      </a>
+      <a href="exercises.html" class="page-nav next">
+        <span class="label">下一节</span>
+        <span class="title">实战练习 →</span>
+      </a>
+    </div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

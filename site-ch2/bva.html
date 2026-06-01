@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>边界值分析 — Ch2 输入空间划分</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Toggle menu">☰</button>
+<div class="overlay"></div>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h1>软件测试笔记</h1>
+    <div class="subtitle">Software Testing · Chapter 2</div>
+  </div>
+  <div class="sidebar-nav">
+    <a href="../index.html" class="back-home"><span class="icon">🏠</span> 返回主页</a>
+    <div class="nav-section">章节导航</div>
+    <a href="index.html"><span class="icon">📖</span> 章节总览</a>
+    <a href="isp-basics.html"><span class="icon">📐</span> ISP基础</a>
+    <a href="combination-criteria.html"><span class="icon">🔗</span> 组合覆盖标准</a>
+    <a href="bva.html" class="active"><span class="icon">📏</span> 边界值分析</a>
+    <a href="istqb-sdlc.html"><span class="icon">📋</span> ISTQB SDLC测试</a>
+    <a href="istqb-static.html"><span class="icon">🔍</span> ISTQB静态测试</a>
+    <a href="exercises.html"><span class="icon">✏️</span> 实战练习</a>
+    <div class="nav-section">本页目录</div>
+    <a href="#ep" class="toc-link"><span class="icon">📋</span> 等价类划分</a>
+    <a href="#bva-2value" class="toc-link"><span class="icon">📊</span> 2-value边界值</a>
+    <a href="#bva-3value" class="toc-link"><span class="icon">🔀</span> 3-value边界值</a>
+    <a href="#continuous" class="toc-link"><span class="icon">📐</span> 连续域处理</a>
+    <a href="#strength" class="toc-link"><span class="icon">⚡</span> 对比总结</a>
+  </div>
+  <div class="sidebar-footer">
+    2.5 Boundary Value Analysis
+  </div>
+</nav>
+
+<main class="main">
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="index.html">Ch2</a>
+      <span class="sep">›</span>
+      <span>边界值分析</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-header">
+      <h2>边界值分析</h2>
+      <p class="desc">Boundary Value Analysis — 等价类划分与边界值分析的2-value和3-value方法。</p>
+      <div class="meta">
+        <span class="tag">BVA</span>
+        <span class="tag">等价类</span>
+        <span class="tag">边界值</span>
+      </div>
+    </div>
+
+    <!-- ==================== 等价类划分 ==================== -->
+    <h3 id="ep">等价类划分</h3>
+
+    <h4>基本思想</h4>
+    <p>等价类划分基于一个假设：在同一等价类中的输入值，程序的行为应该是相似的。因此，从每个等价类中选取一个代表值进行测试即可。</p>
+
+    <h4>等价类与ISP的关系</h4>
+    <p>ISP中的"块"本质上就是等价类。每个特征的每个块代表一组等价的输入值。边界值分析（BVA）在等价类的基础上，特别关注等价类的边界——因为缺陷往往集中在边界处。</p>
+
+    <div class="tip">
+      <div><strong>经验法则：</strong> 大量缺陷发生在输入域的边界处，而非内部。例如数组索引的0和length-1、循环的起始和终止条件、数值范围的上下限等。</div>
+    </div>
+
+    <!-- ==================== 2-value BVA ==================== -->
+    <h3 id="bva-2value">2-value边界值分析</h3>
+
+    <blockquote>
+      <p><strong>定义：</strong> 对每个等价类，取边界值和相邻等价类的边界值作为测试输入。</p>
+    </blockquote>
+
+    <h4>示例</h4>
+    <p>输入域 {1..16} 划分为三个等价类：</p>
+    <table>
+      <thead>
+        <tr><th>等价类</th><th>范围</th><th>边界值</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>EC1</td><td>{1..6}</td><td>1, 6</td></tr>
+        <tr><td>EC2</td><td>{7..13}</td><td>7, 13</td></tr>
+        <tr><td>EC3</td><td>{14..16}</td><td>14, 16</td></tr>
+      </tbody>
+    </table>
+
+    <p>2-value BVA 测试值：</p>
+    <div class="compare-grid">
+      <div class="compare-box">
+        <h4>边界值</h4>
+        <p>每个等价类的边界：1, 6, 7, 13, 14, 16</p>
+      </div>
+      <div class="compare-box">
+        <h4>加上域外边界</h4>
+        <p>输入域外的相邻值：0, 17</p>
+      </div>
+    </div>
+    <p><strong>测试值集合：{0, 1, 6, 7, 13, 14, 16, 17}</strong> — 共 8 个测试值</p>
+
+    <!-- ==================== 3-value BVA ==================== -->
+    <h3 id="bva-3value">3-value边界值分析</h3>
+
+    <blockquote>
+      <p><strong>定义：</strong> 对每个边界值 x，取 x-1, x, x+1 三个值作为测试输入。</p>
+    </blockquote>
+
+    <h4>示例</h4>
+    <p>同样的输入域 {1..16}，等价类 {1..6}, {7..13}, {14..16}：</p>
+    <p>边界值：0, 1, 6, 7, 13, 14, 16, 17</p>
+    <p>对每个边界值取三邻域：</p>
+
+    <table>
+      <thead>
+        <tr><th>边界值</th><th>x-1</th><th>x</th><th>x+1</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>0</td><td>-</td><td>0</td><td>1</td></tr>
+        <tr><td>1</td><td>0</td><td>1</td><td>2</td></tr>
+        <tr><td>6</td><td>5</td><td>6</td><td>7</td></tr>
+        <tr><td>7</td><td>6</td><td>7</td><td>8</td></tr>
+        <tr><td>13</td><td>12</td><td>13</td><td>14</td></tr>
+        <tr><td>14</td><td>13</td><td>14</td><td>15</td></tr>
+        <tr><td>16</td><td>15</td><td>16</td><td>17</td></tr>
+        <tr><td>17</td><td>16</td><td>17</td><td>-</td></tr>
+      </tbody>
+    </table>
+
+    <p><strong>去重后的测试值集合：{0, 1, 2, 5, 6, 7, 8, 12, 13, 14, 15, 16, 17}</strong> — 共 13 个测试值</p>
+
+    <h4>3-value 能发现更多缺陷</h4>
+    <p>考虑以下代码：</p>
+    <pre><code>if (x >= 15) {
+    // 正确：x大于等于15时执行
+}
+// 缺陷：误写为 x == 15</code></pre>
+    <div class="compare-grid">
+      <div class="compare-box">
+        <h4>2-value BVA</h4>
+        <p>测试值：14, 16</p>
+        <p>✅ 能发现此缺陷（16不满足x==15但应满足x>=15）</p>
+      </div>
+      <div class="compare-box">
+        <h4>3-value BVA</h4>
+        <p>测试值：14, 15, 16</p>
+        <p>✅ 能发现此缺陷，并且能精确识别边界位置</p>
+      </div>
+    </div>
+
+    <p>考虑另一个缺陷：</p>
+    <pre><code>if (x > 15) {
+    // 缺陷：误写为 x >= 15（应为严格大于）
+}</code></pre>
+    <p>2-value 测试值 14, 16 无法区分 >15 和 >=15，但 3-value 的测试值 15 能发现此缺陷。</p>
+
+    <!-- ==================== 连续域处理 ==================== -->
+    <h3 id="continuous">连续域处理</h3>
+
+    <h4>问题</h4>
+    <p>实数域是稠密的——任意两个实数之间都有无穷多个实数。因此没有"紧邻"的值。</p>
+
+    <h4>解决方案</h4>
+    <p>由问题性质或计算机表示确定最小增量：</p>
+    <table>
+      <thead>
+        <tr><th>领域</th><th>最小增量</th><th>示例</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>价格</td><td>0.01（分）</td><td>9.99, 10.00, 10.01</td></tr>
+        <tr><td>温度</td><td>0.1（度）</td><td>36.5, 36.6, 36.7</td></tr>
+        <tr><td>重量</td><td>0.1（kg）</td><td>79.9, 80.0, 80.1</td></tr>
+        <tr><td>浮点数</td><td>机器精度</td><td>取决于数据类型</td></tr>
+      </tbody>
+    </table>
+
+    <div class="tip">
+      <div><strong>实践建议：</strong> 在需求分析阶段就应该确定每个数值参数的精度和有效范围，这有助于定义边界值。</div>
+    </div>
+
+    <!-- ==================== 对比总结 ==================== -->
+    <h3 id="strength">2-value vs 3-value 对比</h3>
+
+    <div class="compare-grid">
+      <div class="compare-box">
+        <h4>2-value BVA</h4>
+        <ul>
+          <li>测试值较少（~2n个边界）</li>
+          <li>能发现大多数边界缺陷</li>
+          <li>实现简单</li>
+          <li>适合快速测试</li>
+        </ul>
+      </div>
+      <div class="compare-box">
+        <h4>3-value BVA</h4>
+        <ul>
+          <li>测试值较多（~3n个边界）</li>
+          <li>能发现更多边界缺陷</li>
+          <li>能精确识别边界位置</li>
+          <li>适合关键系统</li>
+        </ul>
+      </div>
+    </div>
+
+    <h4>BVA 练习</h4>
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>练习1：电梯过载 280kg</span>
+          <span class="accordion-icon">▼</span>
+        </button>
+        <div class="accordion-content">
+          <p>电梯最大承重280kg。等价类：{≤280}（正常）, {>280}（超载）。2-value BVA测试值：279, 280, 281。3-value：279, 280, 281（边界值本身已在集合中）。</p>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>练习2：年份输入 1900-2020</span>
+          <span class="accordion-icon">▼</span>
+        </button>
+        <div class="accordion-content">
+          <p>有效范围1900-2020。2-value BVA测试值：1899, 1900, 2020, 2021。3-value：1899, 1900, 1901, 2019, 2020, 2021。</p>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>练习3：购物折扣</span>
+          <span class="accordion-icon">▼</span>
+        </button>
+        <div class="accordion-content">
+          <p>购物金额分档：0-100无折扣，101-500九折，501+八折。边界值：0, 100, 101, 500, 501。2-value：0, 100, 101, 500, 501。3-value：-1, 0, 1, 99, 100, 101, 102, 499, 500, 501, 502。</p>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">
+          <span>练习4：PIN验证</span>
+          <span class="accordion-icon">▼</span>
+        </button>
+        <div class="accordion-content">
+          <p>PIN为4位数字（0000-9990000-9999）。边界值主要关注长度：3位、4位、5位。等价类：{长度≠4}, {长度=4且格式正确}。</p>
+        </div>
+      </div>
+    </div>
+
+    <hr>
+    <div class="pagination">
+      <a href="combination-criteria.html" class="page-nav">
+        <span class="label">上一页</span>
+        <span class="title">← 组合覆盖标准</span>
+      </a>
+      <a href="istqb-sdlc.html" class="page-nav next">
+        <span class="label">下一节</span>
+        <span class="title">ISTQB SDLC测试 →</span>
+      </a>
+    </div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

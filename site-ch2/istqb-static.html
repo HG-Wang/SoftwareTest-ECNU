@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ISTQB静态测试 — Ch2 输入空间划分</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Toggle menu">☰</button>
+<div class="overlay"></div>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h1>软件测试笔记</h1>
+    <div class="subtitle">Software Testing · Chapter 2</div>
+  </div>
+  <div class="sidebar-nav">
+    <a href="../index.html" class="back-home"><span class="icon">🏠</span> 返回主页</a>
+    <div class="nav-section">章节导航</div>
+    <a href="index.html"><span class="icon">📖</span> 章节总览</a>
+    <a href="isp-basics.html"><span class="icon">📐</span> ISP基础</a>
+    <a href="combination-criteria.html"><span class="icon">🔗</span> 组合覆盖标准</a>
+    <a href="bva.html"><span class="icon">📏</span> 边界值分析</a>
+    <a href="istqb-sdlc.html"><span class="icon">📋</span> ISTQB SDLC测试</a>
+    <a href="istqb-static.html" class="active"><span class="icon">🔍</span> ISTQB静态测试</a>
+    <a href="exercises.html"><span class="icon">✏️</span> 实战练习</a>
+    <div class="nav-section">本页目录</div>
+    <a href="#static-basics" class="toc-link"><span class="icon">📋</span> 静态测试基础</a>
+    <a href="#review-process" class="toc-link"><span class="icon">📊</span> 审查流程</a>
+    <a href="#review-types" class="toc-link"><span class="icon">🔀</span> 审查类型</a>
+    <a href="#success-factors" class="toc-link"><span class="icon">⭐</span> 成功因素</a>
+  </div>
+  <div class="sidebar-footer">
+    ISTQB CTFL Ch2-3 · Static
+  </div>
+</nav>
+
+<main class="main">
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="index.html">Ch2</a>
+      <span class="sep">›</span>
+      <span>ISTQB静态测试</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-header">
+      <h2>ISTQB静态测试</h2>
+      <p class="desc">Static Testing — 静态测试基础、审查流程、审查类型和成功因素。</p>
+      <div class="meta">
+        <span class="tag">ISTQB</span>
+        <span class="tag">静态测试</span>
+        <span class="tag">审查</span>
+        <span class="tag">Review</span>
+      </div>
+    </div>
+
+    <!-- ==================== 静态测试基础 ==================== -->
+    <h3 id="static-basics">静态测试基础</h3>
+
+    <h4>什么是静态测试？</h4>
+    <p>静态测试是一种<strong>不需要执行软件</strong>的测试方法。它通过检查工作产品（如文档、代码）来发现缺陷，而不是通过运行程序。</p>
+
+    <h4>静态测试的两种形式</h4>
+    <div class="compare-grid">
+      <div class="compare-box">
+        <h4>审查 (Review)</h4>
+        <p>由人工对工作产品进行系统检查，发现缺陷和改进机会。包括非正式审查、演练、技术审查和检查。</p>
+      </div>
+      <div class="compare-box">
+        <h4>静态分析 (Static Analysis)</h4>
+        <p>使用工具自动分析代码或文档，发现潜在问题。如代码度量、数据流分析、控制流分析等。</p>
+      </div>
+    </div>
+
+    <h4>可检查的工作产品</h4>
+    <table>
+      <thead>
+        <tr><th>工作产品</th><th>检查内容</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>需求文档</td><td>完整性、一致性、可测试性</td></tr>
+        <tr><td>源代码</td><td>编码规范、潜在缺陷、安全漏洞</td></tr>
+        <tr><td>测试计划</td><td>覆盖范围、资源分配、时间安排</td></tr>
+        <tr><td>测试用例</td><td>覆盖需求、预期结果正确性</td></tr>
+        <tr><td>用户手册</td><td>准确性、完整性、易用性</td></tr>
+      </tbody>
+    </table>
+
+    <h4>静态测试的价值</h4>
+    <ul>
+      <li><strong>早期发现缺陷：</strong> 在编码之前就能发现需求和设计中的问题</li>
+      <li><strong>发现动态测试无法检测的缺陷：</strong> 如死代码、未使用的变量、编码规范违反</li>
+      <li><strong>降低修复成本：</strong> 越早发现缺陷，修复成本越低</li>
+      <li><strong>提高代码质量：</strong> 通过审查促进知识共享和最佳实践传播</li>
+    </ul>
+
+    <!-- ==================== 审查流程 ==================== -->
+    <h3 id="review-process">审查流程</h3>
+
+    <h4>审查的五个阶段</h4>
+    <ol class="step-list">
+      <li>
+        <div>
+          <strong>规划 (Planning)</strong>
+          <p>确定审查范围、选择审查员、分配材料、安排时间。</p>
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>审查启动 (Kick-off)</strong>
+          <p>向审查员介绍审查目标、范围和方法。分发材料。</p>
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>个人审查 (Individual Preparation)</strong>
+          <p>每位审查员独立检查工作产品，记录发现的问题。</p>
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>沟通和分析 (Communication & Analysis)</strong>
+          <p>审查会议中讨论发现的问题，分类和记录缺陷。</p>
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>修复和报告 (Rework & Reporting)</strong>
+          <p>作者修复发现的问题，审查负责人跟踪状态并报告。</p>
+        </div>
+      </li>
+    </ol>
+
+    <h4>审查角色</h4>
+    <table>
+      <thead>
+        <tr><th>角色</th><th>职责</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>经理</strong></td><td>决定审查什么、何时审查、由谁审查</td></tr>
+        <tr><td><strong>作者</strong></td><td>工作产品的创建者，参与讨论并修复问题</td></tr>
+        <tr><td><strong>主持人</strong></td><td>协调审查活动，确保审查高效进行</td></tr>
+        <tr><td><strong>抄写员</strong></td><td>记录审查会议中发现的问题和决策</td></tr>
+        <tr><td><strong>审查员</strong></td><td>检查工作产品，发现和报告问题</td></tr>
+        <tr><td><strong>审查负责人</strong></td><td>确保审查按计划执行，跟踪修复状态</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ==================== 审查类型 ==================== -->
+    <h3 id="review-types">审查类型</h3>
+
+    <p>审查类型从非正式到正式递进：</p>
+
+    <div class="tabs">
+      <div class="tab-buttons">
+        <button class="tab-btn active" data-tab="informal">非正式审查</button>
+        <button class="tab-btn" data-tab="walkthrough">演练</button>
+        <button class="tab-btn" data-tab="technical">技术审查</button>
+        <button class="tab-btn" data-tab="inspection">检查</button>
+      </div>
+
+      <div class="tab-panel active" data-panel="informal">
+        <h4>非正式审查 (Informal Review)</h4>
+        <ul>
+          <li>没有正式的流程</li>
+          <li>可以是同事之间的代码走查</li>
+          <li>不需要记录</li>
+          <li>目的主要是发现缺陷和学习</li>
+          <li>优点：灵活、快速、低成本</li>
+        </ul>
+      </div>
+
+      <div class="tab-panel" data-panel="walkthrough">
+        <h4>演练 (Walkthrough)</h4>
+        <ul>
+          <li>作者引导审查过程</li>
+          <li>可以是会议形式或一对一</li>
+          <li>有记录但不一定正式</li>
+          <li>目的：发现缺陷、培训、讨论</li>
+          <li>作者控制节奏和焦点</li>
+        </ul>
+      </div>
+
+      <div class="tab-panel" data-panel="technical">
+        <h4>技术审查 (Technical Review)</h4>
+        <ul>
+          <li>由受过培训的主持人引导</li>
+          <li>审查员应具备技术背景</li>
+          <li>有明确的审查标准</li>
+          <li>目的：发现缺陷、确保符合标准</li>
+          <li>有正式的记录和报告</li>
+        </ul>
+      </div>
+
+      <div class="tab-panel" data-panel="inspection">
+        <h4>检查 (Inspection)</h4>
+        <ul>
+          <li>最正式的审查类型</li>
+          <li>由受过培训的主持人引导</li>
+          <li>使用检查表和正式的入口/出口标准</li>
+          <li>有明确的角色分工</li>
+          <li>目的：发现缺陷</li>
+          <li>有详细的度量和报告</li>
+          <li>作者通常不参加审查会议</li>
+        </ul>
+      </div>
+    </div>
+
+    <h4>审查类型对比</h4>
+    <table>
+      <thead>
+        <tr><th>方面</th><th>非正式审查</th><th>演练</th><th>技术审查</th><th>检查</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>正式程度</td><td>最低</td><td>低</td><td>中</td><td>最高</td></tr>
+        <tr><td>主持人</td><td>无</td><td>作者</td><td>受训主持人</td><td>受训主持人</td></tr>
+        <tr><td>准备</td><td>可选</td><td>可选</td><td>必须</td><td>必须</td></tr>
+        <tr><td>记录</td><td>无/可选</td><td>有</td><td>有</td><td>详细</td></tr>
+        <tr><td>缺陷跟踪</td><td>无</td><td>可选</td><td>有</td><td>有</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ==================== 成功因素 ==================== -->
+    <h3 id="success-factors">成功因素</h3>
+
+    <p>静态测试的成功取决于以下因素：</p>
+
+    <ol>
+      <li><strong>明确目标和退出标准</strong> — 在审查开始前明确要达到什么目标，何时可以结束</li>
+      <li><strong>选择合适的审查类型</strong> — 根据项目阶段、工作产品类型和团队经验选择</li>
+      <li><strong>小块审查</strong> — 每次审查的材料不宜过多，建议每次不超过2小时</li>
+      <li><strong>提供反馈</strong> — 及时向作者反馈发现的问题，促进改进</li>
+      <li><strong>充分准备时间</strong> — 给审查员足够的时间独立准备</li>
+      <li><strong>管理层支持</strong> — 管理层应认可审查的价值并提供资源</li>
+    </ol>
+
+    <div class="warning">
+      <div><strong>常见陷阱：</strong> 将审查变成批评作者的会议、缺乏管理层支持、准备不充分、审查范围过大导致疲劳。成功的审查应聚焦于工作产品本身，而非作者。</div>
+    </div>
+
+    <hr>
+    <div class="pagination">
+      <a href="istqb-sdlc.html" class="page-nav">
+        <span class="label">上一页</span>
+        <span class="title">← ISTQB SDLC测试</span>
+      </a>
+      <a href="exercises.html" class="page-nav next">
+        <span class="label">下一节</span>
+        <span class="title">实战练习 →</span>
+      </a>
+    </div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
