@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://hg-wang.github.io/SoftwareTest-ECNU/sitemap.xml
