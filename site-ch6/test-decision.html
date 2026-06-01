@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="测试决策阶段：测试集合设计、测试取舍说明、测试冗余分析，在资源受限条件下进行测试资源分配。">
+  <meta name="keywords" content="测试决策, 测试集合, 测试取舍, 冗余分析, 资源分配">
+  <title>测试决策 — 系统软件风险驱动测试</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Toggle menu">☰</button>
+<div class="overlay"></div>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h1>软件测试笔记</h1>
+    <div class="subtitle">Software Testing · 系统软件实践</div>
+  </div>
+  <div class="sidebar-nav">
+    <a href="../index.html" class="back-home"><span class="icon">🏠</span> 返回主页</a>
+    <div class="nav-section">实践导航</div>
+    <a href="index.html"><span class="icon">📖</span> 实践总览</a>
+    <a href="system-modeling.html"><span class="icon">🔬</span> 系统建模</a>
+    <a href="risk-analysis.html"><span class="icon">⚠️</span> 风险分析</a>
+    <a href="test-decision.html" class="active"><span class="icon">🎯</span> 测试决策</a>
+    <a href="coverage-analysis.html"><span class="icon">📊</span> 覆盖分析</a>
+    <a href="reflection.html"><span class="icon">🪞</span> 决策反思</a>
+    <a href="extended.html"><span class="icon">🧪</span> 扩展学习</a>
+    <div class="nav-section">本页目录</div>
+    <a href="#principles" class="toc-link"><span class="icon">📐</span> 设计原则</a>
+    <a href="#allocation" class="toc-link"><span class="icon">⚖️</span> 资源分配过程</a>
+    <a href="#test-set" class="toc-link"><span class="icon">📋</span> 最终测试集合</a>
+    <a href="#tradeoffs" class="toc-link"><span class="icon">🔄</span> 测试取舍说明</a>
+    <a href="#redundancy" class="toc-link"><span class="icon">🔍</span> 冗余分析</a>
+  </div>
+  <div class="sidebar-footer">
+    第三部分 · 测试决策
+  </div>
+</nav>
+
+<main class="main">
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="index.html">系统软件实践</a>
+      <span class="sep">›</span>
+      <span>测试决策</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-header">
+      <h2>测试决策</h2>
+      <p class="desc">Test Decision — 在资源受限条件下进行测试资源分配，设计不超过 10 个测试用例。</p>
+      <div class="meta">
+        <span class="tag">第三部分</span>
+        <span class="tag">测试集合</span>
+        <span class="tag">资源分配</span>
+        <span class="tag">取舍</span>
+      </div>
+    </div>
+
+    <blockquote>
+      <p><strong>核心原则：</strong>测试存在的理由是风险优先级，而不是覆盖率目标。</p>
+    </blockquote>
+
+    <!-- ==================== 设计原则 ==================== -->
+    <h3 id="principles">设计原则</h3>
+    <p>每个测试必须包含四个要素：</p>
+    <table>
+      <thead>
+        <tr><th>要素</th><th>说明</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>输入</strong></td><td>具体的测试输入</td></tr>
+        <tr><td><strong>预期输出</strong></td><td>期望的程序行为</td></tr>
+        <tr><td><strong>对应风险编号</strong></td><td>该测试触达的风险</td></tr>
+        <tr><td><strong>设计依据</strong></td><td>包含构造技术依据和资源分配依据两个层面</td></tr>
+      </tbody>
+    </table>
+
+    <h4>设计依据的两个层面</h4>
+    <div class="compare-grid">
+      <div class="compare-box">
+        <h4>构造技术依据</h4>
+        <ul>
+          <li>基于输入域划分选择代表性分区</li>
+          <li>或基于关键边界值构造</li>
+          <li>或针对关键判定逻辑路径进行覆盖</li>
+          <li>说明该测试如何触达目标结构</li>
+        </ul>
+      </div>
+      <div class="compare-box">
+        <h4>资源分配依据</h4>
+        <ul>
+          <li>对应风险的优先级</li>
+          <li>该风险的潜在后果严重性</li>
+          <li>结构复杂度或触发难度</li>
+          <li>说明为何在测试数量受限条件下优先选择该测试</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tip">
+      <strong>说明：</strong>输入域划分与边界值分析属于测试构造技术；风险优先级决定是否为其分配测试资源。
+    </div>
+
+    <!-- ==================== 资源分配过程 ==================== -->
+    <h3 id="allocation">测试资源分配过程</h3>
+    <p>风险排序用于确定优先验证的风险区域。在测试资源有限的情况下，测试设计通常会优先覆盖高风险行为，并尽量通过一个测试同时触达多个风险。</p>
+
+    <h4>Echo 测试分配步骤（限制 5 个测试）</h4>
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header">Step 1：控制最高风险（R6） <span class="arrow">▼</span></button>
+        <div class="accordion-body"><div class="accordion-body-inner">
+          <p><strong>测试 T1：</strong><code>echo -e "hello\cworld"</code></p>
+          <p><strong>覆盖风险：</strong>R6（<code>\c</code> 终止逻辑）、R2（转义解析启用）</p>
+          <p><strong>设计依据：</strong>R6 是风险值最高的风险（15分），<code>\c</code> 的终止行为直接影响输出控制。该测试同时验证了转义解析机制是否被正确启用。</p>
+        </div></div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">Step 2：覆盖选项组合风险（R3、R4、R1） <span class="arrow">▼</span></button>
+        <div class="accordion-body"><div class="accordion-body-inner">
+          <p><strong>测试 T2：</strong><code>echo -n -e "a\nb"</code></p>
+          <p><strong>覆盖风险：</strong>R3（选项组合）、R4（<code>\n</code> 解析）、R1（<code>-n</code> 换行控制）、R2（转义启用）</p>
+          <p><strong>设计依据：</strong>一个测试同时触达四个风险。选项组合风险（R3）和换行解析风险（R4）均为高优先级。该测试通过组合 <code>-n</code> 和 <code>-e</code> 以及包含 <code>\n</code> 的字符串，高效覆盖多个关键路径。</p>
+        </div></div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">Step 3：补充转义解析路径（R5） <span class="arrow">▼</span></button>
+        <div class="accordion-body"><div class="accordion-body-inner">
+          <p><strong>测试 T3：</strong><code>echo -e "a\tb"</code></p>
+          <p><strong>覆盖风险：</strong>R5（<code>\t</code> 解析）、R2（转义启用）</p>
+          <p><strong>设计依据：</strong>补充另一种转义字符类型。虽然 R5 风险值较低（4分），但转义解析是核心功能机制，需要覆盖不同转义路径。</p>
+        </div></div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">Step 4：参数结构测试（R7） <span class="arrow">▼</span></button>
+        <div class="accordion-body"><div class="accordion-body-inner">
+          <p><strong>测试 T4：</strong><code>echo a b</code></p>
+          <p><strong>覆盖风险：</strong>R7（多参数空格处理）</p>
+          <p><strong>设计依据：</strong>多参数是常见使用场景。R7 虽然风险值中等（6分），但参数分隔逻辑影响输出格式的正确性。</p>
+        </div></div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">Step 5：边界输入测试（R8） <span class="arrow">▼</span></button>
+        <div class="accordion-body"><div class="accordion-body-inner">
+          <p><strong>测试 T5：</strong><code>echo</code>（无参数）</p>
+          <p><strong>覆盖风险：</strong>R8（无参数边界输入）</p>
+          <p><strong>设计依据：</strong>虽然 R8 风险值最低（2分），但无参数是基本的边界条件，且测试成本极低。</p>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- ==================== 最终测试集合 ==================== -->
+    <h3 id="test-set">最终测试集合</h3>
+    <table>
+      <thead>
+        <tr><th>编号</th><th>输入</th><th>预期输出</th><th>主要触达风险</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>T1</strong></td>
+          <td><code>echo -e "hello\cworld"</code></td>
+          <td><code>hello</code></td>
+          <td><span class="risk-badge critical">R6</span> <span class="risk-badge low">R2</span></td>
+        </tr>
+        <tr>
+          <td><strong>T2</strong></td>
+          <td><code>echo -n -e "a\nb"</code></td>
+          <td><code>a</code> 换行 <code>b</code></td>
+          <td><span class="risk-badge high">R3</span> <span class="risk-badge high">R4</span> <span class="risk-badge high">R1</span> <span class="risk-badge low">R2</span></td>
+        </tr>
+        <tr>
+          <td><strong>T3</strong></td>
+          <td><code>echo -e "a\tb"</code></td>
+          <td><code>a&lt;TAB&gt;b</code> 换行</td>
+          <td><span class="risk-badge low">R5</span> <span class="risk-badge low">R2</span></td>
+        </tr>
+        <tr>
+          <td><strong>T4</strong></td>
+          <td><code>echo a b</code></td>
+          <td><code>a b</code> 换行</td>
+          <td><span class="risk-badge medium">R7</span></td>
+        </tr>
+        <tr>
+          <td><strong>T5</strong></td>
+          <td><code>echo</code></td>
+          <td>换行</td>
+          <td><span class="risk-badge low">R8</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h4>参数结构覆盖</h4>
+    <p>从输入结构角度看，该测试集合同时覆盖了三种参数数量情况：</p>
+    <ul>
+      <li><strong>无参数输入</strong>（T5）</li>
+      <li><strong>单参数输入</strong>（T1-T3）</li>
+      <li><strong>多参数输入</strong>（T4）</li>
+    </ul>
+
+    <h4>风险触达关系</h4>
+    <table>
+      <thead>
+        <tr><th>风险</th><th>是否触达</th><th>触达测试</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><span class="risk-badge high">R1</span></td><td>✅</td><td>T2</td></tr>
+        <tr><td><span class="risk-badge low">R2</span></td><td>✅</td><td>T1, T2, T3</td></tr>
+        <tr><td><span class="risk-badge high">R3</span></td><td>✅</td><td>T2</td></tr>
+        <tr><td><span class="risk-badge high">R4</span></td><td>✅</td><td>T2</td></tr>
+        <tr><td><span class="risk-badge low">R5</span></td><td>✅</td><td>T3</td></tr>
+        <tr><td><span class="risk-badge critical">R6</span></td><td>✅</td><td>T1</td></tr>
+        <tr><td><span class="risk-badge medium">R7</span></td><td>✅</td><td>T4</td></tr>
+        <tr><td><span class="risk-badge low">R8</span></td><td>✅</td><td>T5</td></tr>
+      </tbody>
+    </table>
+
+    <blockquote>
+      <p>通过 <strong>5 个测试</strong>触达 <strong>8 个风险</strong>。由于多个风险来源于同一输入机制，一个测试输入可能同时触达多个风险。</p>
+    </blockquote>
+
+    <!-- ==================== 测试取舍说明 ==================== -->
+    <h3 id="tradeoffs">测试取舍说明</h3>
+    <p>在资源受限条件下，必须说明哪些风险未被测试及其原因。</p>
+
+    <h4>取舍原则</h4>
+    <ul>
+      <li>优先覆盖<strong>高风险项</strong></li>
+      <li>尽量通过一个测试覆盖多个风险，避免为同一风险设计多个专用测试</li>
+      <li>放弃低风险或重复测试</li>
+    </ul>
+
+    <h4>进一步减少测试数量</h4>
+    <p>如果必须进一步减少测试数量：</p>
+    <ul>
+      <li><strong>优先删除：T3</strong> — 在转义字符内部，<code>\n</code> 的使用频率高于 <code>\t</code>，R5 风险评分较低</li>
+      <li>删除后仍触达 7 个风险（R1-R4, R6-R8），仅缺失 R5</li>
+    </ul>
+
+    <!-- ==================== 冗余分析 ==================== -->
+    <h3 id="redundancy">测试冗余分析</h3>
+    <p>分析当前测试集合的冗余情况：</p>
+
+    <h4>重复覆盖分析</h4>
+    <table>
+      <thead>
+        <tr><th>风险</th><th>触达测试数</th><th>是否冗余</th><th>说明</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><span class="risk-badge low">R2</span></td><td>3 个（T1, T2, T3）</td><td>否</td><td>多个转义字符测试依赖同一机制，非冗余</td></tr>
+        <tr><td>其他风险</td><td>各 1 个</td><td>否</td><td>每个风险有独立触达路径</td></tr>
+      </tbody>
+    </table>
+
+    <div class="tip">
+      <strong>关键理解：</strong>某些风险可能在多个测试中被重复触达，这是因为这些测试依赖相同的输入机制。例如 R2 表示转义解析机制是否启用，而多个转义字符测试都需要依赖该机制。因此这种重复触达是正常现象，并不意味着测试设计存在重复。
+    </div>
+
+    <div class="pagination">
+      <a href="risk-analysis.html" class="page-nav prev">
+        <span class="label">上一页</span>
+        <span class="title">← 风险分析</span>
+      </a>
+      <a href="coverage-analysis.html" class="page-nav next">
+        <span class="label">下一节</span>
+        <span class="title">覆盖分析 →</span>
+      </a>
+    </div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

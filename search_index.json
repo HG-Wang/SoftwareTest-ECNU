@@ -2093,5 +2093,204 @@
         "anchor": "task2"
       }
     ]
+  },
+  {
+    "url": "site-ch6/index.html",
+    "chapter": "ch6",
+    "title": "系统软件风险驱动测试实践",
+    "sections": [
+      {
+        "heading": "实践概述",
+        "content": "以风险驱动测试决策为核心方法，在资源受限条件下回答：哪些风险真正值得优先控制、哪些问题可能产生严重后果、当测试数量有限时应如何进行测试决策。",
+        "keywords": ["风险驱动测试", "测试决策", "资源受限"],
+        "anchor": "overview"
+      },
+      {
+        "heading": "实践主线",
+        "content": "系统建模 → 风险分析 → 测试决策 → 覆盖分析 → 决策反思的统一决策路径。",
+        "keywords": ["系统建模", "风险分析", "覆盖分析"],
+        "anchor": "pipeline"
+      },
+      {
+        "heading": "实验对象与约束",
+        "content": "测试对象为 BusyBox 1.36.1 中的核心命令组件（echo、ls、cp、mv、sort、cut），必须设计 8-10 个测试用例，不得为提高覆盖率而额外增加测试。",
+        "keywords": ["BusyBox", "echo", "测试约束"],
+        "anchor": "object"
+      },
+      {
+        "heading": "风险识别维度",
+        "content": "七个风险维度：功能行为风险、选项解析风险、输入语义解析风险、边界输入风险、错误处理风险、脚本控制风险、IO行为风险。",
+        "keywords": ["风险维度", "功能行为", "选项解析", "边界输入"],
+        "anchor": "risk-dimensions"
+      }
+    ]
+  },
+  {
+    "url": "site-ch6/system-modeling.html",
+    "chapter": "ch6",
+    "title": "系统建模",
+    "sections": [
+      {
+        "heading": "功能语义识别",
+        "content": "简述被测程序的核心行为：默认输出行为、选项对输出行为的影响、参数与输出关系、换行与转义处理规则。描述行为含义而非实现细节。",
+        "keywords": ["功能语义", "默认行为", "转义处理"],
+        "anchor": "semantics"
+      },
+      {
+        "heading": "输入域识别",
+        "content": "描述被测程序的输入构成：选项集合（如 -n、-e、-E）、普通参数（字符串）、选项与参数的组合关系。可采用结构图或分层列表。",
+        "keywords": ["输入域", "选项集合", "参数组合"],
+        "anchor": "input-domain"
+      },
+      {
+        "heading": "关键判定逻辑识别",
+        "content": "识别 3-5 个关键判定逻辑：是否存在 -n 选项、是否启用转义处理、参数是否为空、多选项顺序是否影响行为。",
+        "keywords": ["判定逻辑", "-n", "-e", "转义"],
+        "anchor": "decision-logic"
+      }
+    ]
+  },
+  {
+    "url": "site-ch6/risk-analysis.html",
+    "chapter": "ch6",
+    "title": "风险分析",
+    "sections": [
+      {
+        "heading": "风险识别",
+        "content": "结合代码阅读与使用场景分析，识别 8-12 条具体风险。每条风险必须说明所属风险维度、风险描述和触发条件。",
+        "keywords": ["风险识别", "风险维度", "触发条件"],
+        "anchor": "identification"
+      },
+      {
+        "heading": "风险评分",
+        "content": "风险值 = 严重性 × 发生概率，评分范围 1-5 分。评分仅用于排序，评分理由比数值更重要。",
+        "keywords": ["风险评分", "严重性", "发生概率", "风险值"],
+        "anchor": "scoring"
+      },
+      {
+        "heading": "风险排序",
+        "content": "根据风险值进行排序，必须说明风险最高的 3 项和其他风险优先级较低的原因。排序解释质量比排序结果本身更重要。",
+        "keywords": ["风险排序", "优先级", "排序依据"],
+        "anchor": "ranking"
+      }
+    ]
+  },
+  {
+    "url": "site-ch6/test-decision.html",
+    "chapter": "ch6",
+    "title": "测试决策",
+    "sections": [
+      {
+        "heading": "测试集合设计",
+        "content": "设计不超过 10 个测试用例，每个测试必须包含输入、预期输出、对应风险编号和设计依据。设计依据包含构造技术依据和资源分配依据。",
+        "keywords": ["测试集合", "测试用例", "设计依据"],
+        "anchor": "principles"
+      },
+      {
+        "heading": "测试取舍说明",
+        "content": "说明哪些风险未被测试、未覆盖原因、是因风险较低还是测试成本过高。必须体现资源分配思考。",
+        "keywords": ["测试取舍", "资源分配", "未覆盖风险"],
+        "anchor": "tradeoffs"
+      },
+      {
+        "heading": "测试冗余分析",
+        "content": "分析测试集合是否存在重复覆盖、是否存在可合并测试、若必须删除 2 个测试应删除哪两个。",
+        "keywords": ["冗余分析", "重复覆盖", "测试合并"],
+        "anchor": "redundancy"
+      }
+    ]
+  },
+  {
+    "url": "site-ch6/coverage-analysis.html",
+    "chapter": "ch6",
+    "title": "覆盖分析",
+    "sections": [
+      {
+        "heading": "测试执行",
+        "content": "使用自动化脚本实现并运行测试集合，保证测试可重复执行、结果可复现，不得为提高覆盖率临时修改测试。使用 gcc -fprofile-arcs -ftest-coverage 编译。",
+        "keywords": ["测试执行", "自动化脚本", "gcov"],
+        "anchor": "execution"
+      },
+      {
+        "heading": "覆盖度量统计",
+        "content": "使用 gcov 或等价工具统计语句覆盖率和判定覆盖率。本实践仅采用语句覆盖与判定覆盖作为结构触达验证手段。",
+        "keywords": ["语句覆盖率", "判定覆盖率", "gcov", "lcov"],
+        "anchor": "metrics"
+      },
+      {
+        "heading": "覆盖结果分析",
+        "content": "分析未覆盖分支是否属于高优先级风险。在测试数量与设计精力受限条件下，是否需要重新分配测试资源。",
+        "keywords": ["覆盖结果", "未覆盖分支", "资源分配"],
+        "anchor": "results"
+      },
+      {
+        "heading": "覆盖率提升实验",
+        "content": "通过额外设计测试覆盖未触达分支，分析覆盖率提升所需的测试代价。高覆盖率并不必然意味着高测试价值。",
+        "keywords": ["覆盖率提升", "测试代价", "风险控制"],
+        "anchor": "improvement"
+      }
+    ]
+  },
+  {
+    "url": "site-ch6/reflection.html",
+    "chapter": "ch6",
+    "title": "决策反思",
+    "sections": [
+      {
+        "heading": "本轮决策有效性",
+        "content": "评估风险排序与测试资源分配是否真正控制了关键风险。是否存在排序调整或判断偏差？覆盖率提升但关键风险仍未被有效控制的情况？",
+        "keywords": ["决策有效性", "风险排序", "测试资源"],
+        "anchor": "effectiveness"
+      },
+      {
+        "heading": "情境变化下的风险排序调整",
+        "content": "若程序用于嵌入式启动脚本或安全关键系统，分析原风险结构是否需要重构、哪类风险将上升或下降。",
+        "keywords": ["情境变化", "嵌入式", "安全关键"],
+        "anchor": "context-change"
+      },
+      {
+        "heading": "覆盖指标的适用边界",
+        "content": "在嵌入式实时系统和 AI 系统中，代码覆盖率是否仍然能够代表风险控制程度？是否需要补充其他验证维度？",
+        "keywords": ["覆盖指标", "适用边界", "实时系统", "AI系统"],
+        "anchor": "coverage-boundary"
+      },
+      {
+        "heading": "方法的稳定部分与情境依赖部分",
+        "content": "风险驱动测试中具有普适性的原则：风险优先、资源受限、基于结构决策。情境依赖部分：风险排序、测试重点。",
+        "keywords": ["方法迁移", "普适原则", "情境依赖"],
+        "anchor": "stability"
+      }
+    ]
+  },
+  {
+    "url": "site-ch6/extended.html",
+    "chapter": "ch6",
+    "title": "扩展学习",
+    "sections": [
+      {
+        "heading": "静态风险识别",
+        "content": "通过 SmartTestGrid 工具对 BusyBox 代码进行静态分析，按规范分类（MISRA-C 2012）和按文件分类查看报告。",
+        "keywords": ["静态分析", "SmartTestGrid", "MISRA-C"],
+        "anchor": "static"
+      },
+      {
+        "heading": "运行时风险检测",
+        "content": "使用 Valgrind 检测内存泄漏、越界访问、未初始化变量等运行时问题。Valgrind 不会增加代码覆盖率但能发现内存管理问题。",
+        "keywords": ["Valgrind", "内存泄漏", "越界访问", "运行时检测"],
+        "anchor": "runtime"
+      },
+      {
+        "heading": "单元测试",
+        "content": "使用 Check 单元测试框架编写自动化测试，支持断言验证和测试报告。可通过比对返回值或比对输出两种方式验证。",
+        "keywords": ["Check", "单元测试", "断言"],
+        "anchor": "unit-test"
+      },
+      {
+        "heading": "变异测试",
+        "content": "使用 Mull 变异测试工具验证测试有效性。变异测试用于验证测试是否真正具有缺陷检测能力，而非提高覆盖率。",
+        "keywords": ["Mull", "变异测试", "变异运算符", "变异体"],
+        "anchor": "mutation"
+      }
+    ]
   }
 ]

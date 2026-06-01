@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="风险分析阶段：风险识别、风险评分、风险排序，基于严重性与发生概率进行定量分析。">
+  <meta name="keywords" content="风险分析, 风险识别, 风险评分, 风险排序, 严重性, 发生概率">
+  <title>风险分析 — 系统软件风险驱动测试</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Toggle menu">☰</button>
+<div class="overlay"></div>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h1>软件测试笔记</h1>
+    <div class="subtitle">Software Testing · 系统软件实践</div>
+  </div>
+  <div class="sidebar-nav">
+    <a href="../index.html" class="back-home"><span class="icon">🏠</span> 返回主页</a>
+    <div class="nav-section">实践导航</div>
+    <a href="index.html"><span class="icon">📖</span> 实践总览</a>
+    <a href="system-modeling.html"><span class="icon">🔬</span> 系统建模</a>
+    <a href="risk-analysis.html" class="active"><span class="icon">⚠️</span> 风险分析</a>
+    <a href="test-decision.html"><span class="icon">🎯</span> 测试决策</a>
+    <a href="coverage-analysis.html"><span class="icon">📊</span> 覆盖分析</a>
+    <a href="reflection.html"><span class="icon">🪞</span> 决策反思</a>
+    <a href="extended.html"><span class="icon">🧪</span> 扩展学习</a>
+    <div class="nav-section">本页目录</div>
+    <a href="#identification" class="toc-link"><span class="icon">🔍</span> 风险识别</a>
+    <a href="#scoring" class="toc-link"><span class="icon">📐</span> 风险评分</a>
+    <a href="#ranking" class="toc-link"><span class="icon">🏆</span> 风险排序</a>
+    <a href="#examples" class="toc-link"><span class="icon">💡</span> 典型风险示例</a>
+  </div>
+  <div class="sidebar-footer">
+    第二部分 · 风险分析
+  </div>
+</nav>
+
+<main class="main">
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="index.html">系统软件实践</a>
+      <span class="sep">›</span>
+      <span>风险分析</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-header">
+      <h2>风险分析</h2>
+      <p class="desc">Risk Analysis — 识别并排序可能影响系统质量的关键风险，为测试决策提供依据。</p>
+      <div class="meta">
+        <span class="tag">第二部分</span>
+        <span class="tag">风险识别</span>
+        <span class="tag">风险评分</span>
+        <span class="tag">风险排序</span>
+      </div>
+    </div>
+
+    <div class="warning">
+      <strong>注意：</strong>评分用于排序；排序逻辑比数值更重要；风险排序为测试决策提供依据。
+    </div>
+
+    <!-- ==================== 风险识别 ==================== -->
+    <h3 id="identification">风险识别</h3>
+    <p>结合代码阅读与使用场景分析，识别 <strong>8-12 条具体风险</strong>，仅对前 8 条进行评分排序。</p>
+
+    <h4>风险识别要求</h4>
+    <ul>
+      <li>每条风险必须<strong>具体化</strong>，不得仅写"可能出错"类描述</li>
+      <li>可参考风险识别维度（附录 B），但必须结合实际行为</li>
+      <li>每条风险必须说明：<strong>所属风险维度</strong>、<strong>风险描述</strong>、<strong>触发条件</strong></li>
+    </ul>
+
+    <h4>Echo 风险识别示例（8 条）</h4>
+    <table>
+      <thead>
+        <tr><th>编号</th><th>风险维度</th><th>风险描述</th><th>触发条件</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="risk-badge high">R1</span></td>
+          <td>选项解析</td>
+          <td><code>-n</code> 未正确取消末尾换行</td>
+          <td>输入包含 <code>-n</code></td>
+        </tr>
+        <tr>
+          <td><span class="risk-badge medium">R2</span></td>
+          <td>选项解析</td>
+          <td><code>-e</code> 未正确触发转义解析</td>
+          <td>输入包含 <code>-e</code></td>
+        </tr>
+        <tr>
+          <td><span class="risk-badge high">R3</span></td>
+          <td>选项组合</td>
+          <td><code>-n</code> 与 <code>-e</code> 组合行为异常</td>
+          <td>同时使用 <code>-n -e</code></td>
+        </tr>
+        <tr>
+          <td><span class="risk-badge high">R4</span></td>
+          <td>转义解析</td>
+          <td><code>\n</code> 未被正确解析为换行</td>
+          <td>启用 <code>-e</code> 且包含 <code>\n</code></td>
+        </tr>
+        <tr>
+          <td><span class="risk-badge low">R5</span></td>
+          <td>转义解析</td>
+          <td><code>\t</code> 未被正确解析为制表符</td>
+          <td>启用 <code>-e</code> 且包含 <code>\t</code></td>
+        </tr>
+        <tr>
+          <td><span class="risk-badge critical">R6</span></td>
+          <td>输出控制</td>
+          <td><code>\c</code> 未正确终止输出</td>
+          <td>启用 <code>-e</code> 且包含 <code>\c</code></td>
+        </tr>
+        <tr>
+          <td><span class="risk-badge medium">R7</span></td>
+          <td>参数处理</td>
+          <td>多参数输出空格处理错误</td>
+          <td>输入包含两个及以上参数</td>
+        </tr>
+        <tr>
+          <td><span class="risk-badge low">R8</span></td>
+          <td>边界输入</td>
+          <td>无参数时行为异常</td>
+          <td>未提供参数</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h4>风险来源说明</h4>
+    <p>上述风险来源于系统建模阶段识别的三个方面：</p>
+    <ul>
+      <li><strong>功能语义</strong>：输出控制行为（R1、R6、R7、R8）</li>
+      <li><strong>输入域结构</strong>：选项与参数组合（R1、R2、R3、R7、R8）</li>
+      <li><strong>关键判定逻辑</strong>：转义解析机制（R4、R5、R6）</li>
+    </ul>
+    <p>一个风险可能来源于多个建模维度。R4、R5、R6 是转义解析机制的具体行为风险，而 R2 表示该机制未被正确启用的风险。</p>
+
+    <!-- ==================== 风险评分 ==================== -->
+    <h3 id="scoring">风险评分</h3>
+    <p>评分为辅助排序工具，而非精确风险度量。</p>
+
+    <h4>评分规则</h4>
+    <blockquote>
+      <p><strong>风险值 = 严重性 × 发生概率</strong>，评分范围均为 1-5 分。</p>
+    </blockquote>
+
+    <div class="compare-grid">
+      <div class="compare-box">
+        <h4>严重性评分表</h4>
+        <table>
+          <thead><tr><th>分值</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td><span class="risk-badge low">1</span></td><td>轻微表现差异，对功能无实质影响</td></tr>
+            <tr><td><span class="risk-badge low">2</span></td><td>输出存在小偏差，但不影响整体使用</td></tr>
+            <tr><td><span class="risk-badge medium">3</span></td><td>功能异常，但可恢复或影响范围有限</td></tr>
+            <tr><td><span class="risk-badge high">4</span></td><td>影响脚本逻辑或系统功能行为</td></tr>
+            <tr><td><span class="risk-badge critical">5</span></td><td>导致系统级错误、崩溃或严重后果</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="compare-box">
+        <h4>发生概率评分表</h4>
+        <table>
+          <thead><tr><th>分值</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td><span class="risk-badge low">1</span></td><td>极少发生，需特殊条件触发</td></tr>
+            <tr><td><span class="risk-badge low">2</span></td><td>较少发生，触发路径有限</td></tr>
+            <tr><td><span class="risk-badge medium">3</span></td><td>一般复杂逻辑，存在一定触发可能</td></tr>
+            <tr><td><span class="risk-badge high">4</span></td><td>分支复杂或处理逻辑较多</td></tr>
+            <tr><td><span class="risk-badge critical">5</span></td><td>明显高风险区域，逻辑复杂或边界密集</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <h4>评分原则</h4>
+    <ul>
+      <li>评分仅用于排序</li>
+      <li>评分理由比数值更重要</li>
+      <li>不追求数值精确</li>
+      <li>允许合理调整</li>
+    </ul>
+
+    <h4>Echo 风险评分示例</h4>
+    <table>
+      <thead>
+        <tr><th>风险</th><th>影响</th><th>严重性</th><th>概率</th><th>风险值</th><th>评分理由</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="risk-badge critical">R6</span></td>
+          <td><code>\c</code> 未终止输出</td>
+          <td>5</td><td>3</td><td><strong>15</strong></td>
+          <td>行为差异明显，直接影响输出控制</td>
+        </tr>
+        <tr>
+          <td><span class="risk-badge high">R3</span></td>
+          <td>选项组合异常</td>
+          <td>4</td><td>3</td><td><strong>12</strong></td>
+          <td>组合逻辑复杂，常用场景</td>
+        </tr>
+        <tr>
+          <td><span class="risk-badge high">R4</span></td>
+          <td><code>\n</code> 解析错误</td>
+          <td>4</td><td>3</td><td><strong>12</strong></td>
+          <td>常见使用场景，影响输出格式</td>
+        </tr>
+        <tr>
+          <td><span class="risk-badge high">R1</span></td>
+          <td><code>-n</code> 失效</td>
+          <td>3</td><td>3</td><td><strong>9</strong></td>
+          <td>常见选项，影响换行控制</td>
+        </tr>
+        <tr>
+          <td><span class="risk-badge medium">R7</span></td>
+          <td>多参数空格错误</td>
+          <td>3</td><td>2</td><td><strong>6</strong></td>
+          <td>影响较小，但仍影响输出格式</td>
+        </tr>
+        <tr>
+          <td><span class="risk-badge low">R5</span></td>
+          <td><code>\t</code> 解析错误</td>
+          <td>2</td><td>2</td><td><strong>4</strong></td>
+          <td>较少使用的转义字符</td>
+        </tr>
+        <tr>
+          <td><span class="risk-badge low">R2</span></td>
+          <td><code>-e</code> 解析失效</td>
+          <td>2</td><td>2</td><td><strong>4</strong></td>
+          <td>实现逻辑简单，具体行为已由 R4/R5/R6 覆盖</td>
+        </tr>
+        <tr>
+          <td><span class="risk-badge low">R8</span></td>
+          <td>无参数异常</td>
+          <td>1</td><td>2</td><td><strong>2</strong></td>
+          <td>影响较小，边界场景</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ==================== 风险排序 ==================== -->
+    <h3 id="ranking">风险排序</h3>
+    <p>根据风险值进行排序，并给出优先级列表。</p>
+
+    <h4>排序结果</h4>
+    <table>
+      <thead>
+        <tr><th>优先级</th><th>风险</th><th>描述</th><th>风险值</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>1</strong></td><td><span class="risk-badge critical">R6</span></td><td>输出控制风险 — <code>\c</code> 终止逻辑</td><td>15</td></tr>
+        <tr><td><strong>2</strong></td><td><span class="risk-badge high">R3</span></td><td>选项组合风险 — <code>-n</code> 与 <code>-e</code> 组合</td><td>12</td></tr>
+        <tr><td><strong>3</strong></td><td><span class="risk-badge high">R4</span></td><td>转义解析风险 — <code>\n</code> 解析</td><td>12</td></tr>
+        <tr><td><strong>4</strong></td><td><span class="risk-badge high">R1</span></td><td>换行控制风险 — <code>-n</code> 失效</td><td>9</td></tr>
+        <tr><td><strong>5</strong></td><td><span class="risk-badge medium">R7</span></td><td>参数组合风险 — 多参数空格</td><td>6</td></tr>
+        <tr><td><strong>6</strong></td><td><span class="risk-badge low">R5</span></td><td>转义解析风险 — <code>\t</code> 解析</td><td>4</td></tr>
+        <tr><td><strong>7</strong></td><td><span class="risk-badge low">R2</span></td><td>选项解析风险 — <code>-e</code> 失效</td><td>4</td></tr>
+        <tr><td><strong>8</strong></td><td><span class="risk-badge low">R8</span></td><td>边界输入风险 — 无参数</td><td>2</td></tr>
+      </tbody>
+    </table>
+
+    <h4>排序依据</h4>
+    <p><strong>最高风险前三项：</strong>R6（<code>\c</code> 终止逻辑）、R3（<code>-n</code> 与 <code>-e</code> 组合）、R4（<code>\n</code> 转义解析）</p>
+    <ul>
+      <li><strong>影响用户输出行为</strong> — 这些风险直接改变程序的输出结果</li>
+      <li><strong>触发频率较高</strong> — 涉及常用选项和转义字符</li>
+      <li><strong>涉及关键逻辑路径</strong> — 覆盖了选项解析和转义解析的核心路径</li>
+    </ul>
+
+    <p><strong>其他风险优先级较低的原因：</strong></p>
+    <ul>
+      <li>R5（<code>\t</code>）：制表符使用频率低于换行符</li>
+      <li>R2（<code>-e</code>）：属于机制级风险，具体行为已由 R4/R5/R6 覆盖</li>
+      <li>R8（无参数）：边界场景，影响较小</li>
+    </ul>
+
+    <!-- ==================== 典型风险示例 ==================== -->
+    <h3 id="examples">典型风险示例</h3>
+    <p>以下展示风险条目的标准描述方式，包含完整的风险结构。</p>
+
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header">R3 选项组合风险 — <code>-n</code> 与 <code>-e</code> 组合行为异常 <span class="arrow">▼</span></button>
+        <div class="accordion-body"><div class="accordion-body-inner">
+          <h4>风险名称</h4>
+          <p><code>-n</code> 与 <code>-e</code> 组合行为异常</p>
+          <h4>风险描述</h4>
+          <p>当 echo 同时接收多个选项时，程序需要正确解析选项组合的语义。<code>-n</code> 用于取消末尾换行，<code>-e</code> 用于启用转义解析。如果选项解析逻辑存在缺陷，可能导致其中一个选项未生效，或者选项处理顺序错误。</p>
+          <h4>风险触发条件</h4>
+          <p>同时使用 <code>-n</code> 与 <code>-e</code>。</p>
+          <h4>潜在影响</h4>
+          <ul>
+            <li>输出格式与预期不一致</li>
+            <li>脚本处理逻辑产生错误</li>
+            <li>不同系统实现行为不一致</li>
+          </ul>
+        </div></div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-header">R6 输出控制风险 — <code>\c</code> 未正确终止输出 <span class="arrow">▼</span></button>
+        <div class="accordion-body"><div class="accordion-body-inner">
+          <h4>风险名称</h4>
+          <p><code>\c</code> 未正确终止输出</p>
+          <h4>风险描述</h4>
+          <p>当启用转义解析时，<code>\c</code> 表示立即终止输出，并取消末尾换行。如果实现未正确处理该控制序列，程序可能继续输出后续字符。</p>
+          <h4>风险触发条件</h4>
+          <p>启用 <code>-e</code>，且输入字符串中包含 <code>\c</code>。</p>
+          <h4>潜在影响</h4>
+          <ul>
+            <li>输出行为与用户预期不一致</li>
+            <li>自动化脚本可能依赖错误输出</li>
+            <li>管道或日志内容出现异常</li>
+          </ul>
+        </div></div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-header">R7 参数处理风险 — 多参数输出空格处理错误 <span class="arrow">▼</span></button>
+        <div class="accordion-body"><div class="accordion-body-inner">
+          <h4>风险名称</h4>
+          <p>多参数输出空格处理错误</p>
+          <h4>风险描述</h4>
+          <p>当 echo 接收多个字符串参数时，程序应按照顺序输出参数，并在参数之间插入一个空格。如果实现逻辑存在缺陷，可能出现参数拼接错误。</p>
+          <h4>风险触发条件</h4>
+          <p>输入包含两个及以上参数。</p>
+          <h4>潜在影响</h4>
+          <ul>
+            <li>输出文本结构错误</li>
+            <li>脚本解析输出内容时产生异常</li>
+            <li>文本处理流程出现问题</li>
+          </ul>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="pagination">
+      <a href="system-modeling.html" class="page-nav prev">
+        <span class="label">上一页</span>
+        <span class="title">← 系统建模</span>
+      </a>
+      <a href="test-decision.html" class="page-nav next">
+        <span class="label">下一节</span>
+        <span class="title">测试决策 →</span>
+      </a>
+    </div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

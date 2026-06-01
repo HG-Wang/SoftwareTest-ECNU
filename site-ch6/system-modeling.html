@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="系统建模阶段：功能语义识别、输入域识别、关键判定逻辑识别，为风险分析提供结构基础。">
+  <meta name="keywords" content="系统建模, 功能语义, 输入域, 判定逻辑, BusyBox echo">
+  <title>系统建模 — 系统软件风险驱动测试</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Toggle menu">☰</button>
+<div class="overlay"></div>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h1>软件测试笔记</h1>
+    <div class="subtitle">Software Testing · 系统软件实践</div>
+  </div>
+  <div class="sidebar-nav">
+    <a href="../index.html" class="back-home"><span class="icon">🏠</span> 返回主页</a>
+    <div class="nav-section">实践导航</div>
+    <a href="index.html"><span class="icon">📖</span> 实践总览</a>
+    <a href="system-modeling.html" class="active"><span class="icon">🔬</span> 系统建模</a>
+    <a href="risk-analysis.html"><span class="icon">⚠️</span> 风险分析</a>
+    <a href="test-decision.html"><span class="icon">🎯</span> 测试决策</a>
+    <a href="coverage-analysis.html"><span class="icon">📊</span> 覆盖分析</a>
+    <a href="reflection.html"><span class="icon">🪞</span> 决策反思</a>
+    <a href="extended.html"><span class="icon">🧪</span> 扩展学习</a>
+    <div class="nav-section">本页目录</div>
+    <a href="#purpose" class="toc-link"><span class="icon">🎯</span> 目的与定位</a>
+    <a href="#semantics" class="toc-link"><span class="icon">📝</span> 功能语义识别</a>
+    <a href="#input-domain" class="toc-link"><span class="icon">📥</span> 输入域识别</a>
+    <a href="#decision-logic" class="toc-link"><span class="icon">🔀</span> 关键判定逻辑</a>
+    <a href="#echo-example" class="toc-link"><span class="icon">💡</span> Echo 完整示例</a>
+    <a href="#modeling-summary" class="toc-link"><span class="icon">📋</span> 建模总结</a>
+  </div>
+  <div class="sidebar-footer">
+    第一部分 · 系统建模
+  </div>
+</nav>
+
+<main class="main">
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="index.html">系统软件实践</a>
+      <span class="sep">›</span>
+      <span>系统建模</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-header">
+      <h2>系统建模</h2>
+      <p class="desc">System Modeling — 刻画程序功能语义、输入域与关键判定逻辑，为风险分析提供结构基础。</p>
+      <div class="meta">
+        <span class="tag">第一部分</span>
+        <span class="tag">功能语义</span>
+        <span class="tag">输入域</span>
+        <span class="tag">判定逻辑</span>
+      </div>
+    </div>
+
+    <!-- ==================== 目的与定位 ==================== -->
+    <h3 id="purpose">目的与定位</h3>
+    <p>系统建模是风险驱动测试的<strong>第一步</strong>，其核心目的是为后续的风险分析提供结构基础。</p>
+
+    <div class="tip">
+      <strong>关键理解：</strong>建模用于定位可能引发风险的结构位置，而不是穷尽所有行为细节。
+    </div>
+
+    <p>在软件系统中，风险通常由三个维度共同形成：</p>
+    <ul>
+      <li><strong>功能语义</strong> — 功能行为与预期语义不一致，决定风险后果严重程度</li>
+      <li><strong>输入域</strong> — 参数组合或边界条件决定风险触发入口</li>
+      <li><strong>关键判定逻辑</strong> — 条件分支与状态路径决定风险传播路径</li>
+    </ul>
+
+    <blockquote>
+      <p><strong>语义决定风险价值，结构决定风险分布与触达方式。</strong></p>
+    </blockquote>
+
+    <!-- ==================== 功能语义识别 ==================== -->
+    <h3 id="semantics">功能语义识别</h3>
+    <p>简述被测程序的核心行为，包括：</p>
+    <ul>
+      <li><strong>默认输出行为</strong> — 程序在无特殊选项时的默认行为</li>
+      <li><strong>选项对输出行为的影响</strong> — 各选项如何改变程序行为</li>
+      <li><strong>参数与输出关系</strong> — 输入参数如何映射到输出</li>
+      <li><strong>换行与转义处理规则</strong> — 特殊字符的处理方式</li>
+    </ul>
+
+    <div class="warning">
+      <strong>要求：</strong>描述不超过 10 行文字；描述行为含义，而非实现细节。
+    </div>
+
+    <h4>示例：echo 命令的功能语义</h4>
+    <p>echo 用于将输入参数输出到标准输出。默认情况下，所有参数按顺序输出，并在末尾添加换行。各选项影响如下：</p>
+    <table>
+      <thead>
+        <tr><th>选项</th><th>行为</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>-n</code></td><td>取消末尾换行</td></tr>
+        <tr><td><code>-e</code></td><td>启用反斜杠转义字符解析</td></tr>
+        <tr><td><code>-E</code></td><td>显式关闭转义解析（默认行为）</td></tr>
+      </tbody>
+    </table>
+    <p>启用转义解析时的关键转义字符：</p>
+    <ul>
+      <li><code>\n</code> — 换行（结构变化行为）</li>
+      <li><code>\t</code> — 制表符（字符替换行为）</li>
+      <li><code>\c</code> — 终止输出，忽略后续字符，不再输出换行（控制行为）</li>
+    </ul>
+    <p>多个参数之间默认以空格分隔输出。</p>
+
+    <!-- ==================== 输入域识别 ==================== -->
+    <h3 id="input-domain">输入域识别</h3>
+    <p>描述被测程序的输入构成，可采用结构图或分层列表形式。</p>
+
+    <h4>输入结构</h4>
+    <pre><code><span class="fn">command</span> [<span class="kw">option</span>] [<span class="st">string</span>]...</code></pre>
+
+    <h4>输入构成</h4>
+    <div class="compare-grid">
+      <div class="compare-box">
+        <h4>选项集合</h4>
+        <ul>
+          <li><code>-n</code> 取消换行</li>
+          <li><code>-e</code> 启用反斜杠转义解析</li>
+          <li><code>-E</code> 显式禁用转义解析（默认行为）</li>
+        </ul>
+      </div>
+      <div class="compare-box">
+        <h4>普通参数</h4>
+        <ul>
+          <li>字符串</li>
+          <li>可能包含转义字符</li>
+          <li>可能为空</li>
+        </ul>
+      </div>
+    </div>
+
+    <h4>输入组合示例</h4>
+    <table>
+      <thead>
+        <tr><th>组合</th><th>示例</th><th>说明</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>纯参数</td><td><code>echo hello</code></td><td>最简单场景</td></tr>
+        <tr><td>单选项 + 参数</td><td><code>echo -n hello</code></td><td>选项影响输出格式</td></tr>
+        <tr><td>转义选项 + 参数</td><td><code>echo -e "a\nb"</code></td><td>启用转义解析</td></tr>
+        <tr><td>多选项 + 参数</td><td><code>echo -n -e "hello"</code></td><td>选项组合</td></tr>
+        <tr><td>多参数</td><td><code>echo "a" "b"</code></td><td>参数分隔处理</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ==================== 关键判定逻辑识别 ==================== -->
+    <h3 id="decision-logic">关键判定逻辑识别</h3>
+    <p>结合代码或行为说明，识别 3-5 个关键判定逻辑。每项用 1-2 行说明其对行为的影响。</p>
+
+    <table>
+      <thead>
+        <tr><th>编号</th><th>判定逻辑</th><th>对行为的影响</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1</strong></td>
+          <td>是否存在 <code>-n</code> 选项</td>
+          <td>决定输出末尾是否添加换行</td>
+        </tr>
+        <tr>
+          <td><strong>2</strong></td>
+          <td>是否启用 <code>-e</code> 转义</td>
+          <td>决定是否对字符串中的反斜杠序列进行解析</td>
+        </tr>
+        <tr>
+          <td><strong>3</strong></td>
+          <td>是否出现 <code>\c</code></td>
+          <td>终止后续输出并取消换行</td>
+        </tr>
+        <tr>
+          <td><strong>4</strong></td>
+          <td>是否存在多个参数</td>
+          <td>多个参数之间是否插入空格</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ==================== Echo 完整示例 ==================== -->
+    <h3 id="echo-example">Echo 完整建模示例</h3>
+    <p>以下展示使用 BusyBox 中的 <code>echo</code> 工具进行系统建模的完整过程。</p>
+
+    <div class="tabs">
+      <div class="tab-buttons">
+        <button class="tab-btn active" data-tab="semantics-tab">功能语义</button>
+        <button class="tab-btn" data-tab="input-tab">输入域</button>
+        <button class="tab-btn" data-tab="logic-tab">判定逻辑</button>
+      </div>
+
+      <div class="tab-panel active" data-panel="semantics-tab">
+        <h4>echo 功能语义识别</h4>
+        <ol>
+          <li>默认将所有参数按顺序输出到标准输出，末尾添加换行</li>
+          <li><code>-n</code> 取消末尾换行</li>
+          <li><code>-e</code> 启用反斜杠转义字符解析</li>
+          <li><code>-E</code> 显式关闭转义解析（默认行为等价）</li>
+          <li><code>\n</code> 换行、<code>\t</code> 制表符、<code>\c</code> 终止输出</li>
+          <li>多参数之间以空格分隔</li>
+        </ol>
+      </div>
+
+      <div class="tab-panel" data-panel="input-tab">
+        <h4>echo 输入域识别</h4>
+        <p><strong>输入结构：</strong><code>echo [option] [string]...</code></p>
+        <p><strong>选项集合：</strong><code>-n</code>、<code>-e</code>、<code>-E</code></p>
+        <p><strong>普通参数：</strong>字符串，可能包含转义字符，可能为空</p>
+        <p><strong>典型组合：</strong></p>
+        <ul>
+          <li><code>echo hello</code> — 纯参数</li>
+          <li><code>echo -n hello</code> — 单选项</li>
+          <li><code>echo -e "a\nb"</code> — 转义选项</li>
+          <li><code>echo -n -e "hello"</code> — 多选项组合</li>
+          <li><code>echo "a" "b"</code> — 多参数</li>
+        </ul>
+      </div>
+
+      <div class="tab-panel" data-panel="logic-tab">
+        <h4>echo 关键判定逻辑</h4>
+        <ol>
+          <li><strong>是否存在 -n</strong>：决定输出末尾是否添加换行</li>
+          <li><strong>是否启用 -e</strong>：决定是否对反斜杠序列进行解析</li>
+          <li><strong>是否出现 \c</strong>：终止后续输出并取消换行</li>
+          <li><strong>是否存在多个参数</strong>：决定参数间是否插入空格</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- ==================== 建模总结 ==================== -->
+    <h3 id="modeling-summary">建模总结</h3>
+    <p>完成系统建模后，需要回答以下三个问题：</p>
+
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header">哪些输入维度可能引发语义偏差？ <span class="arrow">▼</span></button>
+        <div class="accordion-body"><div class="accordion-body-inner">
+          <ol>
+            <li><strong>选项组合</strong> — 多个选项同时使用时的行为一致性</li>
+            <li><strong>转义字符类型</strong> — 不同转义序列的解析正确性</li>
+            <li><strong>参数数量</strong> — 无参数、单参数、多参数的不同处理逻辑</li>
+          </ol>
+        </div></div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">哪些判定逻辑可能导致路径差异？ <span class="arrow">▼</span></button>
+        <div class="accordion-body"><div class="accordion-body-inner">
+          <ol>
+            <li><strong>是否启用转义</strong> — 决定进入转义解析路径或直接输出</li>
+            <li><strong>是否取消换行</strong> — 决定输出末尾行为</li>
+            <li><strong>是否触发 \c</strong> — 决定是否提前终止输出</li>
+          </ol>
+        </div></div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">哪些结构位置值得在风险分析阶段重点关注？ <span class="arrow">▼</span></button>
+        <div class="accordion-body"><div class="accordion-body-inner">
+          <ol>
+            <li><strong>选项解析逻辑</strong> — 选项识别与组合处理</li>
+            <li><strong>转义解析逻辑</strong> — 各类转义序列的处理分支</li>
+            <li><strong>输出控制逻辑</strong> — 换行、终止等输出行为控制</li>
+          </ol>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="pagination">
+      <a href="index.html" class="page-nav prev">
+        <span class="label">上一页</span>
+        <span class="title">← 实践总览</span>
+      </a>
+      <a href="risk-analysis.html" class="page-nav next">
+        <span class="label">下一节</span>
+        <span class="title">风险分析 →</span>
+      </a>
+    </div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

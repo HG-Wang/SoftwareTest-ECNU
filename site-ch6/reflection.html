@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="决策反思阶段：评估风险驱动测试决策的有效性、覆盖指标的适用边界和方法的稳定部分与情境依赖部分。">
+  <meta name="keywords" content="决策反思, 风险排序, 覆盖指标, 情境变化, 方法迁移">
+  <title>决策反思 — 系统软件风险驱动测试</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Toggle menu">☰</button>
+<div class="overlay"></div>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h1>软件测试笔记</h1>
+    <div class="subtitle">Software Testing · 系统软件实践</div>
+  </div>
+  <div class="sidebar-nav">
+    <a href="../index.html" class="back-home"><span class="icon">🏠</span> 返回主页</a>
+    <div class="nav-section">实践导航</div>
+    <a href="index.html"><span class="icon">📖</span> 实践总览</a>
+    <a href="system-modeling.html"><span class="icon">🔬</span> 系统建模</a>
+    <a href="risk-analysis.html"><span class="icon">⚠️</span> 风险分析</a>
+    <a href="test-decision.html"><span class="icon">🎯</span> 测试决策</a>
+    <a href="coverage-analysis.html"><span class="icon">📊</span> 覆盖分析</a>
+    <a href="reflection.html" class="active"><span class="icon">🪞</span> 决策反思</a>
+    <a href="extended.html"><span class="icon">🧪</span> 扩展学习</a>
+    <div class="nav-section">本页目录</div>
+    <a href="#effectiveness" class="toc-link"><span class="icon">✅</span> 决策有效性</a>
+    <a href="#context-change" class="toc-link"><span class="icon">🔄</span> 情境变化分析</a>
+    <a href="#coverage-boundary" class="toc-link"><span class="icon">📐</span> 覆盖指标边界</a>
+    <a href="#stability" class="toc-link"><span class="icon">🏗️</span> 方法稳定性</a>
+  </div>
+  <div class="sidebar-footer">
+    第五部分 · 决策反思
+  </div>
+</nav>
+
+<main class="main">
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="index.html">系统软件实践</a>
+      <span class="sep">›</span>
+      <span>决策反思</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-header">
+      <h2>决策反思</h2>
+      <p class="desc">Decision Reflection — 评估风险驱动测试决策方法的有效性与适用边界。</p>
+      <div class="meta">
+        <span class="tag">第五部分</span>
+        <span class="tag">有效性</span>
+        <span class="tag">情境变化</span>
+        <span class="tag">方法迁移</span>
+      </div>
+    </div>
+
+    <h3 id="effectiveness">本轮决策有效性</h3>
+    <p>本轮风险排序与测试资源分配是否真正控制了关键风险？</p>
+
+    <h4>（1）风险排序是否合理</h4>
+    <p>通过系统建模识别了 8 条潜在风险，并根据严重性与发生概率进行排序。排序结果中，最高风险集中在以下行为路径：</p>
+    <ul>
+      <li><strong>输出控制</strong>（R6：<code>\c</code> 终止逻辑）— 风险值 15</li>
+      <li><strong>选项组合</strong>（R3：<code>-n</code> 与 <code>-e</code> 组合）— 风险值 12</li>
+      <li><strong>转义解析</strong>（R4：<code>\n</code> 解析）— 风险值 12</li>
+    </ul>
+    <p>这些风险直接影响程序输出行为，并可能影响脚本执行结果，因此被认为是需要优先验证的关键风险。</p>
+
+    <h4>（2）测试资源是否集中在关键风险</h4>
+    <p>在测试数量限制为 5 个的条件下，测试设计优先覆盖上述高风险路径：</p>
+    <table>
+      <thead>
+        <tr><th>测试</th><th>覆盖风险</th><th>说明</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>T1</strong></td><td>R6, R2</td><td>输出终止逻辑 — 控制最高风险</td></tr>
+        <tr><td><strong>T2</strong></td><td>R3, R4, R1, R2</td><td>选项组合与转义解析 — 一个测试触达四个风险</td></tr>
+        <tr><td><strong>T3</strong></td><td>R5, R2</td><td>补充转义解析路径</td></tr>
+        <tr><td><strong>T4</strong></td><td>R7</td><td>多参数输出风险</td></tr>
+        <tr><td><strong>T5</strong></td><td>R8</td><td>无参数边界输入</td></tr>
+      </tbody>
+    </table>
+    <p>总体上：共设计 5 个测试，触达 8 个风险。</p>
+
+    <h4>（3）是否存在覆盖率较高但风险未控制</h4>
+    <p>覆盖分析结果显示：语句覆盖率 90.2%，判定覆盖率 76.5%。未覆盖路径主要包括：</p>
+    <ul>
+      <li>无效选项处理</li>
+      <li>八进制转义解析</li>
+      <li>错误处理路径</li>
+    </ul>
+    <p>这些路径对应的行为在当前风险排序中优先级较低，且多数需要特殊输入或环境才能触发，因此未纳入主要测试集合。</p>
+
+    <blockquote>
+      <p><strong>结论：</strong>测试设计优先控制关键行为风险，而不是单纯追求更高的代码覆盖率。</p>
+    </blockquote>
+
+    <h4>（4）资源增减分析</h4>
+    <div class="compare-grid">
+      <div class="compare-box">
+        <h4>如果允许增加 50% 测试</h4>
+        <p>（从 5 个增加到 7-8 个）</p>
+        <ul>
+          <li>增加无效选项处理测试 — 覆盖选项解析的异常路径</li>
+          <li>增加八进制转义测试 — 补充转义解析的完整路径</li>
+          <li>原因：虽然当前风险排序较低，但增加测试成本不高，且能显著提升结构覆盖</li>
+        </ul>
+      </div>
+      <div class="compare-box">
+        <h4>如果必须减少 50% 测试</h4>
+        <p>（从 5 个减少到 2-3 个）</p>
+        <ul>
+          <li>保留 T1（最高风险 R6）</li>
+          <li>保留 T2（覆盖最多风险）</li>
+          <li>保留 T4 或 T5（参数结构覆盖）</li>
+          <li>删除 T3（R5 风险值低）和 T5/T4</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 id="context-change">情境变化下的风险排序调整</h3>
+    <p>若该程序用于不同应用场景，风险排序可能发生变化，从而影响测试资源分配。</p>
+
+    <div class="tabs">
+      <div class="tab-buttons">
+        <button class="tab-btn active" data-tab="embedded">嵌入式启动脚本</button>
+        <button class="tab-btn" data-tab="safety">安全关键系统</button>
+      </div>
+
+      <div class="tab-panel active" data-panel="embedded">
+        <h4>嵌入式启动脚本场景</h4>
+        <p><strong>风险结构变化：</strong>换行行为可能影响脚本解析，因此与换行相关的风险（如 R1）优先级可能上升。</p>
+        <p><strong>测试资源调整：</strong></p>
+        <ul>
+          <li>需要增加对换行控制逻辑的验证</li>
+          <li>R1（<code>-n</code> 换行控制）的风险值从 9 上升</li>
+          <li>R7（多参数空格处理）的重要性也会上升</li>
+          <li>可能需要减少对转义字符的测试资源</li>
+        </ul>
+      </div>
+
+      <div class="tab-panel" data-panel="safety">
+        <h4>安全关键系统场景</h4>
+        <p><strong>风险结构变化：</strong>输入解析错误可能导致异常行为或安全风险，因此输入解析相关风险优先级上升。</p>
+        <p><strong>测试资源调整：</strong></p>
+        <ul>
+          <li>R2（<code>-e</code> 转义启用）、R4（<code>\n</code> 解析）、R5（<code>\t</code> 解析）优先级上升</li>
+          <li>需要增加针对不同输入模式的测试</li>
+          <li>边界输入风险（R8）的重要性也会上升</li>
+          <li>可能需要增加错误处理路径的测试</li>
+        </ul>
+      </div>
+    </div>
+
+    <blockquote>
+      <p><strong>结论：</strong>风险驱动测试依赖系统使用情境，风险排序和测试重点可能随之变化。</p>
+    </blockquote>
+
+    <h3 id="coverage-boundary">覆盖指标的适用边界</h3>
+    <p>在某些系统中，代码覆盖率可能无法反映关键风险。</p>
+
+    <h4>嵌入式实时系统</h4>
+    <table>
+      <thead>
+        <tr><th>问题</th><th>分析</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>覆盖率无法反映的风险</strong></td>
+          <td>时序行为风险 — 代码被执行但执行时序不正确</td>
+        </tr>
+        <tr>
+          <td><strong>覆盖充分但仍有隐患</strong></td>
+          <td>是 — 所有代码路径都被执行，但实时性约束未被验证</td>
+        </tr>
+        <tr>
+          <td><strong>补充验证维度</strong></td>
+          <td>时序分析、最坏执行时间（WCET）分析</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h4>AI 系统</h4>
+    <table>
+      <thead>
+        <tr><th>问题</th><th>分析</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>覆盖率无法反映的风险</strong></td>
+          <td>数据分布风险 — 训练数据偏差导致的模型行为异常</td>
+        </tr>
+        <tr>
+          <td><strong>覆盖充分但仍有隐患</strong></td>
+          <td>是 — 代码覆盖充分，但模型决策逻辑不可解释</td>
+        </tr>
+        <tr>
+          <td><strong>补充验证维度</strong></td>
+          <td>对抗测试、公平性测试、可解释性验证</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="danger-block">
+      <strong>关键洞察：</strong>覆盖率可能无法反映数据分布风险和时序行为风险。可能出现"覆盖充分但系统行为仍存在重大隐患"的情形，因此需要补充其他验证维度。
+    </div>
+
+    <h3 id="stability">方法的稳定部分与情境依赖部分</h3>
+    <p>风险驱动测试方法中，哪些原则具有普适性，哪些依赖于具体情境？</p>
+
+    <div class="compare-grid">
+      <div class="compare-box">
+        <h4>稳定原则（普适性）</h4>
+        <ul>
+          <li><strong>风险优先</strong> — 测试资源应优先分配给高风险区域</li>
+          <li><strong>资源受限</strong> — 测试数量有限是工程现实</li>
+          <li><strong>基于结构决策</strong> — 测试设计应基于程序结构特征</li>
+          <li><strong>覆盖率是验证手段</strong> — 覆盖率用于检验决策，而非驱动决策</li>
+        </ul>
+      </div>
+      <div class="compare-box">
+        <h4>情境依赖部分</h4>
+        <ul>
+          <li><strong>风险排序</strong> — 取决于系统用途和运行环境</li>
+          <li><strong>测试重点</strong> — 取决于安全要求和使用场景</li>
+          <li><strong>覆盖率目标</strong> — 取决于质量要求和行业标准</li>
+          <li><strong>取舍决策</strong> — 取决于项目约束和团队判断</li>
+        </ul>
+      </div>
+    </div>
+
+    <blockquote>
+      <p><strong>方法迁移的核心：</strong>理解"风险优先、资源受限、基于结构决策"的稳定原则，并根据具体情境调整风险排序和测试重点。</p>
+    </blockquote>
+
+    <div class="pagination">
+      <a href="coverage-analysis.html" class="page-nav prev">
+        <span class="label">上一页</span>
+        <span class="title">← 覆盖分析</span>
+      </a>
+      <a href="extended.html" class="page-nav next">
+        <span class="label">下一节</span>
+        <span class="title">扩展学习 →</span>
+      </a>
+    </div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

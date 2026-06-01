@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="系统软件风险驱动测试实践，以BusyBox为实验对象，涵盖系统建模、风险分析、测试决策、覆盖分析和决策反思的完整流程。">
+  <meta name="keywords" content="风险驱动测试, BusyBox, 系统建模, 风险分析, 覆盖分析, gcov">
+  <title>系统软件风险驱动测试实践 — 软件测试笔记</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Toggle menu">☰</button>
+<div class="overlay"></div>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h1>软件测试笔记</h1>
+    <div class="subtitle">Software Testing · 系统软件实践</div>
+  </div>
+  <div class="sidebar-nav">
+    <a href="../index.html" class="back-home"><span class="icon">🏠</span> 返回主页</a>
+    <div class="nav-section">实践导航</div>
+    <a href="index.html" class="active"><span class="icon">📖</span> 实践总览</a>
+    <a href="system-modeling.html"><span class="icon">🔬</span> 系统建模</a>
+    <a href="risk-analysis.html"><span class="icon">⚠️</span> 风险分析</a>
+    <a href="test-decision.html"><span class="icon">🎯</span> 测试决策</a>
+    <a href="coverage-analysis.html"><span class="icon">📊</span> 覆盖分析</a>
+    <a href="reflection.html"><span class="icon">🪞</span> 决策反思</a>
+    <a href="extended.html"><span class="icon">🧪</span> 扩展学习</a>
+    <div class="nav-section">附录</div>
+    <a href="#summary"><span class="icon">📋</span> 实践总结</a>
+  </div>
+  <div class="sidebar-footer">
+    系统软件分册 · 风险驱动测试<br>
+    2026 智能软件测试课程
+  </div>
+</nav>
+
+<main class="main">
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="#">系统软件实践</a>
+      <span class="sep">›</span>
+      <span>实践总览</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="hero">
+      <h2>系统软件风险驱动测试实践</h2>
+      <p>Risk-Driven Testing for System Software — 以 BusyBox 命令组件为对象，在资源受限条件下进行理性测试决策的完整方法论训练。</p>
+      <div class="hero-stats">
+        <div class="stat"><div class="stat-num">5</div><div class="stat-label">实践阶段</div></div>
+        <div class="stat"><div class="stat-num">8-10</div><div class="stat-label">测试用例约束</div></div>
+        <div class="stat"><div class="stat-num">7</div><div class="stat-label">风险维度</div></div>
+        <div class="stat"><div class="stat-num">7</div><div class="stat-label">知识页面</div></div>
+      </div>
+    </div>
+
+    <h3 id="overview">实践概述</h3>
+    <p>本实践以<strong>风险驱动测试决策</strong>为核心方法。测试的目标不是追求覆盖率最大化，也不是增加测试数量，而是在资源受限条件下回答三个关键问题：</p>
+    <ul>
+      <li><strong>哪些风险真正值得优先控制？</strong> — 识别并排序可能影响系统质量的风险</li>
+      <li><strong>哪些问题可能产生严重后果？</strong> — 评估风险的影响范围与严重程度</li>
+      <li><strong>当测试数量有限时，应如何进行测试决策？</strong> — 合理分配有限的测试资源</li>
+    </ul>
+
+    <blockquote>
+      <p><strong>核心理念：</strong>覆盖率不是目标，而是用于检验测试决策是否触达关键风险结构的辅助证据。</p>
+    </blockquote>
+
+    <h3 id="pipeline">实践主线</h3>
+    <p>本实践采用统一决策路径，包含五个有序阶段：</p>
+
+    <div class="pipeline">
+      <div class="pipeline-step">
+        <div class="step-num">阶段一</div>
+        <div class="step-name">系统建模</div>
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step">
+        <div class="step-num">阶段二</div>
+        <div class="step-name">风险分析</div>
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step">
+        <div class="step-num">阶段三</div>
+        <div class="step-name">测试决策</div>
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step">
+        <div class="step-num">阶段四</div>
+        <div class="step-name">覆盖分析</div>
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step">
+        <div class="step-num">阶段五</div>
+        <div class="step-name">决策反思</div>
+      </div>
+    </div>
+
+    <h3 id="cards">实践内容</h3>
+    <div class="card-grid">
+      <a href="system-modeling.html" class="card">
+        <div class="card-icon teal">🔬</div>
+        <h3>系统建模</h3>
+        <p>刻画程序功能语义、输入域与关键判定逻辑，为风险分析提供结构基础。</p>
+        <div class="card-arrow">查看详情 →</div>
+      </a>
+      <a href="risk-analysis.html" class="card">
+        <div class="card-icon red">⚠️</div>
+        <h3>风险分析</h3>
+        <p>识别 8-12 条具体风险，基于严重性与发生概率进行评分和排序。</p>
+        <div class="card-arrow">查看详情 →</div>
+      </a>
+      <a href="test-decision.html" class="card">
+        <div class="card-icon amber">🎯</div>
+        <h3>测试决策</h3>
+        <p>在 8-10 个测试用例约束下，基于风险优先级进行资源分配与测试设计。</p>
+        <div class="card-arrow">查看详情 →</div>
+      </a>
+      <a href="coverage-analysis.html" class="card">
+        <div class="card-icon green">📊</div>
+        <h3>覆盖分析</h3>
+        <p>使用 gcov/lcov 统计语句覆盖率与判定覆盖率，验证测试是否触达关键路径。</p>
+        <div class="card-arrow">查看详情 →</div>
+      </a>
+      <a href="reflection.html" class="card">
+        <div class="card-icon blue">🪞</div>
+        <h3>决策反思</h3>
+        <p>评估风险排序合理性、覆盖指标适用边界和方法的稳定部分与情境依赖部分。</p>
+        <div class="card-arrow">查看详情 →</div>
+      </a>
+      <a href="extended.html" class="card">
+        <div class="card-icon purple">🧪</div>
+        <h3>扩展学习</h3>
+        <p>静态分析、Valgrind 内存检测、Check 单元测试框架和 Mull 变异测试。</p>
+        <div class="card-arrow">查看详情 →</div>
+      </a>
+    </div>
+
+    <h3 id="object">实验对象与约束</h3>
+
+    <h4>实验对象</h4>
+    <p>测试对象为 <strong>BusyBox</strong> 中的核心命令组件（版本 1.36.1），例如：</p>
+    <ul>
+      <li><code>echo</code>（课堂示范对象）</li>
+      <li><code>ls</code>、<code>cp</code>、<code>mv</code>、<code>sort</code>、<code>cut</code> 等</li>
+    </ul>
+
+    <h4>基本约束</h4>
+    <table>
+      <thead>
+        <tr><th>约束项</th><th>要求</th><th>目的</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>测试数量</strong></td><td>8-10 个测试用例</td><td>体现资源受限情境</td></tr>
+        <tr><td><strong>覆盖率</strong></td><td>不得为提高覆盖率而额外增加测试</td><td>强化决策能力</td></tr>
+        <tr><td><strong>设计依据</strong></td><td>每个测试必须说明设计依据</td><td>训练理性取舍</td></tr>
+      </tbody>
+    </table>
+
+    <h3 id="env">实验环境</h3>
+    <table>
+      <thead>
+        <tr><th>组件</th><th>版本/要求</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>操作系统</strong></td><td>Linux (Ubuntu)</td></tr>
+        <tr><td><strong>编译器</strong></td><td>gcc</td></tr>
+        <tr><td><strong>覆盖率工具</strong></td><td>gcov / lcov</td></tr>
+        <tr><td><strong>BusyBox</strong></td><td>1.36.1</td></tr>
+        <tr><td><strong>虚拟化平台</strong></td><td>VMware Workstation</td></tr>
+      </tbody>
+    </table>
+
+    <h3 id="abilities">能力目标</h3>
+    <table>
+      <thead>
+        <tr><th>能力</th><th>说明</th><th>训练重点</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>系统建模能力</strong></td><td>识别功能结构、输入空间与潜在失效模式</td><td>建立可测试视图</td></tr>
+        <tr><td><strong>风险分析能力</strong></td><td>基于影响与可能性进行风险排序</td><td>形成风险结构</td></tr>
+        <tr><td><strong>测试决策能力</strong></td><td>依据风险结构分配测试资源</td><td>风险驱动分配</td></tr>
+        <tr><td><strong>边界意识与迁移能力</strong></td><td>理解覆盖指标与风险控制的关系</td><td>方法稳定性判断</td></tr>
+      </tbody>
+    </table>
+
+    <h3 id="risk-dimensions">风险识别维度</h3>
+    <p>本实践依据以下七个维度进行风险识别：</p>
+
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header">B.1 功能行为风险 (Functional Behavior Risk) <span class="arrow">▼</span></button>
+        <div class="accordion-body"><div class="accordion-body-inner">
+          指程序在正常使用场景下可能出现的功能性偏差。思考方向：输出是否符合命令语义？默认行为是否符合预期？是否存在与常见实现不一致的情况？
+        </div></div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">B.2 选项解析风险 (Option Parsing Risk) <span class="arrow">▼</span></button>
+        <div class="accordion-body"><div class="accordion-body-inner">
+          指命令行选项解析过程中的潜在问题。思考方向：多个选项组合时是否存在歧义？选项顺序是否影响结果？非法或未知选项如何处理？
+        </div></div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">B.3 输入语义解析风险 (Input Semantic Interpretation Risk) <span class="arrow">▼</span></button>
+        <div class="accordion-body"><div class="accordion-body-inner">
+          指程序对输入内容进行解释时可能产生的语义偏差。思考方向：输入数据是否被正确解析？不同输入模式是否触发不同语义路径？
+        </div></div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">B.4 边界输入风险 (Boundary Input Risk) <span class="arrow">▼</span></button>
+        <div class="accordion-body"><div class="accordion-body-inner">
+          指极端或边界输入条件可能引发异常行为。思考方向：空输入或无参数情况如何处理？超长输入是否稳定？参数数量极少或极多时是否异常？
+        </div></div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">B.5 错误处理风险 (Error Handling Risk) <span class="arrow">▼</span></button>
+        <div class="accordion-body"><div class="accordion-body-inner">
+          指程序在异常或非法输入情况下的行为风险。思考方向：是否存在未处理异常路径？是否静默失败？是否给出错误提示？
+        </div></div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">B.6 脚本控制风险 (Script Control Risk) <span class="arrow">▼</span></button>
+        <div class="accordion-body"><div class="accordion-body-inner">
+          指该组件在脚本或自动化环境中使用时可能带来的系统级影响。思考方向：输出格式是否可能影响脚本逻辑判断？换行行为是否可能改变控制流程？
+        </div></div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">B.7 IO 行为风险 (IO Behavior Risk) <span class="arrow">▼</span></button>
+        <div class="accordion-body"><div class="accordion-body-inner">
+          指与输出行为相关的系统层面风险。思考方向：输出是否稳定？是否存在缓冲或刷新问题？在重定向或管道环境下是否正常？
+        </div></div>
+      </div>
+    </div>
+
+    <h3 id="summary">实践流程总览</h3>
+    <table>
+      <thead>
+        <tr><th>阶段</th><th>主要任务</th><th>输出</th><th>对应能力</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>系统建模</strong></td><td>功能语义识别、输入域识别、关键判定逻辑识别</td><td>程序可测试视图</td><td>系统建模能力</td></tr>
+        <tr><td><strong>风险分析</strong></td><td>风险识别（8-12条）、风险评分、风险排序</td><td>风险优先级列表</td><td>风险分析能力</td></tr>
+        <tr><td><strong>测试决策</strong></td><td>测试集合设计、取舍说明、冗余分析</td><td>8-10 个测试用例</td><td>测试决策能力</td></tr>
+        <tr><td><strong>覆盖分析</strong></td><td>测试执行、覆盖度量、结果分析</td><td>覆盖率报告</td><td>度量理解能力</td></tr>
+        <tr><td><strong>决策反思</strong></td><td>有效性评估、情境变化分析、边界讨论</td><td>反思报告</td><td>边界意识</td></tr>
+      </tbody>
+    </table>
+
+    <div class="pagination">
+      <div></div>
+      <a href="system-modeling.html" class="page-nav next">
+        <span class="label">下一节</span>
+        <span class="title">系统建模 →</span>
+      </a>
+    </div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

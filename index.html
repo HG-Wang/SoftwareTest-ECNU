@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="软件测试课程学习笔记，涵盖测试导论、输入空间划分、图覆盖、逻辑覆盖和基于语法的测试五大章节，包含ISTQB基础知识和实战练习。">
-    <meta name="keywords" content="软件测试, software testing, 测试覆盖, RIPR, ISTQB, 图覆盖, 逻辑覆盖, 变异测试">
+    <meta name="description" content="软件测试课程学习笔记，涵盖测试导论、输入空间划分、图覆盖、逻辑覆盖、基于语法的测试和系统软件风险驱动测试实践，包含ISTQB基础知识和实战练习。">
+    <meta name="keywords" content="软件测试, software testing, 测试覆盖, RIPR, ISTQB, 图覆盖, 逻辑覆盖, 变异测试, 风险驱动测试, BusyBox">
     <link rel="canonical" href="https://hg-wang.github.io/SoftwareTest-ECNU/">
     <meta property="og:title" content="软件测试笔记">
     <meta property="og:description" content="软件测试课程学习笔记，涵盖测试导论、输入空间划分、图覆盖、逻辑覆盖和基于语法的测试五大章节，包含ISTQB基础知识和实战练习。">
@@ -35,6 +35,13 @@
           {"@type": "ListItem", "position": 3, "name": "Chapter 3 图覆盖", "url": "https://hg-wang.github.io/SoftwareTest-ECNU/site-ch3/index.html"},
           {"@type": "ListItem", "position": 4, "name": "Chapter 4 逻辑覆盖", "url": "https://hg-wang.github.io/SoftwareTest-ECNU/site-ch4/index.html"},
           {"@type": "ListItem", "position": 5, "name": "Chapter 5 基于语法的测试", "url": "https://hg-wang.github.io/SoftwareTest-ECNU/site-ch5/index.html"}
+        ]
+      },
+      {
+        "@type": "ItemList",
+        "name": "实验实践",
+        "itemListElement": [
+          {"@type": "ListItem", "position": 1, "name": "系统软件风险驱动测试实践", "url": "https://hg-wang.github.io/SoftwareTest-ECNU/site-ch6/index.html"}
         ]
       }
     }
@@ -152,6 +159,28 @@
     .chapter-card .ch-icon.green { background: #d1fae5; }
     .chapter-card .ch-icon.red { background: #fee2e2; }
     .chapter-card .ch-icon.orange { background: #ffedd5; }
+    .chapter-card .ch-icon.teal { background: #ccfbf1; }
+
+    .section-divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 2.5rem 0 0;
+    }
+    .section-divider::before,
+    .section-divider::after {
+      content: '';
+      flex: 1;
+      border-top: 2px solid var(--border);
+    }
+    .section-divider span {
+      font-size: .85rem;
+      font-weight: 700;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      white-space: nowrap;
+    }
 
     .chapter-card .ch-body {
       flex: 1;
@@ -339,7 +368,7 @@
   <div class="hero">
     <div class="hero-icon">📘</div>
     <h1>软件测试笔记</h1>
-    <div class="subtitle">Software Testing Notes — 软件工程课程学习笔记</div>
+    <div class="subtitle">Software Testing Notes — 软件工程课程学习笔记 &amp; 实践</div>
   </div>
 
   <div class="search-section">
@@ -401,6 +430,23 @@
       </div>
       <div class="ch-arrow">→</div>
     </a>
+
+  </div>
+
+  <div class="section-divider">
+    <span>实验实践</span>
+  </div>
+
+  <div class="chapters">
+    <a href="site-ch6/index.html" class="chapter-card">
+      <div class="ch-icon teal">🛡️</div>
+      <div class="ch-body">
+        <h2>系统软件 · 风险驱动测试实践</h2>
+        <div class="ch-en">Risk-Driven Testing for System Software</div>
+        <p>以 BusyBox 为实验对象，在资源受限条件下进行系统建模、风险分析、测试决策、覆盖分析和决策反思的完整方法论训练。</p>
+      </div>
+      <div class="ch-arrow">→</div>
+    </a>
   </div>
 
   <div class="footer">
@@ -419,7 +465,8 @@
     ch2: 'Chapter 2 · 输入空间划分',
     ch3: 'Chapter 3 · 图覆盖',
     ch4: 'Chapter 4 · 逻辑覆盖',
-    ch5: 'Chapter 5 · 基于语法的测试'
+    ch5: 'Chapter 5 · 基于语法的测试',
+    ch6: '实验 · 风险驱动测试实践'
   };
 
   fetch('search_index.json')

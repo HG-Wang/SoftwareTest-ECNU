@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="覆盖分析阶段：测试执行、覆盖度量统计、覆盖结果分析，使用gcov/lcov验证测试是否触达关键路径。">
+  <meta name="keywords" content="覆盖分析, gcov, lcov, 语句覆盖率, 判定覆盖率, 覆盖率">
+  <title>覆盖分析 — 系统软件风险驱动测试</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Toggle menu">☰</button>
+<div class="overlay"></div>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h1>软件测试笔记</h1>
+    <div class="subtitle">Software Testing · 系统软件实践</div>
+  </div>
+  <div class="sidebar-nav">
+    <a href="../index.html" class="back-home"><span class="icon">🏠</span> 返回主页</a>
+    <div class="nav-section">实践导航</div>
+    <a href="index.html"><span class="icon">📖</span> 实践总览</a>
+    <a href="system-modeling.html"><span class="icon">🔬</span> 系统建模</a>
+    <a href="risk-analysis.html"><span class="icon">⚠️</span> 风险分析</a>
+    <a href="test-decision.html"><span class="icon">🎯</span> 测试决策</a>
+    <a href="coverage-analysis.html" class="active"><span class="icon">📊</span> 覆盖分析</a>
+    <a href="reflection.html"><span class="icon">🪞</span> 决策反思</a>
+    <a href="extended.html"><span class="icon">🧪</span> 扩展学习</a>
+    <div class="nav-section">本页目录</div>
+    <a href="#execution" class="toc-link"><span class="icon">▶️</span> 测试执行</a>
+    <a href="#metrics" class="toc-link"><span class="icon">📐</span> 覆盖度量统计</a>
+    <a href="#results" class="toc-link"><span class="icon">📋</span> 覆盖结果分析</a>
+    <a href="#improvement" class="toc-link"><span class="icon">📈</span> 覆盖率提升实验</a>
+    <a href="#conclusion" class="toc-link"><span class="icon">💡</span> 关键结论</a>
+  </div>
+  <div class="sidebar-footer">
+    第四部分 · 覆盖分析
+  </div>
+</nav>
+
+<main class="main">
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="index.html">系统软件实践</a>
+      <span class="sep">›</span>
+      <span>覆盖分析</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-header">
+      <h2>覆盖分析</h2>
+      <p class="desc">Coverage Analysis — 验证测试是否触达关键路径，使用 gcov/lcov 统计覆盖率。</p>
+      <div class="meta">
+        <span class="tag">第四部分</span>
+        <span class="tag">gcov</span>
+        <span class="tag">语句覆盖</span>
+        <span class="tag">判定覆盖</span>
+      </div>
+    </div>
+
+    <blockquote>
+      <p><strong>核心理解：</strong>覆盖分析用于检验测试决策是否触达高风险路径，而不是驱动新增测试。</p>
+    </blockquote>
+
+    <!-- ==================== 测试执行 ==================== -->
+    <h3 id="execution">测试执行</h3>
+    <p>使用自动化脚本实现并运行测试集合。</p>
+
+    <h4>测试脚本模板</h4>
+    <pre><code><span class="cm">#!/bin/bash</span>
+
+<span class="cm"># 清理旧文件</span>
+<span class="fn">rm</span> -f coreutils/echo coreutils/*.gcda coreutils/*.gcno coreutils/*.info
+<span class="fn">rm</span> -rf coreutils/coverage_report/
+
+<span class="cm"># 编译（启用覆盖率统计）</span>
+<span class="kw">cd</span> /home/busybox/Desktop/busybox
+<span class="fn">gcc</span> -Iinclude -Ilibbb -include include/autoconf.h \
+    -fprofile-arcs -ftest-coverage -g \
+    -c -o coreutils/echo.o coreutils/echo.c
+<span class="fn">gcc</span> -o coreutils/echo coreutils/echo.o \
+    -fprofile-arcs -ftest-coverage \
+    -Wl,--start-group shell/lib.a libbb/lib.a -Wl,--end-group
+
+<span class="cm"># 运行测试用例</span>
+<span class="kw">cd</span> coreutils
+./echo -e <span class="st">"hello\cworld"</span>
+./echo -n -e <span class="st">"a\nb"</span>
+./echo -e <span class="st">"a\tb"</span>
+./echo a b
+./echo
+
+<span class="cm"># 收集覆盖率数据</span>
+<span class="fn">lcov</span> --capture --directory . \
+    --output-file coverage.info \
+    --rc lcov_branch_coverage=1
+
+<span class="cm"># 过滤覆盖率数据</span>
+<span class="fn">lcov</span> --remove coverage.info <span class="st">"/usr/*"</span> <span class="st">"*/tests/*"</span> \
+    --output-file coverage_filtered.info \
+    --rc lcov_branch_coverage=1
+
+<span class="cm"># 生成 HTML 报告</span>
+<span class="fn">genhtml</span> coverage_filtered.info \
+    --output-directory coverage_report \
+    --branch-coverage</code></pre>
+
+    <div class="warning">
+      <strong>约束：</strong>保证测试可重复执行；确保测试结果可复现；不得为提高覆盖率临时修改测试。
+    </div>
+
+    <div class="tip">
+      <strong>通用性：</strong>测试其他工具时，只需替换工具名和测试用例部分，其余结构完全通用。建议每次测试使用独立的测试目录。
+    </div>
+
+    <!-- ==================== 覆盖度量统计 ==================== -->
+    <h3 id="metrics">覆盖度量统计</h3>
+    <p>使用 gcov 统计语句覆盖率与判定覆盖率。</p>
+
+    <h4>Echo 测试结果</h4>
+    <table>
+      <thead>
+        <tr><th>文件</th><th>语句覆盖率</th><th>函数覆盖率</th><th>判定覆盖率</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>echo.c</code></td>
+          <td><strong>90.2%</strong> (46/51)</td>
+          <td>100.0% (1/1)</td>
+          <td><strong>76.5%</strong> (26/34)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="tip">
+      <strong>说明：</strong>覆盖准则存在不同复杂度层级。更高复杂度准则（如条件覆盖或 MC/DC）通常需要更多测试设计精力。在测试资源受限的前提下，本实践仅采用语句覆盖与判定覆盖作为结构触达验证手段。
+    </div>
+
+    <!-- ==================== 覆盖结果分析 ==================== -->
+    <h3 id="results">覆盖结果分析</h3>
+    <p>未覆盖分支主要包括以下三种场景：</p>
+
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header">场景 1：无效选项处理 <span class="arrow">▼</span></button>
+        <div class="accordion-body"><div class="accordion-body-inner">
+          <p><strong>未覆盖路径：</strong>当用户输入无效选项（如 <code>-z</code>）时，程序会将参数原样回显。</p>
+          <p><strong>风险分析：</strong>不会崩溃或产生安全问题，只是功能降级，不是功能失效。</p>
+          <p><strong>是否纳入原始测试集合：</strong>否 — 低风险、低频场景。</p>
+        </div></div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">场景 2：八进制转义处理 <span class="arrow">▼</span></button>
+        <div class="accordion-body"><div class="accordion-body-inner">
+          <p><strong>未覆盖路径：</strong>八进制转义序列（如 <code>\0141</code>）的解析逻辑。</p>
+          <p><strong>风险分析：</strong>很少使用的特性，有默认行为，影响范围小。</p>
+          <p><strong>是否纳入原始测试集合：</strong>否 — 低频使用特性。</p>
+        </div></div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header">场景 3：错误处理路径 <span class="arrow">▼</span></button>
+        <div class="accordion-body"><div class="accordion-body-inner">
+          <p><strong>未覆盖路径：</strong>写入错误（如磁盘满）时的错误处理逻辑。</p>
+          <p><strong>风险分析：</strong>需要特殊环境才能触发，错误处理是防御性编程，正常环境不会执行。</p>
+          <p><strong>是否纳入原始测试集合：</strong>否 — 需要特殊环境，低频触发。</p>
+        </div></div>
+      </div>
+    </div>
+
+    <blockquote>
+      <p><strong>结论：</strong>未覆盖分支均为低风险、低频、防御性代码，符合风险驱动的取舍原则。</p>
+    </blockquote>
+
+    <!-- ==================== 覆盖率提升实验 ==================== -->
+    <h3 id="improvement">覆盖率提升实验（扩展分析）</h3>
+    <p>为了分析覆盖率提升所需的测试代价，本节额外设计测试覆盖未触达的分支。这些测试<strong>不属于原始测试决策结果</strong>，仅用于说明覆盖率提升成本。</p>
+
+    <h4>额外测试用例</h4>
+    <table>
+      <thead>
+        <tr><th>编号</th><th>输入</th><th>预期行为</th><th>覆盖路径</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>T6</strong></td>
+          <td><code>echo -z hello</code></td>
+          <td><code>-z hello</code></td>
+          <td>无效选项处理分支</td>
+        </tr>
+        <tr>
+          <td><strong>T7</strong></td>
+          <td><code>echo -e "\0141\0142"</code></td>
+          <td><code>ab</code></td>
+          <td>八进制转义解析逻辑</td>
+        </tr>
+        <tr>
+          <td><strong>T8</strong></td>
+          <td>输出到已满的文件系统</td>
+          <td>错误处理</td>
+          <td>错误处理路径</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h4>覆盖率变化对比</h4>
+    <table>
+      <thead>
+        <tr><th>测试集合</th><th>语句覆盖率</th><th>判定覆盖率</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>原始测试集合</strong>（5 tests）</td>
+          <td>90.2%</td>
+          <td>76.5%</td>
+        </tr>
+        <tr>
+          <td><strong>扩展测试集合</strong>（8 tests）</td>
+          <td>100%</td>
+          <td>91.2%</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h4>覆盖率提升代价分析</h4>
+    <div class="compare-grid">
+      <div class="compare-box">
+        <h4>从覆盖率角度看</h4>
+        <ul>
+          <li>新增 <strong>3 个测试</strong></li>
+          <li>覆盖率从 <strong>90.2%</strong> 提升至 <strong>100%</strong></li>
+          <li>判定覆盖率从 76.5% 提升至 91.2%</li>
+        </ul>
+      </div>
+      <div class="compare-box">
+        <h4>从风险角度看</h4>
+        <ul>
+          <li>新增测试主要覆盖：<strong>低频错误输入</strong>、<strong>边界转义解析</strong></li>
+          <li>这些行为在原始风险排序中<strong>优先级较低</strong></li>
+          <li>因此未纳入主要测试集合</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ==================== 关键结论 ==================== -->
+    <h3 id="conclusion">关键结论</h3>
+    <p>该示例说明了两个核心概念的区别：</p>
+
+    <div class="compare-grid">
+      <div class="compare-box">
+        <h4>代码覆盖率</h4>
+        <p>回答：<strong>测试是否触达关键程序结构？</strong></p>
+        <p>覆盖率是结构触达的度量，用于检验测试决策的有效性。</p>
+      </div>
+      <div class="compare-box">
+        <h4>风险驱动测试</h4>
+        <p>回答：<strong>测试是否控制关键行为风险？</strong></p>
+        <p>风险驱动关注的是行为控制的有效性，而非结构覆盖的完整性。</p>
+      </div>
+    </div>
+
+    <div class="danger-block">
+      <strong>关键结论：</strong>高覆盖率并不必然意味着高测试价值。提高覆盖率通常需要设计额外测试、增加测试执行成本和维护成本。在实际工程中，测试设计需要在风险控制与测试成本之间进行权衡。
+    </div>
+
+    <div class="pagination">
+      <a href="test-decision.html" class="page-nav prev">
+        <span class="label">上一页</span>
+        <span class="title">← 测试决策</span>
+      </a>
+      <a href="reflection.html" class="page-nav next">
+        <span class="label">下一节</span>
+        <span class="title">决策反思 →</span>
+      </a>
+    </div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

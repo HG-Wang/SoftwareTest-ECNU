@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="扩展学习：静态分析、Valgrind内存检测、Check单元测试框架和Mull变异测试在风险控制中的补充作用。">
+  <meta name="keywords" content="静态分析, Valgrind, Check, Mull, 变异测试, 内存检测, 单元测试">
+  <title>扩展学习 — 系统软件风险驱动测试</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Toggle menu">☰</button>
+<div class="overlay"></div>
+
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h1>软件测试笔记</h1>
+    <div class="subtitle">Software Testing · 系统软件实践</div>
+  </div>
+  <div class="sidebar-nav">
+    <a href="../index.html" class="back-home"><span class="icon">🏠</span> 返回主页</a>
+    <div class="nav-section">实践导航</div>
+    <a href="index.html"><span class="icon">📖</span> 实践总览</a>
+    <a href="system-modeling.html"><span class="icon">🔬</span> 系统建模</a>
+    <a href="risk-analysis.html"><span class="icon">⚠️</span> 风险分析</a>
+    <a href="test-decision.html"><span class="icon">🎯</span> 测试决策</a>
+    <a href="coverage-analysis.html"><span class="icon">📊</span> 覆盖分析</a>
+    <a href="reflection.html"><span class="icon">🪞</span> 决策反思</a>
+    <a href="extended.html" class="active"><span class="icon">🧪</span> 扩展学习</a>
+    <div class="nav-section">本页目录</div>
+    <a href="#static" class="toc-link"><span class="icon">🔍</span> 静态分析</a>
+    <a href="#runtime" class="toc-link"><span class="icon">🐛</span> 运行时检测</a>
+    <a href="#unit-test" class="toc-link"><span class="icon">🧪</span> 单元测试</a>
+    <a href="#mutation" class="toc-link"><span class="icon">🧬</span> 变异测试</a>
+    <a href="#mapping" class="toc-link"><span class="icon">📋</span> 风险控制映射</a>
+  </div>
+  <div class="sidebar-footer">
+    第六部分 · 扩展学习
+  </div>
+</nav>
+
+<main class="main">
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="index.html">系统软件实践</a>
+      <span class="sep">›</span>
+      <span>扩展学习</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-header">
+      <h2>扩展学习</h2>
+      <p class="desc">Extended Learning — 静态分析、内存检测、单元测试和变异测试等工具在工程中的补充作用。</p>
+      <div class="meta">
+        <span class="tag">第六部分</span>
+        <span class="tag">静态分析</span>
+        <span class="tag">Valgrind</span>
+        <span class="tag">变异测试</span>
+      </div>
+    </div>
+
+    <div class="tip">
+      <strong>说明：</strong>本部分不改变主线，仅扩展风险控制视角。工具不能替代风险排序与工程取舍决策。
+    </div>
+
+    <!-- ==================== 静态分析 ==================== -->
+    <h3 id="static">静态风险识别</h3>
+    <p>通过 SmartTestGrid 工具对 BusyBox 代码进行静态分析，可以在不执行程序的情况下发现潜在风险。</p>
+
+    <h4>静态分析流程</h4>
+    <ol class="step-list">
+      <li>
+        <div>
+          <strong>创建项目</strong> — 输入项目基本信息（名称、版本号、编译器），上传源代码，配置包含目录和宏定义。
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>配置检测模板</strong> — 选择或导入检测规则（如 MISRA-C 2012），查看知识中心的规则详情和修复建议。
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>执行静态分析</strong> — 选择目标文件（如 echo.c），执行分析，查看按规范分类和按文件分类的报告。
+        </div>
+      </li>
+    </ol>
+
+    <h4>静态分析能力</h4>
+    <table>
+      <thead>
+        <tr><th>控制关注点</th><th>典型问题表现</th><th>控制机制</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>关键路径遗漏</td><td>高风险决策路径未被执行</td><td>语句/判定覆盖分析</td></tr>
+        <tr><td>不可达代码</td><td>存在死代码</td><td>可达性分析</td></tr>
+        <tr><td>数据流异常</td><td>未初始化变量等问题</td><td>数据流分析</td></tr>
+        <tr><td>结构复杂度高</td><td>分支嵌套过深</td><td>控制流可视化</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ==================== 运行时检测 ==================== -->
+    <h3 id="runtime">运行时风险检测</h3>
+    <p>Valgrind 是一款常见的内存管理工具，用于检测内存泄漏和错误的内存操作。</p>
+
+    <h4>可检测的运行时风险</h4>
+    <table>
+      <thead>
+        <tr><th>控制关注点</th><th>典型问题表现</th><th>工具能力</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>内存管理</td><td>内存泄漏</td><td>动态检测</td></tr>
+        <tr><td>越界访问</td><td>未定义行为</td><td>运行期监控</td></tr>
+        <tr><td>资源管理</td><td>文件或缓冲未释放</td><td>运行期监控</td></tr>
+        <tr><td>IO 情境异常</td><td>管道或重定向异常</td><td>情境测试</td></tr>
+      </tbody>
+    </table>
+
+    <h4>Echo 中的内存问题示例</h4>
+
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header">越界访问示例 <span class="arrow">▼</span></button>
+        <div class="accordion-body"><div class="accordion-body-inner">
+          <pre><code><span class="vr">buflen</span> = 0;
+<span class="vr">pp</span> = <span class="vr">argv</span>;
+<span class="kw">while</span> ((<span class="vr">arg</span> = *<span class="vr">pp</span>) != <span class="kw">NULL</span>) {
+    <span class="vr">buflen</span> += <span class="fn">strlen</span>(<span class="vr">arg</span>);  <span class="cm">// 少了 "+1"</span>
+    <span class="vr">pp</span>++;
+}
+<span class="vr">out</span> = <span class="vr">buffer</span> = <span class="fn">xmalloc</span>(<span class="vr">buflen</span>);  <span class="cm">// 少了 "+1"</span></code></pre>
+          <p><strong>问题：</strong>每个字符串通过 strlen(arg) 累加到 buflen，但忽略了字符串末尾的空字节。后续操作可能导致缓冲区溢出。</p>
+        </div></div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-header">内存泄漏示例 <span class="arrow">▼</span></button>
+        <div class="accordion-body"><div class="accordion-body-inner">
+          <pre><code><span class="vr">err</span> = <span class="fn">full_write</span>(STDOUT_FILENO, <span class="vr">buffer</span>, <span class="vr">out</span> - <span class="vr">buffer</span>) != <span class="vr">out</span> - <span class="vr">buffer</span>;
+<span class="kw">if</span> (<span class="vr">err</span>) {
+    <span class="fn">bb_simple_perror_msg</span>(bb_msg_write_error);
+}
+<span class="cm">// free(buffer);  // 错误：内存未释放，导致泄漏</span>
+<span class="kw">return</span> <span class="vr">err</span>;</code></pre>
+          <p><strong>问题：</strong>buffer 通过 xmalloc() 动态分配内存，未调用 free(buffer) 会导致内存泄漏，尤其当程序多次执行时，泄漏会逐渐积累。</p>
+        </div></div>
+      </div>
+    </div>
+
+    <h4>Valgrind 使用方法</h4>
+    <pre><code><span class="fn">valgrind</span> ./busybox echo <span class="st">"Hello"</span> <span class="st">"World"</span></code></pre>
+    <p>Valgrind 检测到的关键问题：</p>
+    <ul>
+      <li><strong>越界写入</strong> — 程序尝试写入超出分配内存范围的地址</li>
+      <li><strong>内存泄漏</strong> — 程序分配了 10 字节内存，退出时未释放</li>
+    </ul>
+
+    <div class="warning">
+      <strong>注意：</strong>Valgrind 运行期检测不会增加代码覆盖率，但会显著增加测试执行时间。它用于发现仅通过程序输出无法发现的内存管理问题。
+    </div>
+
+    <!-- ==================== 单元测试 ==================== -->
+    <h3 id="unit-test">单元测试</h3>
+    <p>Check 是一个轻量级的 C/C++ 单元测试框架。本实践的测试对象为完整的命令行程序，测试层级更接近于程序级或系统级测试。</p>
+
+    <h4>Check 测试结构</h4>
+    <table>
+      <thead>
+        <tr><th>组件</th><th>说明</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>测试用例 (Test Case)</strong></td><td>定义具体的测试内容，通过断言验证功能</td></tr>
+        <tr><td><strong>测试集 (TCase)</strong></td><td>将功能相关的测试用例归类为一个集合</td></tr>
+        <tr><td><strong>测试套件 (Suite)</strong></td><td>多个测试用例集的高级集合</td></tr>
+        <tr><td><strong>测试运行器 (SRunner)</strong></td><td>执行整个测试套件并生成测试报告</td></tr>
+      </tbody>
+    </table>
+
+    <h4>两种测试验证方式</h4>
+    <div class="compare-grid">
+      <div class="compare-box">
+        <h4>方式一：比对返回值</h4>
+        <p>通过比对预期返回值与实际返回值来测试代码正确性。echo_main() 返回 0 表示成功，1 表示失败。</p>
+      </div>
+      <div class="compare-box">
+        <h4>方式二：比对输出</h4>
+        <p>通过比对预期标准输出和实际输出来测试代码正确性。更适合 echo 这类以输出为主的命令。</p>
+      </div>
+    </div>
+
+    <h4>编译与运行</h4>
+    <pre><code><span class="cm"># 编译</span>
+<span class="fn">gcc</span> -o test_echo test_echo.c \
+    -L/usr/lib -lcheck -lsubunit -lrt -lm -lpthread
+
+<span class="cm"># 运行</span>
+./test_echo</code></pre>
+
+    <!-- ==================== 变异测试 ==================== -->
+    <h3 id="mutation">变异测试</h3>
+    <p>Mull 是一个针对 C/C++ 的动态变异测试工具，基于 LLVM 框架运行。它通过引入程序代码中的"变异"，检测测试用例是否能够有效覆盖所有可能的执行路径。</p>
+
+    <h4>变异测试核心概念</h4>
+    <ul>
+      <li><strong>变异体 (Mutant)</strong> — 原程序的微小变化版本</li>
+      <li><strong>杀死变异体</strong> — 测试套件使变异体出错</li>
+      <li><strong>存活变异体</strong> — 测试套件不能使变异体出错，说明测试可能不够全面</li>
+      <li><strong>等价变异体</strong> — 与原程序行为完全相同的变异体，无法被杀死</li>
+    </ul>
+
+    <h4>Mull 使用流程</h4>
+    <ol class="step-list">
+      <li>
+        <div>
+          <strong>准备被测文件</strong> — 准备 echo.c 和 test_echo.c（测试用例文件）
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>配置 mull.yml</strong> — 配置变异运算符和变异范围，使用所有可用变异运算符
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>注册 Applet</strong> — 将 test_echo 追加到 BusyBox 的 Applet 表中
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>编译并运行</strong> — 使用 <code>mull-runner-12</code> 执行变异测试
+        </div>
+      </li>
+    </ol>
+
+    <h4>变异运算符分类</h4>
+    <table>
+      <thead>
+        <tr><th>类别</th><th>示例运算符</th><th>说明</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>算术运算变异</strong></td><td><code>+ → -</code>, <code>* → /</code></td><td>修改算术运算符</td></tr>
+        <tr><td><strong>比较运算变异</strong></td><td><code>== → !=</code>, <code>> → >=</code></td><td>修改比较运算符</td></tr>
+        <tr><td><strong>逻辑运算变异</strong></td><td><code>&& → ||</code>, <code>!x → x</code></td><td>修改逻辑运算符</td></tr>
+        <tr><td><strong>自增/自减变异</strong></td><td><code>x++ → x--</code></td><td>修改自增自减运算</td></tr>
+        <tr><td><strong>函数调用变异</strong></td><td>删除无返回值函数调用</td><td>修改函数调用行为</td></tr>
+      </tbody>
+    </table>
+
+    <div class="warning">
+      <strong>重要理解：</strong>变异测试用于验证"测试是否真正具有缺陷检测能力"，而不是提高覆盖率。
+    </div>
+
+    <!-- ==================== 风险控制映射 ==================== -->
+    <h3 id="mapping">风险控制机制映射</h3>
+    <p>不同类型的风险控制需求，通常对应不同的控制机制与工具能力。</p>
+
+    <h4>输入域控制机制</h4>
+    <table>
+      <thead>
+        <tr><th>控制关注点</th><th>控制机制</th><th>工具能力</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>参数组合复杂</td><td>组合测试策略</td><td>组合测试工具</td></tr>
+        <tr><td>边界条件敏感</td><td>边界值分析</td><td>单元测试或手工设计</td></tr>
+        <tr><td>异常输入处理</td><td>异常路径测试</td><td>单元测试工具</td></tr>
+      </tbody>
+    </table>
+
+    <h4>测试有效性控制机制</h4>
+    <table>
+      <thead>
+        <tr><th>控制关注点</th><th>控制机制</th><th>工具能力</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>覆盖率误导</td><td>测试强度验证</td><td>变异测试工具</td></tr>
+        <tr><td>等价类失效</td><td>有效性验证</td><td>变异测试工具</td></tr>
+        <tr><td>测试盲区</td><td>思路扩展与对比</td><td>人工分析或生成式工具</td></tr>
+        <tr><td>自动生成未审查</td><td>人工复核</td><td>人工决策主导</td></tr>
+      </tbody>
+    </table>
+
+    <blockquote>
+      <p><strong>核心观点：</strong>工具不能替代风险排序与工程取舍决策。工具是风险控制的补充手段，而非决策的替代品。</p>
+    </blockquote>
+
+    <div class="pagination">
+      <a href="reflection.html" class="page-nav prev">
+        <span class="label">上一页</span>
+        <span class="title">← 决策反思</span>
+      </a>
+      <div></div>
+    </div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
