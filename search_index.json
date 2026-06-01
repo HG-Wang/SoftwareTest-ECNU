@@ -1,0 +1,2097 @@
+[
+  {
+    "url": "site-ch1/index.html",
+    "chapter": "ch1",
+    "title": "Chapter 1软件测试导论",
+    "sections": [
+      {
+        "heading": "章节概述",
+        "content": "软件测试是软件工程中最重要的质量保障手段。本章从\"为什么要测试\"出发，介绍软件故障、错误和失败的概念，以及RIPR故障模型。然后介绍测试活动的分类（测试设计、测试自动化、测试执行、测试评估）和模型驱动测试设计(MDTD)方法。最后引入覆盖标准的概念，为后续章节的图覆盖、逻辑覆盖等具体覆盖标准奠定基础。本章还包含ISTQB基础级的测试原则、测试技能和良好实践。",
+        "keywords": [
+          "RIPR",
+          "MDTD",
+          "ISTQB"
+        ],
+        "anchor": "overview"
+      },
+      {
+        "heading": "章节内容",
+        "content": "",
+        "keywords": [],
+        "anchor": "cards"
+      },
+      {
+        "heading": "为什么要测试",
+        "content": "软件故障的危害、故障/错误/失败的概念与区别、RIPR故障模型、软件可测试性、验证与确认。",
+        "keywords": [
+          "RIPR"
+        ]
+      },
+      {
+        "heading": "测试活动与模型驱动设计",
+        "content": "四大测试活动分类、模型驱动测试设计(MDTD)方法、测试自动化框架、团队组织与最佳实践。",
+        "keywords": [
+          "MDTD"
+        ]
+      },
+      {
+        "heading": "覆盖标准导论",
+        "content": "测试需求、覆盖标准的定义、包含关系以及生成器与识别器的概念。",
+        "keywords": []
+      },
+      {
+        "heading": "ISTQB测试基础",
+        "content": "测试的定义与目标、七项测试原则、测试活动与测试件、测试技能与良好实践。",
+        "keywords": [
+          "ISTQB"
+        ]
+      },
+      {
+        "heading": "实战练习",
+        "content": "通过案例分析和概念辨析，巩固第一章的核心知识点。",
+        "keywords": []
+      },
+      {
+        "heading": "学习路线",
+        "content": "本章内容按照以下路线展开，建议按顺序学习：",
+        "keywords": [],
+        "anchor": "roadmap"
+      },
+      {
+        "heading": "本章核心概念一览",
+        "content": "",
+        "keywords": [],
+        "anchor": "summary"
+      },
+      {
+        "heading": "关键术语速查",
+        "content": "",
+        "keywords": [],
+        "anchor": "key-terms"
+      }
+    ]
+  },
+  {
+    "url": "site-ch1/why-test.html",
+    "chapter": "ch1",
+    "title": "为什么要测试",
+    "sections": [
+      {
+        "heading": "软件故障案例",
+        "content": "软件故障可能造成巨大的经济损失甚至人员伤亡。以下是一些著名的软件故障案例：",
+        "keywords": [
+          "软件故障",
+          "RIPR",
+          "测试目标"
+        ],
+        "anchor": "failures"
+      },
+      {
+        "heading": "故障、错误与失败",
+        "content": "在软件测试领域，Fault、Error和Failure是三个密切相关但含义不同的概念：",
+        "keywords": [
+          "软件故障",
+          "RIPR",
+          "测试目标"
+        ],
+        "anchor": "fault-failure-error"
+      },
+      {
+        "heading": "RIPR故障模型",
+        "content": "一个软件故障要导致可观察的失败，需要满足四个条件：",
+        "keywords": [
+          "RIPR"
+        ],
+        "anchor": "ripr"
+      },
+      {
+        "heading": "软件可测试性",
+        "content": "软件可测试性(Testability)衡量发现软件故障的难易程度，由两个因素决定：",
+        "keywords": [
+          "软件故障",
+          "RIPR",
+          "测试目标"
+        ],
+        "anchor": "testability"
+      },
+      {
+        "heading": "验证与确认",
+        "content": "Verification（验证）和Validation（确认）是软件质量保证中的两个重要概念：",
+        "keywords": [
+          "软件故障",
+          "RIPR",
+          "测试目标"
+        ],
+        "anchor": "v-v"
+      },
+      {
+        "heading": "测试成熟度等级",
+        "content": "软件测试的成熟度可以分为五个等级：",
+        "keywords": [
+          "软件故障",
+          "RIPR",
+          "测试目标"
+        ],
+        "anchor": "levels"
+      }
+    ]
+  },
+  {
+    "url": "site-ch1/test-activities.html",
+    "chapter": "ch1",
+    "title": "测试活动与模型驱动设计",
+    "sections": [
+      {
+        "heading": "软件测试的复杂性",
+        "content": "没有其他工程领域构建的产品像软件这样复杂。软件的复杂性体现在多个方面：",
+        "keywords": [
+          "测试活动",
+          "MDTD",
+          "测试自动化"
+        ],
+        "anchor": "complexity"
+      },
+      {
+        "heading": "四大测试活动",
+        "content": "软件测试可以分解为四个主要活动，每个活动有不同的目标和技能要求：",
+        "keywords": [
+          "测试活动",
+          "MDTD",
+          "测试自动化"
+        ],
+        "anchor": "four-activities"
+      },
+      {
+        "heading": "模型驱动测试设计 (MDTD)",
+        "content": "假设一个果冻豆有6种口味（樱桃、柠檬、橙子、蓝莓、薄荷、巧克力）和4种颜色（红、黄、蓝、绿），共24种组合。",
+        "keywords": [
+          "MDTD"
+        ],
+        "anchor": "mdtm"
+      },
+      {
+        "heading": "测试自动化框架",
+        "content": "现代测试自动化框架提供以下核心功能：",
+        "keywords": [
+          "测试活动",
+          "MDTD",
+          "测试自动化"
+        ],
+        "anchor": "automation"
+      },
+      {
+        "heading": "团队组织",
+        "content": "测试团队通常按照以下角色进行组织：",
+        "keywords": [
+          "测试活动",
+          "MDTD",
+          "测试自动化"
+        ],
+        "anchor": "team"
+      }
+    ]
+  },
+  {
+    "url": "site-ch1/coverage-intro.html",
+    "chapter": "ch1",
+    "title": "覆盖标准导论",
+    "sections": [
+      {
+        "heading": "输入空间与测试选择",
+        "content": "即使是小程序也有巨大的输入空间。考虑一个在32位机器上接受3个int参数的程序：",
+        "keywords": [
+          "覆盖标准",
+          "测试需求",
+          "包含关系"
+        ],
+        "anchor": "input-space"
+      },
+      {
+        "heading": "测试需求与覆盖标准",
+        "content": "",
+        "keywords": [
+          "覆盖标准",
+          "测试需求",
+          "包含关系"
+        ],
+        "anchor": "criteria"
+      },
+      {
+        "heading": "包含关系",
+        "content": "覆盖标准之间可以存在包含关系（Subsumption），这是衡量覆盖标准强弱的重要指标：",
+        "keywords": [
+          "覆盖标准",
+          "测试需求",
+          "包含关系"
+        ],
+        "anchor": "subsumption"
+      },
+      {
+        "heading": "生成器与识别器",
+        "content": "对于覆盖标准，存在两个关键问题：",
+        "keywords": [
+          "覆盖标准",
+          "测试需求",
+          "包含关系"
+        ],
+        "anchor": "generators"
+      }
+    ]
+  },
+  {
+    "url": "site-ch1/istqb-basics.html",
+    "chapter": "ch1",
+    "title": "ISTQB测试基础",
+    "sections": [
+      {
+        "heading": "什么是测试",
+        "content": "根据ISTQB的定义，软件测试是一个包含多种活动的过程，旨在评估工作产品质量并改进它。",
+        "keywords": [
+          "ISTQB"
+        ],
+        "anchor": "what-is-testing"
+      },
+      {
+        "heading": "为什么需要测试",
+        "content": "测试是软件质量控制的核心手段，通过系统化的检查和验证来确保软件产品质量。",
+        "keywords": [
+          "ISTQB",
+          "测试原则",
+          "测试角色"
+        ],
+        "anchor": "why-testing"
+      },
+      {
+        "heading": "七项测试原则",
+        "content": "ISTQB总结了七项被广泛接受的测试原则，这些原则指导着测试实践：",
+        "keywords": [
+          "ISTQB"
+        ],
+        "anchor": "principles"
+      },
+      {
+        "heading": "测试活动与测试件",
+        "content": "ISTQB定义了以下测试活动，它们可以在任何开发生命周期中进行：",
+        "keywords": [
+          "ISTQB"
+        ],
+        "anchor": "test-activities-istqb"
+      },
+      {
+        "heading": "测试技能与良好实践",
+        "content": "完整团队方法强调团队中每个成员都对质量负责：",
+        "keywords": [
+          "ISTQB",
+          "测试原则",
+          "测试角色"
+        ],
+        "anchor": "skills"
+      }
+    ]
+  },
+  {
+    "url": "site-ch1/exercises.html",
+    "chapter": "ch1",
+    "title": "实战练习",
+    "sections": [
+      {
+        "heading": "练习1：故障/错误/失败分析",
+        "content": "考虑以下计算数组中零值个数的方法：",
+        "keywords": [
+          "练习",
+          "案例分析",
+          "概念辨析"
+        ],
+        "anchor": "exercise1"
+      },
+      {
+        "heading": "练习2：RIPR模型应用",
+        "content": "给定以下代码段，分析当输入 x = -5 时的RIPR四条件：",
+        "keywords": [
+          "RIPR"
+        ],
+        "anchor": "exercise2"
+      },
+      {
+        "heading": "练习3：覆盖标准包含关系",
+        "content": "对于以下覆盖标准，判断它们之间的包含关系（哪些包含哪些）：",
+        "keywords": [
+          "练习",
+          "案例分析",
+          "概念辨析"
+        ],
+        "anchor": "exercise3"
+      },
+      {
+        "heading": "练习4：ISTQB测试原则辨析",
+        "content": "以下哪项最准确地描述了\"测试显示缺陷存在，而非不存在\"这一原则的含义？",
+        "keywords": [
+          "ISTQB"
+        ],
+        "anchor": "exercise4"
+      }
+    ]
+  },
+  {
+    "url": "site-ch2/index.html",
+    "chapter": "ch2",
+    "title": "Chapter 2输入空间划分",
+    "sections": [
+      {
+        "heading": "章节概述",
+        "content": "输入空间划分（ISP）是一种基于输入域的测试方法。它将程序的输入参数划分为不同的特征（Characteristic），每个特征再划分为若干块（Block），然后通过组合标准选择测试用例。ISP适用于单元测试、集成测试和系统测试等各个层级。本章还介绍边界值分析（BVA）技术，以及ISTQB中关于SDLC测试和静态测试的内容。",
+        "keywords": [
+          "BVA",
+          "ISP",
+          "ISTQB",
+          "SDLC"
+        ],
+        "anchor": "overview"
+      },
+      {
+        "heading": "章节内容",
+        "content": "",
+        "keywords": [],
+        "anchor": "cards"
+      },
+      {
+        "heading": "ISP基础",
+        "content": "输入域、划分的性质、输入域建模的五步方法、基于接口和基于功能的建模方法。",
+        "keywords": [
+          "ISP"
+        ]
+      },
+      {
+        "heading": "组合覆盖标准",
+        "content": "ACoC、ECC、PWC、TWC、BCC、MBCC六种组合标准的定义、计算和应用。",
+        "keywords": [
+          "EC",
+          "ACoC",
+          "ECC",
+          "PWC",
+          "TWC",
+          "BCC",
+          "MBCC",
+          "CC",
+          "CoC"
+        ]
+      },
+      {
+        "heading": "边界值分析",
+        "content": "等价类划分与边界值分析的2-value和3-value方法。",
+        "keywords": []
+      },
+      {
+        "heading": "ISTQB SDLC测试",
+        "content": "SDLC模型对测试的影响、测试级别、测试类型、DevOps与左移。",
+        "keywords": [
+          "ISTQB",
+          "SDLC",
+          "DevOps"
+        ]
+      },
+      {
+        "heading": "ISTQB静态测试",
+        "content": "静态测试基础、审查流程、审查类型和成功因素。",
+        "keywords": [
+          "ISTQB"
+        ]
+      },
+      {
+        "heading": "实战练习",
+        "content": "通过ISP建模、组合标准计算和边界值分析案例，综合运用输入空间划分技术。",
+        "keywords": [
+          "ISP"
+        ]
+      },
+      {
+        "heading": "学习路线",
+        "content": "本章内容按照以下路线展开，建议按顺序学习：",
+        "keywords": [],
+        "anchor": "roadmap"
+      },
+      {
+        "heading": "本章核心覆盖标准一览",
+        "content": "",
+        "keywords": [],
+        "anchor": "summary"
+      },
+      {
+        "heading": "包含关系",
+        "content": "ACoC ⊇ PWC ⊇ ECC — 全组合覆盖包含成对覆盖，成对覆盖包含每选择覆盖",
+        "keywords": [
+          "EC",
+          "ACoC",
+          "ECC",
+          "PWC",
+          "CC",
+          "CoC"
+        ],
+        "anchor": "subsumption"
+      },
+      {
+        "heading": "关键术语速查",
+        "content": "",
+        "keywords": [],
+        "anchor": "key-terms"
+      }
+    ]
+  },
+  {
+    "url": "site-ch2/isp-basics.html",
+    "chapter": "ch2",
+    "title": "输入空间划分基础",
+    "sections": [
+      {
+        "heading": "输入域",
+        "content": "输入域包含程序所有可能的输入。即使是一个小程序，其输入域也大到几乎无限。测试人员不可能穷举所有输入，因此需要系统的方法来选择有限的测试用例。",
+        "keywords": [
+          "ISP",
+          "输入域建模",
+          "特征"
+        ],
+        "anchor": "input-domains"
+      },
+      {
+        "heading": "划分的性质",
+        "content": "一个划分 q 定义块集合 Bq = {b1, b2, ..., bQ}，必须满足两个性质：",
+        "keywords": [
+          "ISP",
+          "输入域建模",
+          "特征"
+        ],
+        "anchor": "partitioning"
+      },
+      {
+        "heading": "输入域建模五步法",
+        "content": "输入域建模（Input Domain Modeling, IDM）是ISP的核心，包含以下五个步骤：",
+        "keywords": [
+          "ISP"
+        ],
+        "anchor": "idm"
+      },
+      {
+        "heading": "基于接口的方法",
+        "content": "基于接口的方法机械地考虑每个参数，为每个参数定义特征和块。不考虑参数之间的关系。",
+        "keywords": [
+          "ISP",
+          "输入域建模",
+          "特征"
+        ],
+        "anchor": "interface-based"
+      },
+      {
+        "heading": "基于功能的方法",
+        "content": "基于功能的方法从程序的行为视图出发，考虑程序应该如何响应不同类型的输入。需要理解程序的功能和领域知识。",
+        "keywords": [
+          "ISP",
+          "输入域建模",
+          "特征"
+        ],
+        "anchor": "functionality-based"
+      }
+    ]
+  },
+  {
+    "url": "site-ch2/combination-criteria.html",
+    "chapter": "ch2",
+    "title": "组合覆盖标准",
+    "sections": [
+      {
+        "heading": "全组合覆盖 (ACoC)",
+        "content": "定义： 测试需求集包含所有特征的所有块的所有组合。",
+        "keywords": [
+          "ACoC",
+          "CoC"
+        ],
+        "anchor": "acoc"
+      },
+      {
+        "heading": "每选择覆盖 (ECC)",
+        "content": "定义： 每个特征的每个块至少在一个测试中使用。",
+        "keywords": [
+          "EC",
+          "ECC",
+          "CC"
+        ],
+        "anchor": "ecc"
+      },
+      {
+        "heading": "成对覆盖 (PWC)",
+        "content": "定义： 每个特征的每个块与其他特征的每个块至少配对一次。",
+        "keywords": [
+          "PWC"
+        ],
+        "anchor": "pwc"
+      },
+      {
+        "heading": "T维覆盖 (TWC)",
+        "content": "定义： 每 t 个特征的组合中的每个块组合至少出现一次。",
+        "keywords": [
+          "TWC"
+        ],
+        "anchor": "twc"
+      },
+      {
+        "heading": "基本选择覆盖 (BCC)",
+        "content": "定义： 每个特征选一个基本块（Base Choice），形成基本测试。依次改变每个特征的非基本块，保持其他特征为基本块。",
+        "keywords": [
+          "BCC",
+          "CC"
+        ],
+        "anchor": "bcc"
+      },
+      {
+        "heading": "多基本选择覆盖 (MBCC)",
+        "content": "定义： 每个特征可选多个基本块，形成多个基本测试。对每个基本测试，依次改变每个特征的非基本块。",
+        "keywords": [
+          "BCC",
+          "MBCC",
+          "CC"
+        ],
+        "anchor": "mbcc"
+      },
+      {
+        "heading": "包含关系",
+        "content": "ACoC ⊇ PWC ⊇ ECC",
+        "keywords": [
+          "EC",
+          "ACoC",
+          "ECC",
+          "PWC",
+          "CC",
+          "CoC"
+        ],
+        "anchor": "subsumption"
+      },
+      {
+        "heading": "约束处理",
+        "content": "有些块组合在现实中不可行。例如对于 triang()：",
+        "keywords": [
+          "ACoC",
+          "ECC",
+          "PWC"
+        ],
+        "anchor": "constraints"
+      }
+    ]
+  },
+  {
+    "url": "site-ch2/bva.html",
+    "chapter": "ch2",
+    "title": "边界值分析",
+    "sections": [
+      {
+        "heading": "等价类划分",
+        "content": "等价类划分基于一个假设：在同一等价类中的输入值，程序的行为应该是相似的。因此，从每个等价类中选取一个代表值进行测试即可。",
+        "keywords": [
+          "BVA",
+          "等价类",
+          "边界值"
+        ],
+        "anchor": "ep"
+      },
+      {
+        "heading": "2-value边界值分析",
+        "content": "定义： 对每个等价类，取边界值和相邻等价类的边界值作为测试输入。",
+        "keywords": [
+          "BVA",
+          "等价类",
+          "边界值"
+        ],
+        "anchor": "bva-2value"
+      },
+      {
+        "heading": "3-value边界值分析",
+        "content": "定义： 对每个边界值 x，取 x-1, x, x+1 三个值作为测试输入。",
+        "keywords": [
+          "BVA",
+          "等价类",
+          "边界值"
+        ],
+        "anchor": "bva-3value"
+      },
+      {
+        "heading": "连续域处理",
+        "content": "实数域是稠密的——任意两个实数之间都有无穷多个实数。因此没有\"紧邻\"的值。",
+        "keywords": [
+          "BVA",
+          "等价类",
+          "边界值"
+        ],
+        "anchor": "continuous"
+      },
+      {
+        "heading": "2-value vs 3-value 对比",
+        "content": "电梯最大承重280kg。等价类：{≤280}（正常）, {>280}（超载）。2-value BVA测试值：279, 280, 281。3-value：279, 280, 281（边界值本身已在集合中）。",
+        "keywords": [
+          "BVA"
+        ],
+        "anchor": "strength"
+      }
+    ]
+  },
+  {
+    "url": "site-ch2/istqb-sdlc.html",
+    "chapter": "ch2",
+    "title": "ISTQB SDLC中的测试",
+    "sections": [
+      {
+        "heading": "SDLC模型与测试",
+        "content": "不同的软件开发生命周期（SDLC）模型对测试活动有不同的影响：",
+        "keywords": [
+          "SDLC"
+        ],
+        "anchor": "sdlc-models"
+      },
+      {
+        "heading": "测试级别",
+        "content": "测试级别是测试组织的方式，每个级别关注不同的测试目标：",
+        "keywords": [
+          "ISTQB",
+          "SDLC",
+          "测试级别"
+        ],
+        "anchor": "test-levels"
+      },
+      {
+        "heading": "测试类型",
+        "content": "功能测试： 验证系统\"做什么\"，检查功能是否符合需求。例如：登录功能、搜索功能。",
+        "keywords": [
+          "ISTQB",
+          "SDLC",
+          "测试级别"
+        ],
+        "anchor": "test-types"
+      },
+      {
+        "heading": "DevOps与测试",
+        "content": "DevOps是开发（Development）和运维（Operations）的结合，强调：",
+        "keywords": [
+          "DevOps"
+        ],
+        "anchor": "devops"
+      },
+      {
+        "heading": "左移（Shift Left）",
+        "content": "左移原则： 测试活动应尽早开始，在软件开发生命周期的左侧（早期阶段）进行更多的测试。",
+        "keywords": [
+          "ISTQB",
+          "SDLC",
+          "测试级别"
+        ],
+        "anchor": "shift-left"
+      }
+    ]
+  },
+  {
+    "url": "site-ch2/istqb-static.html",
+    "chapter": "ch2",
+    "title": "ISTQB静态测试",
+    "sections": [
+      {
+        "heading": "静态测试基础",
+        "content": "静态测试是一种不需要执行软件的测试方法。它通过检查工作产品（如文档、代码）来发现缺陷，而不是通过运行程序。",
+        "keywords": [
+          "ISTQB",
+          "静态测试",
+          "审查"
+        ],
+        "anchor": "static-basics"
+      },
+      {
+        "heading": "审查流程",
+        "content": "确定审查范围、选择审查员、分配材料、安排时间。",
+        "keywords": [
+          "ISTQB",
+          "静态测试",
+          "审查"
+        ],
+        "anchor": "review-process"
+      },
+      {
+        "heading": "审查类型",
+        "content": "审查类型从非正式到正式递进：",
+        "keywords": [
+          "ISTQB",
+          "静态测试",
+          "审查"
+        ],
+        "anchor": "review-types"
+      },
+      {
+        "heading": "成功因素",
+        "content": "静态测试的成功取决于以下因素：",
+        "keywords": [
+          "ISTQB",
+          "静态测试",
+          "审查"
+        ],
+        "anchor": "success-factors"
+      }
+    ]
+  },
+  {
+    "url": "site-ch2/exercises.html",
+    "chapter": "ch2",
+    "title": "实战练习",
+    "sections": [
+      {
+        "heading": "练习1：ISP建模与组合标准",
+        "content": "对三角形分类方法 triang(int a, int b, int c) 进行完整的ISP分析。",
+        "keywords": [
+          "ISP"
+        ],
+        "anchor": "exercise1"
+      },
+      {
+        "heading": "练习2：组合标准计算",
+        "content": "给定以下特征和块数，计算各组合标准的测试数：",
+        "keywords": [
+          "练习",
+          "案例分析",
+          "测试设计"
+        ],
+        "anchor": "exercise2"
+      },
+      {
+        "heading": "练习3：边界值分析",
+        "content": "电梯最大承重280kg，使用2-value和3-value BVA设计测试用例。",
+        "keywords": [
+          "BVA"
+        ],
+        "anchor": "exercise3"
+      },
+      {
+        "heading": "练习4：ISTQB概念辨析",
+        "content": "A. 组件测试 &nbsp; B. 系统测试 &nbsp; C. 回归测试 &nbsp; D. 验收测试",
+        "keywords": [
+          "ISTQB"
+        ],
+        "anchor": "exercise4"
+      }
+    ]
+  },
+  {
+    "url": "site-ch3/index.html",
+    "chapter": "ch3",
+    "title": "Chapter 3图覆盖",
+    "sections": [
+      {
+        "heading": "章节概述",
+        "content": "图覆盖是最常用的测试结构，测试人员通过将软件表示为图（如控制流图、设计结构图、有限状态机、用例活动图等）来定义覆盖标准。图的来源多种多样，包括源代码中的控制流、设计阶段的调用关系、规约中的状态转换以及用例场景等。",
+        "keywords": [],
+        "anchor": "overview"
+      },
+      {
+        "heading": "章节内容",
+        "content": "",
+        "keywords": [],
+        "anchor": "cards"
+      },
+      {
+        "heading": "图基础与覆盖标准",
+        "content": "图的形式化定义、节点覆盖、边覆盖、边对覆盖、主路径覆盖等结构化覆盖标准，以及游历、侧访、绕道等概念。",
+        "keywords": []
+      },
+      {
+        "heading": "源代码图覆盖",
+        "content": "将控制流图(CFG)应用于程序源码，覆盖if、while、for等控制结构，以及源码级数据流覆盖。",
+        "keywords": [
+          "CFG"
+        ]
+      },
+      {
+        "heading": "设计元素图覆盖",
+        "content": "调用图、面向对象调用覆盖、过程间DU对、耦合数据流路径等集成测试方法。",
+        "keywords": [
+          "DU"
+        ]
+      },
+      {
+        "heading": "规约图覆盖",
+        "content": "顺序约束、有限状态机(FSM)的构造与覆盖、层次化FSM等规约级测试方法。",
+        "keywords": [
+          "FSM"
+        ]
+      },
+      {
+        "heading": "用例图覆盖",
+        "content": "UML用例、活动图的转换与覆盖，场景测试方法。",
+        "keywords": []
+      },
+      {
+        "heading": "实战练习",
+        "content": "通过完整的控制流图分析和数据流覆盖案例，综合运用图覆盖标准设计测试用例。",
+        "keywords": []
+      },
+      {
+        "heading": "学习路线",
+        "content": "本章内容按照以下路线展开，建议按顺序学习：",
+        "keywords": [],
+        "anchor": "roadmap"
+      },
+      {
+        "heading": "本章核心覆盖标准一览",
+        "content": "",
+        "keywords": [],
+        "anchor": "summary"
+      },
+      {
+        "heading": "包含关系",
+        "content": "PPC ⊇ EC ⊇ NC — 主路径覆盖包含边覆盖，边覆盖包含节点覆盖",
+        "keywords": [
+          "NC",
+          "EC",
+          "PPC",
+          "PC"
+        ],
+        "anchor": "subsumption"
+      },
+      {
+        "heading": "关键术语速查",
+        "content": "",
+        "keywords": [],
+        "anchor": "key-terms"
+      }
+    ]
+  },
+  {
+    "url": "site-ch3/graph-basics.html",
+    "chapter": "ch3",
+    "title": "图基础与覆盖标准",
+    "sections": [
+      {
+        "heading": "图的定义与基本概念",
+        "content": "图是软件测试中最常用的结构。图可以来自多种来源：控制流图、设计结构、有限状态机（FSM）和状态图、用例等。测试通常旨在以某种方式\"覆盖\"图——即确保测试用例的执行路径遍历图中的节点、边或更长的子路径。",
+        "keywords": [
+          "FSM"
+        ],
+        "anchor": "graph-def"
+      },
+      {
+        "heading": "结构化覆盖标准",
+        "content": "结构化覆盖标准定义了测试需要覆盖图中哪些元素。以下六种标准从弱到强排列：",
+        "keywords": [
+          "3.1",
+          "3.2",
+          "NC"
+        ],
+        "anchor": "structural"
+      },
+      {
+        "heading": "简单路径与主路径",
+        "content": "从节点 nᵢ 到节点 nⱼ 的路径是简单路径，当且仅当没有节点重复出现（除了首尾节点可能相同的情况）。简单路径没有内部环路。注意：环本身也是一条简单路径。",
+        "keywords": [
+          "3.1",
+          "3.2",
+          "NC"
+        ],
+        "anchor": "prime-path"
+      },
+      {
+        "heading": "游历、侧访与绕道",
+        "content": "不可行的测试需求无法被满足，常见的不可行情况包括：",
+        "keywords": [
+          "3.1",
+          "3.2",
+          "NC"
+        ],
+        "anchor": "touring"
+      },
+      {
+        "heading": "数据流覆盖标准",
+        "content": "数据流覆盖标准关注变量的定义和使用之间的关系，比单纯的结构覆盖更能发现与变量相关的缺陷。",
+        "keywords": [
+          "3.1",
+          "3.2",
+          "NC"
+        ],
+        "anchor": "data-flow"
+      },
+      {
+        "heading": "包含关系总结",
+        "content": "结构化覆盖标准关注图的节点和边，数据流覆盖标准关注变量的定义和使用。两者结合可以更全面地测试软件：结构覆盖确保代码的每个部分都被执行，数据流覆盖确保变量的值被正确地传递和使用。",
+        "keywords": [
+          "3.1",
+          "3.2",
+          "NC"
+        ],
+        "anchor": "subsumption"
+      }
+    ]
+  },
+  {
+    "url": "site-ch3/source-code.html",
+    "chapter": "ch3",
+    "title": "源代码图覆盖",
+    "sections": [
+      {
+        "heading": "控制流图 (CFG)",
+        "content": "控制流图（Control Flow Graph, CFG）通过描述控制结构来建模方法的所有执行。CFG是图覆盖标准在源代码中最常见的应用。",
+        "keywords": [
+          "CFG"
+        ],
+        "anchor": "cfg"
+      },
+      {
+        "heading": "典型控制结构的CFG",
+        "content": "if语句产生两条边——条件为真和条件为假的分支。",
+        "keywords": [
+          "CFG"
+        ],
+        "anchor": "control-structures"
+      },
+      {
+        "heading": "源码级数据流覆盖",
+        "content": "在源代码层面，def和use的识别规则如下：",
+        "keywords": [
+          "def",
+          "use"
+        ],
+        "anchor": "data-flow-source"
+      },
+      {
+        "heading": "完整案例：Stats程序",
+        "content": "public static void computeStats(int[] numbers) { int length = numbers.length; double med, var, sd, mean, sum, varsum; sum = 0; for (int i = 0; i &lt; length; i++) { sum += numbers[i]; } med = numbers[",
+        "keywords": [
+          "3.3",
+          "CFG",
+          "控制流图"
+        ],
+        "anchor": "stats-example"
+      },
+      {
+        "heading": "现代趋势",
+        "content": "传统CFG+def-use分析 → SSA（静态单赋值形式）直接编码def-use关系 → Dataflow IR直接消除控制依赖。",
+        "keywords": [
+          "CFG",
+          "SSA",
+          "def",
+          "use"
+        ],
+        "anchor": "trends"
+      }
+    ]
+  },
+  {
+    "url": "site-ch3/design.html",
+    "chapter": "ch3",
+    "title": "设计元素图覆盖",
+    "sections": [
+      {
+        "heading": "调用图",
+        "content": "调用图(Call Graph)是结构化设计测试中最常见的图。节点是单元（Java中的方法），边是对单元的调用。",
+        "keywords": [
+          "§ 3.4",
+          "调用图",
+          "耦合DU"
+        ],
+        "anchor": "call-graph"
+      },
+      {
+        "heading": "面向对象调用覆盖",
+        "content": "在继承层次结构中，类本身不可执行，需要创建对象。因此调用图需要基于实例化对象来构建。",
+        "keywords": [
+          "§ 3.4",
+          "调用图",
+          "耦合DU"
+        ],
+        "anchor": "oo-coverage"
+      },
+      {
+        "heading": "耦合数据流",
+        "content": "设计层面的数据流耦合比控制流耦合更复杂。当值被传递时，它们\"改变名称\"。有许多不同的数据共享方式。",
+        "keywords": [
+          "§ 3.4",
+          "调用图",
+          "耦合DU"
+        ],
+        "anchor": "coupling-du"
+      },
+      {
+        "heading": "完整案例：Quadratic程序",
+        "content": "",
+        "keywords": [
+          "§ 3.4",
+          "调用图",
+          "耦合DU"
+        ],
+        "anchor": "quadratic"
+      },
+      {
+        "heading": "现代演进",
+        "content": "传统静态调用图无法处理多态、反射、动态分派。",
+        "keywords": [
+          "§ 3.4",
+          "调用图",
+          "耦合DU"
+        ],
+        "anchor": "modern"
+      }
+    ]
+  },
+  {
+    "url": "site-ch3/spec.html",
+    "chapter": "ch3",
+    "title": "规约图覆盖",
+    "sections": [
+      {
+        "heading": "顺序约束",
+        "content": "顺序约束（Sequencing Constraints）是对方法调用顺序施加限制的规则。它们可以作为前置条件或其他规约来表达。类中的方法可能互不调用，但可以通过方法调用序列来创建测试，顺序约束提供了选择哪些序列的有效方式。",
+        "keywords": [
+          "3.5",
+          "FSM",
+          "顺序约束"
+        ],
+        "anchor": "sequencing"
+      },
+      {
+        "heading": "有限状态机 (FSM)",
+        "content": "有限状态机（FSM）是一个描述软件在执行过程中变量如何被修改的图。",
+        "keywords": [
+          "FSM"
+        ],
+        "anchor": "fsm"
+      },
+      {
+        "heading": "FSM的构造方法",
+        "content": "不经验的开发者的第一反应是画CFG并连接它们。这实际上不是FSM。",
+        "keywords": [
+          "CFG",
+          "FSM"
+        ],
+        "anchor": "deriving-fsm"
+      },
+      {
+        "heading": "完整案例：Watch手表程序",
+        "content": "public class Watch { enum Mode { TIME, STOPWATCH, ALARM } Mode mode = Mode.TIME; Time currentTime; Time alarmTime; void doTransition(Event e) { if (mode == Mode.TIME) { if (e == B2) changeTime(); if (",
+        "keywords": [
+          "3.5",
+          "FSM",
+          "顺序约束"
+        ],
+        "anchor": "watch-example"
+      }
+    ]
+  },
+  {
+    "url": "site-ch3/use-case.html",
+    "chapter": "ch3",
+    "title": "用例图覆盖",
+    "sections": [
+      {
+        "heading": "UML用例",
+        "content": "UML用例常用于表达软件需求，帮助表达计算机应用的工作流程。用例图由参与者(Actor)和用例(Use Case)组成。",
+        "keywords": [
+          "3.6",
+          "用例",
+          "活动图"
+        ],
+        "anchor": "use-cases"
+      },
+      {
+        "heading": "活动图转换",
+        "content": "Beizer提出\"事务流图\"(Transaction Flow Graph)，UML活动图(Activity Diagram)与之类似。",
+        "keywords": [
+          "3.6",
+          "用例",
+          "活动图"
+        ],
+        "anchor": "activity-diagrams"
+      },
+      {
+        "heading": "ATM取款案例",
+        "content": "",
+        "keywords": [
+          "3.6",
+          "用例",
+          "活动图"
+        ],
+        "anchor": "atm-example"
+      },
+      {
+        "heading": "覆盖活动图",
+        "content": "",
+        "keywords": [
+          "3.6",
+          "用例",
+          "活动图"
+        ],
+        "anchor": "covering-activity"
+      }
+    ]
+  },
+  {
+    "url": "site-ch3/exercises.html",
+    "chapter": "ch3",
+    "title": "实战练习",
+    "sections": [
+      {
+        "heading": "练习1：控制流图覆盖分析",
+        "content": "给定以下Java方法，画出控制流图，并分别给出满足边覆盖(EC)、边对覆盖(EPC)和主路径覆盖(PPC)的测试需求和测试路径。",
+        "keywords": [
+          "EC",
+          "EPC",
+          "PPC",
+          "PC"
+        ],
+        "anchor": "exercise1"
+      },
+      {
+        "heading": "练习2：数据流覆盖分析",
+        "content": "对于以下代码，标识所有def和use集合，列出DU对，并给出满足All-Uses覆盖(AUC)的测试路径。",
+        "keywords": [
+          "AUC",
+          "DU",
+          "def",
+          "use"
+        ],
+        "anchor": "exercise2"
+      },
+      {
+        "heading": "练习3：综合案例 — Stats程序",
+        "content": "对于本章的computeStats程序，完成以下任务：",
+        "keywords": [
+          "练习",
+          "案例分析",
+          "测试设计"
+        ],
+        "anchor": "exercise3"
+      },
+      {
+        "heading": "练习4：Quadratic程序耦合DU分析",
+        "content": "对于3.4节的Quadratic程序，完成以下任务：",
+        "keywords": [
+          "DU"
+        ],
+        "anchor": "exercise4"
+      }
+    ]
+  },
+  {
+    "url": "site-ch4/index.html",
+    "chapter": "ch4",
+    "title": "Chapter 4逻辑覆盖",
+    "sections": [
+      {
+        "heading": "章节概述",
+        "content": "逻辑覆盖（Logic Coverage）是软件测试中基于谓词（predicate）和子句（clause）的覆盖标准体系。它广泛应用于以下场景：",
+        "keywords": [
+          "use"
+        ],
+        "anchor": "overview"
+      },
+      {
+        "heading": "核心章节",
+        "content": "",
+        "keywords": [],
+        "anchor": "sections"
+      },
+      {
+        "heading": "语义覆盖标准",
+        "content": "PC、CC、CoC、ACC 四大家族的语义定义、真值表示例、限制性条件与包含关系。",
+        "keywords": [
+          "ACC",
+          "PC",
+          "CC",
+          "CoC"
+        ]
+      },
+      {
+        "heading": "非活动子句覆盖",
+        "content": "GICC 与 RICC — 当子句不影响谓词取值时的覆盖策略。",
+        "keywords": [
+          "ICC",
+          "GICC",
+          "RICC",
+          "CC"
+        ]
+      },
+      {
+        "heading": "DNF 语法覆盖",
+        "content": "将逻辑表达式化为 DNF 后，利用蕴含项、UTP、NFP 等概念定义的 9 种故障类型。",
+        "keywords": [
+          "DNF",
+          "UTP",
+          "NFP"
+        ]
+      },
+      {
+        "heading": "源代码逻辑覆盖",
+        "content": "在程序源码层面应用逻辑覆盖标准，处理短路求值等实现细节。",
+        "keywords": []
+      },
+      {
+        "heading": "FSM 逻辑覆盖",
+        "content": "在有限状态机中，将守卫条件视为谓词，应用逻辑覆盖标准测试状态转换。",
+        "keywords": [
+          "FSM"
+        ]
+      },
+      {
+        "heading": "覆盖标准一览",
+        "content": "",
+        "keywords": [],
+        "anchor": "coverage-criteria"
+      },
+      {
+        "heading": "关键术语速查",
+        "content": "",
+        "keywords": [],
+        "anchor": "glossary"
+      },
+      {
+        "heading": "包含关系图",
+        "content": "覆盖标准之间存在严格的包含关系（A ⊇ B 表示满足 A 一定满足 B）：",
+        "keywords": [],
+        "anchor": "subsumption"
+      }
+    ]
+  },
+  {
+    "url": "site-ch4/semantic.html",
+    "chapter": "ch4",
+    "title": "语义逻辑覆盖标准",
+    "sections": [
+      {
+        "heading": "基本概念",
+        "content": "谓词是一个返回布尔值的逻辑表达式，由多个子句通过逻辑运算符（∧、∨、¬ 等）连接而成。在程序中，谓词通常出现在 if、while、for 等控制流语句中。",
+        "keywords": [
+          "8.1",
+          "PC",
+          "CC"
+        ],
+        "anchor": "concepts"
+      },
+      {
+        "heading": "基础覆盖标准",
+        "content": "三种基础覆盖标准从简单到严格递进：",
+        "keywords": [
+          "8.1",
+          "PC",
+          "CC"
+        ],
+        "anchor": "basic"
+      },
+      {
+        "heading": "有效子句覆盖 ACC",
+        "content": "ACC（Active Clause Coverage）的核心思想是：一个子句应该是\"有效的\"（active），即它能够决定整个谓词的取值。换句话说，当主子句改变取值时，谓词也应该随之改变。",
+        "keywords": [
+          "ACC",
+          "CC",
+          "use"
+        ],
+        "anchor": "acc"
+      },
+      {
+        "heading": "包含关系",
+        "content": "语义覆盖标准之间的包含关系如下：",
+        "keywords": [
+          "8.1",
+          "PC",
+          "CC"
+        ],
+        "anchor": "subsumption"
+      },
+      {
+        "heading": "实践指导",
+        "content": "根据谓词中子句的数量，推荐使用不同的覆盖标准：",
+        "keywords": [
+          "8.1",
+          "PC",
+          "CC"
+        ],
+        "anchor": "practice"
+      }
+    ]
+  },
+  {
+    "url": "site-ch4/inactive.html",
+    "chapter": "ch4",
+    "title": "非活动子句覆盖 (Inactive Clause Coverage)",
+    "sections": [
+      {
+        "heading": "ICC 定义",
+        "content": "",
+        "keywords": [
+          "ICC",
+          "CC"
+        ]
+      },
+      {
+        "heading": "GICC 与 RICC",
+        "content": "",
+        "keywords": [
+          "ICC",
+          "GICC",
+          "RICC",
+          "CC"
+        ]
+      },
+      {
+        "heading": "ICC 隐含谓词覆盖",
+        "content": "",
+        "keywords": [
+          "ICC",
+          "CC"
+        ]
+      },
+      {
+        "heading": "不可行性示例",
+        "content": "",
+        "keywords": [
+          "§ 8.1.3",
+          "ICC / GICC / RICC",
+          "MC/DC"
+        ]
+      },
+      {
+        "heading": "包含关系图",
+        "content": "",
+        "keywords": [
+          "§ 8.1.3",
+          "ICC / GICC / RICC",
+          "MC/DC"
+        ]
+      },
+      {
+        "heading": "GACC 不能保证 PC 的示例",
+        "content": "",
+        "keywords": [
+          "ACC",
+          "GACC",
+          "PC",
+          "CC"
+        ]
+      },
+      {
+        "heading": "使子句决定谓词",
+        "content": "",
+        "keywords": [
+          "§ 8.1.3",
+          "ICC / GICC / RICC",
+          "MC/DC"
+        ]
+      },
+      {
+        "heading": "测试需求分析表",
+        "content": "",
+        "keywords": [
+          "§ 8.1.3",
+          "ICC / GICC / RICC",
+          "MC/DC"
+        ]
+      },
+      {
+        "heading": "MC/DC 覆盖标准",
+        "content": "",
+        "keywords": [
+          "MC/DC",
+          "DC",
+          "MC"
+        ]
+      },
+      {
+        "heading": "术语映射表",
+        "content": "",
+        "keywords": [
+          "§ 8.1.3",
+          "ICC / GICC / RICC",
+          "MC/DC"
+        ]
+      }
+    ]
+  },
+  {
+    "url": "site-ch4/dnf.html",
+    "chapter": "ch4",
+    "title": "DNF 语法覆盖标准 (Syntactic Logic Coverage)",
+    "sections": [
+      {
+        "heading": "DNF 基本概念",
+        "content": "",
+        "keywords": [
+          "DNF"
+        ]
+      },
+      {
+        "heading": "蕴含项覆盖 IC (Implicant Coverage)",
+        "content": "",
+        "keywords": [
+          "§ 8.2",
+          "DNF",
+          "MUMCUT"
+        ]
+      },
+      {
+        "heading": "关键定义",
+        "content": "",
+        "keywords": [
+          "§ 8.2",
+          "DNF",
+          "MUMCUT"
+        ]
+      },
+      {
+        "heading": "UTP 与 MUTP",
+        "content": "",
+        "keywords": [
+          "UTP"
+        ]
+      },
+      {
+        "heading": "NFP 与 CUTPNFP",
+        "content": "",
+        "keywords": [
+          "UTP",
+          "NFP"
+        ]
+      },
+      {
+        "heading": "MNFP (Multiple Near False Points)",
+        "content": "",
+        "keywords": [
+          "NFP"
+        ]
+      },
+      {
+        "heading": "MUMCUT 覆盖标准",
+        "content": "",
+        "keywords": [
+          "MC",
+          "MUMCUT"
+        ]
+      },
+      {
+        "heading": "DNF 故障类",
+        "content": "",
+        "keywords": [
+          "DNF"
+        ]
+      },
+      {
+        "heading": "故障检测能力",
+        "content": "",
+        "keywords": [
+          "§ 8.2",
+          "DNF",
+          "MUMCUT"
+        ]
+      },
+      {
+        "heading": "Karnaugh Map 应用",
+        "content": "",
+        "keywords": [
+          "§ 8.2",
+          "DNF",
+          "MUMCUT"
+        ]
+      }
+    ]
+  },
+  {
+    "url": "site-ch4/source.html",
+    "chapter": "ch4",
+    "title": "源代码逻辑覆盖 (Logic Coverage for Source Code)",
+    "sections": [
+      {
+        "heading": "基本步骤",
+        "content": "",
+        "keywords": [
+          "§ 8.3",
+          "可达性分析",
+          "谓词提取"
+        ]
+      },
+      {
+        "heading": "核心挑战",
+        "content": "",
+        "keywords": [
+          "§ 8.3",
+          "可达性分析",
+          "谓词提取"
+        ]
+      },
+      {
+        "heading": "可达性 (Reachability)",
+        "content": "如何到达包含目标谓词的代码语句？需要满足所有前置条件和路径约束。",
+        "keywords": [
+          "§ 8.3",
+          "可达性分析",
+          "谓词提取"
+        ]
+      },
+      {
+        "heading": "可控性 (Controllability)",
+        "content": "如何通过外部输入控制谓词中各子句的取值？输入变量与子句之间的映射关系可能很复杂。",
+        "keywords": [
+          "§ 8.3",
+          "可达性分析",
+          "谓词提取"
+        ]
+      },
+      {
+        "heading": "内部变量 (Internal Variables)",
+        "content": "谓词中可能包含非输入的中间变量，需要回溯计算其与输入的关系。",
+        "keywords": [
+          "§ 8.3",
+          "可达性分析",
+          "谓词提取"
+        ]
+      },
+      {
+        "heading": "三角形分类示例",
+        "content": "",
+        "keywords": [
+          "§ 8.3",
+          "可达性分析",
+          "谓词提取"
+        ]
+      },
+      {
+        "heading": "恒温器示例",
+        "content": "",
+        "keywords": [
+          "§ 8.3",
+          "可达性分析",
+          "谓词提取"
+        ]
+      },
+      {
+        "heading": "程序变换问题",
+        "content": "",
+        "keywords": [
+          "§ 8.3",
+          "可达性分析",
+          "谓词提取"
+        ]
+      },
+      {
+        "heading": "谓词中的副作用",
+        "content": "",
+        "keywords": [
+          "§ 8.3",
+          "可达性分析",
+          "谓词提取"
+        ]
+      },
+      {
+        "heading": "总结",
+        "content": "",
+        "keywords": [
+          "§ 8.3",
+          "可达性分析",
+          "谓词提取"
+        ]
+      }
+    ]
+  },
+  {
+    "url": "site-ch4/spec.html",
+    "chapter": "ch4",
+    "title": "规约的逻辑覆盖",
+    "sections": [
+      {
+        "heading": "规约的形式与分类",
+        "content": "规约（Specifications）可以是形式化的（用数学语言表达）或非形式化的（用自然语言表达）。",
+        "keywords": [
+          "8.4",
+          "CNF",
+          "DNF"
+        ],
+        "anchor": "form"
+      },
+      {
+        "heading": "前置条件示例",
+        "content": "程序员经常为方法添加前置条件，通常以注释形式出现在方法头中：",
+        "keywords": [
+          "8.4",
+          "CNF",
+          "DNF"
+        ],
+        "anchor": "precondition"
+      },
+      {
+        "heading": "CNF 快捷方法",
+        "content": "合取范式 (CNF)： 谓词由子句或析取子句通过 ∧ 连接，如 A ∧ B ∧ C ∧ ... 或 (A ∨ B) ∧ (C ∨ D)。",
+        "keywords": [
+          "CNF"
+        ],
+        "anchor": "cnf"
+      },
+      {
+        "heading": "DNF 快捷方法",
+        "content": "析取范式 (DNF)： 谓词由子句或合取子句通过 ∨ 连接，如 A ∨ B ∨ C ∨ ... 或 (A ∧ B) ∨ (C ∧ D)。",
+        "keywords": [
+          "DNF"
+        ],
+        "anchor": "dnf"
+      },
+      {
+        "heading": "逻辑规约的来源",
+        "content": "逻辑规约可以从多种来源获得：",
+        "keywords": [
+          "8.4",
+          "CNF",
+          "DNF"
+        ],
+        "anchor": "sources"
+      }
+    ]
+  },
+  {
+    "url": "site-ch4/fsm.html",
+    "chapter": "ch4",
+    "title": "有限状态机的逻辑覆盖",
+    "sections": [
+      {
+        "heading": "FSM 基本概念",
+        "content": "有限状态机（Finite State Machine, FSM）本质上是图：",
+        "keywords": [
+          "FSM"
+        ],
+        "anchor": "concept"
+      },
+      {
+        "heading": "示例：地铁列车系统",
+        "content": "地铁列车系统包含 4 个状态：",
+        "keywords": [
+          "8.5",
+          "FSM",
+          "守卫条件"
+        ],
+        "anchor": "subway"
+      },
+      {
+        "heading": "判定分析（Determination）",
+        "content": "使用 XOR 方法计算每个子句决定谓词的条件：",
+        "keywords": [
+          "8.5",
+          "FSM",
+          "守卫条件"
+        ],
+        "anchor": "determination"
+      },
+      {
+        "heading": "CACC 测试真值赋值",
+        "content": "根据上述判定分析，填写完整的 CACC 测试真值赋值表：",
+        "keywords": [
+          "ACC",
+          "CACC",
+          "CC"
+        ],
+        "anchor": "cacc"
+      },
+      {
+        "heading": "发现的问题与挑战",
+        "content": "预期结果从 FSM 中读取：",
+        "keywords": [
+          "FSM"
+        ],
+        "anchor": "issues"
+      }
+    ]
+  },
+  {
+    "url": "site-ch5/index.html",
+    "chapter": "ch5",
+    "title": "Chapter 5基于语法的测试",
+    "sections": [
+      {
+        "heading": "章节概述",
+        "content": "大量软件构件遵循严格的语法规则，这些语法通常用 BNF（巴科斯范式） 等形式来描述。基于语法的测试利用这些结构化描述来：",
+        "keywords": [
+          "BNF"
+        ],
+        "anchor": "overview"
+      },
+      {
+        "heading": "四种建模结构",
+        "content": "软件测试使用四种结构来建模软件，基于语法的测试横跨所有四种结构：",
+        "keywords": [],
+        "anchor": "four-structures"
+      },
+      {
+        "heading": "程序级 (Program)",
+        "content": "对编程语言的 BNF 文法进行覆盖测试，常用于编译器测试和源码级变异测试。",
+        "keywords": [
+          "BNF"
+        ]
+      },
+      {
+        "heading": "集成级 (Integration)",
+        "content": "对集成接口的语法进行测试，应用变异运算符到集成元素上。",
+        "keywords": []
+      },
+      {
+        "heading": "模型级 (Model)",
+        "content": "对代数规约、有限状态机等模型进行基于语法的测试。",
+        "keywords": []
+      },
+      {
+        "heading": "输入空间 (Input)",
+        "content": "对输入语言（XML、SQL、HTML 等）的文法进行覆盖测试。",
+        "keywords": []
+      },
+      {
+        "heading": "学习路线",
+        "content": "本章内容按照以下路线展开，建议按顺序学习：",
+        "keywords": [],
+        "anchor": "roadmap"
+      },
+      {
+        "heading": "本章核心覆盖标准一览",
+        "content": "",
+        "keywords": [],
+        "anchor": "summary"
+      },
+      {
+        "heading": "包含关系",
+        "content": "DC ⊇ PDC ⊇ TSC — 推导覆盖包含产生式覆盖，产生式覆盖包含终端符号覆盖",
+        "keywords": [
+          "TSC",
+          "PDC",
+          "DC"
+        ],
+        "anchor": "subsumption"
+      },
+      {
+        "heading": "关键术语速查",
+        "content": "",
+        "keywords": [],
+        "anchor": "key-terms"
+      }
+    ]
+  },
+  {
+    "url": "site-ch5/grammar.html",
+    "chapter": "ch5",
+    "title": "文法覆盖标准",
+    "sections": [
+      {
+        "heading": "BNF 文法基础",
+        "content": "BNF（Backus-Naur Form，巴科斯-诺尔范式）是一种用来描述计算机语言语法的元语言。它使用产生式规则来定义语言的结构，是定义编程语言、标记语言和协议语法的标准方法。",
+        "keywords": [
+          "BNF"
+        ],
+        "anchor": "bnf"
+      },
+      {
+        "heading": "文法的使用",
+        "content": "文法有两个核心用途：识别和生成。",
+        "keywords": [
+          "5.1.1",
+          "TSC",
+          "PDC"
+        ],
+        "anchor": "using-grammar"
+      },
+      {
+        "heading": "文法覆盖标准",
+        "content": "基于文法可以定义三种覆盖标准，从简单到严格递进：",
+        "keywords": [
+          "5.1.1",
+          "TSC",
+          "PDC"
+        ],
+        "anchor": "coverage"
+      },
+      {
+        "heading": "完整示例",
+        "content": "以下测试用例展示了如何用最少的字符串覆盖 stream 文法的所有终端符号和产生式：",
+        "keywords": [
+          "5.1.1",
+          "TSC",
+          "PDC"
+        ],
+        "anchor": "example"
+      }
+    ]
+  },
+  {
+    "url": "site-ch5/mutation-basics.html",
+    "chapter": "ch5",
+    "title": "变异测试基础",
+    "sections": [
+      {
+        "heading": "什么是变异？",
+        "content": "变异（Mutation）是一种基于语法的测试方法。其核心思想是：对一个已有的程序或字符串（称为基本字符串），按照明确定义的规则（称为变异运算符），进行系统性的微小修改，生成新的版本（称为变体）。",
+        "keywords": [
+          "5.1.2",
+          "变异测试",
+          "变体"
+        ],
+        "anchor": "what"
+      },
+      {
+        "heading": "核心概念",
+        "content": "定义： 文法中的一个有效字符串，作为变异的起始点。",
+        "keywords": [
+          "5.1.2",
+          "变异测试",
+          "变体"
+        ],
+        "anchor": "concepts"
+      },
+      {
+        "heading": "变体的类型",
+        "content": "在实际的变异测试中，产生的变体可以分为以下几种类型：",
+        "keywords": [
+          "5.1.2",
+          "变异测试",
+          "变体"
+        ],
+        "anchor": "mutant-types"
+      },
+      {
+        "heading": "变异测试覆盖标准",
+        "content": "基于变异测试，可以定义三种覆盖标准：",
+        "keywords": [
+          "5.1.2",
+          "变异测试",
+          "变体"
+        ],
+        "anchor": "coverage-criteria"
+      },
+      {
+        "heading": "变异测试的关键问题",
+        "content": "变异运算符已为多种语言和领域定义：",
+        "keywords": [
+          "5.1.2",
+          "变异测试",
+          "变体"
+        ],
+        "anchor": "questions"
+      }
+    ]
+  },
+  {
+    "url": "site-ch5/ripr.html",
+    "chapter": "ch5",
+    "title": "RIPR 模型",
+    "sections": [
+      {
+        "heading": "模型概述",
+        "content": "RIPR 模型来自第 2 章，是分析故障检测条件的系统化框架。在变异测试中，它被用来判断一个测试用例是否能够杀死某个变体。",
+        "keywords": [
+          "RIPR"
+        ],
+        "anchor": "model"
+      },
+      {
+        "heading": "四个条件详解",
+        "content": "定义： 测试用例必须导致包含故障（或变异）的语句被执行。",
+        "keywords": [
+          "RIPR",
+          "强杀死",
+          "弱杀死"
+        ],
+        "anchor": "conditions"
+      },
+      {
+        "heading": "强杀死 vs 弱杀死",
+        "content": "根据满足 RIPR 条件的程度，可以定义两种\"杀死\"变体的方式：",
+        "keywords": [
+          "RIPR"
+        ],
+        "anchor": "strong-weak"
+      },
+      {
+        "heading": "RIPR 分析方法",
+        "content": "对于给定的程序和变体，分析 RIPR 条件的步骤：",
+        "keywords": [
+          "RIPR"
+        ],
+        "anchor": "analysis"
+      },
+      {
+        "heading": "案例分析",
+        "content": "将条件 if (B &lt; A) 修改为 if (B &gt; A)。",
+        "keywords": [
+          "RIPR",
+          "强杀死",
+          "弱杀死"
+        ],
+        "anchor": "example"
+      }
+    ]
+  },
+  {
+    "url": "site-ch5/program-mutation.html",
+    "chapter": "ch5",
+    "title": "程序级变异测试",
+    "sections": [
+      {
+        "heading": "程序级变异测试的基本流程",
+        "content": "基于语法的测试最原始和最广为人知的应用是修改程序。在程序级变异测试中：",
+        "keywords": [
+          "5.2.2",
+          "程序变异",
+          "等价变体"
+        ],
+        "anchor": "process"
+      },
+      {
+        "heading": "经典案例：Min() 函数",
+        "content": "以下是一个经典的变异测试案例，展示了如何对一个简单的求最小值函数进行变异分析：",
+        "keywords": [
+          "5.2.2",
+          "程序变异",
+          "等价变体"
+        ],
+        "anchor": "min-example"
+      },
+      {
+        "heading": "等价变体 (Equivalent Mutant)",
+        "content": "等价变体是变异测试中最棘手的问题之一。它是指与原程序行为完全相同的变体 — 不存在任何测试能杀死它。",
+        "keywords": [
+          "5.2.2",
+          "程序变异",
+          "等价变体"
+        ],
+        "anchor": "equivalent"
+      },
+      {
+        "heading": "弱变异案例分析",
+        "content": "变体 Δ1 在 if 之前插入了 minVal = B：",
+        "keywords": [
+          "5.2.2",
+          "程序变异",
+          "等价变体"
+        ],
+        "anchor": "weak-example"
+      },
+      {
+        "heading": "变异测试为什么有效？",
+        "content": "变异测试的基本前提 (Fundamental Premise)： 如果软件包含一个故障，通常会存在一组变体，只有能检测到该故障的测试用例才能杀死这些变体。",
+        "keywords": [
+          "5.2.2",
+          "程序变异",
+          "等价变体"
+        ],
+        "anchor": "premise"
+      }
+    ]
+  },
+  {
+    "url": "site-ch5/mutation-operators.html",
+    "chapter": "ch5",
+    "title": "变异运算符",
+    "sections": [
+      {
+        "heading": "变异运算符的设计原则",
+        "content": "变异运算符的设计遵循两个核心原则：",
+        "keywords": [
+          "AOR",
+          "ROR",
+          "COR"
+        ],
+        "anchor": "design"
+      },
+      {
+        "heading": "变异运算符的分类",
+        "content": "变异运算符可以按照被修改的程序元素类型分为四大类：",
+        "keywords": [
+          "AOR",
+          "ROR",
+          "COR"
+        ],
+        "anchor": "categories"
+      },
+      {
+        "heading": "语句变异",
+        "content": "Statement Mutations — 对整个语句进行修改，如删除语句、插入语句等。",
+        "keywords": [
+          "AOR",
+          "ROR",
+          "COR"
+        ]
+      },
+      {
+        "heading": "运算符变异",
+        "content": "Operator Mutations — 替换程序中的运算符，如算术、关系、逻辑运算符等。",
+        "keywords": [
+          "AOR",
+          "ROR",
+          "COR"
+        ]
+      },
+      {
+        "heading": "变量变异",
+        "content": "Variable Mutations — 替换程序中的变量引用，如用其他变量替换当前变量。",
+        "keywords": [
+          "AOR",
+          "ROR",
+          "COR"
+        ]
+      },
+      {
+        "heading": "常量变异",
+        "content": "Constant Mutations — 修改程序中的常量值或插入特殊函数调用。",
+        "keywords": [
+          "AOR",
+          "ROR",
+          "COR"
+        ]
+      },
+      {
+        "heading": "Java 变异运算符完整列表",
+        "content": "",
+        "keywords": [
+          "AOR",
+          "ROR",
+          "COR"
+        ],
+        "anchor": "operator-list"
+      },
+      {
+        "heading": "运算符详细示例",
+        "content": "将一个算术运算符替换为另一个。这是最常见的变异运算符之一。",
+        "keywords": [
+          "AOR",
+          "ROR",
+          "COR"
+        ],
+        "anchor": "examples"
+      },
+      {
+        "heading": "有效变异运算符集",
+        "content": "并非所有变异运算符都同等重要。研究表明，一小部分运算符就能产生大部分测试效果。",
+        "keywords": [
+          "AOR",
+          "ROR",
+          "COR"
+        ],
+        "anchor": "effective"
+      }
+    ]
+  },
+  {
+    "url": "site-ch5/exercises.html",
+    "chapter": "ch5",
+    "title": "实战练习",
+    "sections": [
+      {
+        "heading": "Task 1：Min() 函数变体分析",
+        "content": "任务： 为以下 Min() 函数的变体 Δ2、Δ4、Δ5、Δ6 提供到达条件、感染条件、传播条件和杀死变体的测试用例。",
+        "keywords": [
+          "RIPR 分析",
+          "变体杀死",
+          "测试设计"
+        ],
+        "anchor": "task1"
+      },
+      {
+        "heading": "Task 2：findVal() 方法变体分析",
+        "content": "任务： 对于 findVal() 方法中的变体（i = 0 → i = 0+1，即 i = 1），回答以下四个问题。",
+        "keywords": [
+          "RIPR 分析",
+          "变体杀死",
+          "测试设计"
+        ],
+        "anchor": "task2"
+      }
+    ]
+  }
+]

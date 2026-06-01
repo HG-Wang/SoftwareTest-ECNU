@@ -151,6 +151,136 @@
       transform: translateX(4px);
     }
 
+    .search-section {
+      margin-bottom: 2.5rem;
+    }
+
+    .search-box {
+      position: relative;
+      max-width: 560px;
+      margin: 0 auto;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: .9rem 1.2rem .9rem 3rem;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 1rem;
+      font-family: inherit;
+      background: var(--bg-white);
+      color: var(--text-dark);
+      transition: var(--transition);
+      outline: none;
+    }
+
+    .search-box input:focus {
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, .1);
+    }
+
+    .search-box input::placeholder {
+      color: var(--text-light);
+    }
+
+    .search-box .search-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-light);
+      font-size: 1.1rem;
+      pointer-events: none;
+    }
+
+    .search-results {
+      max-width: 560px;
+      margin: .75rem auto 0;
+      text-align: left;
+      max-height: 420px;
+      overflow-y: auto;
+      border-radius: var(--radius);
+      background: var(--bg-white);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-lg);
+      display: none;
+    }
+
+    .search-results.active {
+      display: block;
+    }
+
+    .search-result-item {
+      display: block;
+      padding: .85rem 1.2rem;
+      text-decoration: none;
+      color: inherit;
+      border-bottom: 1px solid var(--border);
+      transition: var(--transition);
+    }
+
+    .search-result-item:last-child {
+      border-bottom: none;
+    }
+
+    .search-result-item:hover {
+      background: #f1f5f9;
+    }
+
+    .search-result-item .result-chapter {
+      font-size: .72rem;
+      font-weight: 600;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      margin-bottom: .2rem;
+    }
+
+    .search-result-item .result-title {
+      font-size: .95rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: .2rem;
+    }
+
+    .search-result-item .result-heading {
+      font-size: .85rem;
+      color: var(--text-light);
+      margin-bottom: .15rem;
+    }
+
+    .search-result-item .result-content {
+      font-size: .82rem;
+      color: var(--text);
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .search-result-item mark {
+      background: #fef08a;
+      color: inherit;
+      border-radius: 2px;
+      padding: 0 2px;
+    }
+
+    .search-hint {
+      max-width: 560px;
+      margin: .5rem auto 0;
+      font-size: .8rem;
+      color: var(--text-light);
+      text-align: center;
+    }
+
+    .no-results {
+      padding: 1.5rem;
+      text-align: center;
+      color: var(--text-light);
+      font-size: .9rem;
+    }
+
     .footer {
       color: var(--text-light);
       font-size: .82rem;
@@ -162,6 +292,7 @@
       .hero h1 { font-size: 1.8rem; }
       .chapter-card { padding: 1.2rem; gap: 1rem; }
       .chapter-card .ch-icon { width: 48px; height: 48px; font-size: 1.4rem; border-radius: 12px; }
+      .search-results { max-height: 320px; }
     }
   </style>
 </head>
@@ -172,6 +303,15 @@
     <div class="hero-icon">📘</div>
     <h1>软件测试笔记</h1>
     <div class="subtitle">Software Testing Notes — 软件工程课程学习笔记</div>
+  </div>
+
+  <div class="search-section">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="搜索知识点、术语..." autocomplete="off">
+    </div>
+    <div class="search-results" id="searchResults"></div>
+    <div class="search-hint">支持中英文搜索，如「RIPR」「边界值」「变异测试」</div>
   </div>
 
   <div class="chapters">
@@ -229,7 +369,124 @@
   <div class="footer">
     Software Testing · HW5
   </div>
-</div>
+  </div>
+
+<script>
+(function() {
+  const searchInput = document.getElementById('searchInput');
+  const searchResults = document.getElementById('searchResults');
+  let searchIndex = null;
+
+  const chapterNames = {
+    ch1: 'Chapter 1 · 软件测试导论',
+    ch2: 'Chapter 2 · 输入空间划分',
+    ch3: 'Chapter 3 · 图覆盖',
+    ch4: 'Chapter 4 · 逻辑覆盖',
+    ch5: 'Chapter 5 · 基于语法的测试'
+  };
+
+  fetch('search_index.json')
+    .then(r => r.json())
+    .then(data => { searchIndex = data; })
+    .catch(() => { console.log('Search index not loaded'); });
+
+  function escapeHtml(str) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function highlightText(text, query) {
+    if (!query) return escapeHtml(text);
+    const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp('(' + escaped + ')', 'gi');
+    return escapeHtml(text).replace(regex, '<mark>$1</mark>');
+  }
+
+  function search(query) {
+    if (!searchIndex || !query.trim()) {
+      searchResults.classList.remove('active');
+      searchResults.innerHTML = '';
+      return;
+    }
+
+    const q = query.trim().toLowerCase();
+    const results = [];
+
+    for (const page of searchIndex) {
+      const titleMatch = page.title.toLowerCase().includes(q);
+      for (const section of page.sections) {
+        const headingMatch = section.heading.toLowerCase().includes(q);
+        const contentMatch = section.content.toLowerCase().includes(q);
+        const keywordMatch = section.keywords.some(k => k.toLowerCase().includes(q));
+
+        if (titleMatch || headingMatch || contentMatch || keywordMatch) {
+          results.push({
+            url: page.url,
+            chapter: page.chapter,
+            pageTitle: page.title,
+            heading: section.heading,
+            anchor: section.anchor || '',
+            content: section.content,
+            score: (titleMatch ? 10 : 0) + (headingMatch ? 5 : 0) + (keywordMatch ? 3 : 0) + (contentMatch ? 1 : 0)
+          });
+        }
+      }
+    }
+
+    results.sort((a, b) => b.score - a.score);
+    const top = results.slice(0, 15);
+
+    if (top.length === 0) {
+      searchResults.innerHTML = '<div class="no-results">未找到相关结果</div>';
+      searchResults.classList.add('active');
+      return;
+    }
+
+    const seen = new Set();
+    const deduped = top.filter(r => {
+      const key = r.url + '|' + r.heading;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+
+    searchResults.innerHTML = deduped.map(r => {
+      const chName = chapterNames[r.chapter] || r.chapter;
+      const anchor = r.anchor ? '#' + r.anchor : '';
+      return '<a class="search-result-item" href="' + r.url + anchor + '">' +
+        '<div class="result-chapter">' + escapeHtml(chName) + '</div>' +
+        '<div class="result-title">' + highlightText(r.pageTitle, query) + '</div>' +
+        (r.heading ? '<div class="result-heading">' + highlightText(r.heading, query) + '</div>' : '') +
+        (r.content ? '<div class="result-content">' + highlightText(r.content.substring(0, 150), query) + '</div>' : '') +
+        '</a>';
+    }).join('');
+
+    searchResults.classList.add('active');
+  }
+
+  let debounceTimer;
+  searchInput.addEventListener('input', function() {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => search(this.value), 200);
+  });
+
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.search-section')) {
+      searchResults.classList.remove('active');
+    }
+  });
+
+  searchInput.addEventListener('focus', function() {
+    if (this.value.trim()) search(this.value);
+  });
+
+  searchInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      searchResults.classList.remove('active');
+      this.blur();
+    }
+  });
+})();
+</script>
 
 </body>
 </html>
